@@ -1,14 +1,12 @@
 package com.ncr.project.pulsecheck.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -29,9 +27,9 @@ public class Question implements Serializable {
     @Column(name = "question")
     private String question;
 
-    @OneToMany(mappedBy = "questions")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<QuestionCategory> categories = new HashSet<>();
+    @ManyToOne
+    @JsonIgnoreProperties("questions")
+    private QuestionCategory category;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -55,29 +53,17 @@ public class Question implements Serializable {
         this.question = question;
     }
 
-    public Set<QuestionCategory> getCategories() {
-        return categories;
+    public QuestionCategory getCategory() {
+        return category;
     }
 
-    public Question categories(Set<QuestionCategory> questionCategories) {
-        this.categories = questionCategories;
+    public Question category(QuestionCategory questionCategory) {
+        this.category = questionCategory;
         return this;
     }
 
-    public Question addCategory(QuestionCategory questionCategory) {
-        this.categories.add(questionCategory);
-        questionCategory.setQuestions(this);
-        return this;
-    }
-
-    public Question removeCategory(QuestionCategory questionCategory) {
-        this.categories.remove(questionCategory);
-        questionCategory.setQuestions(null);
-        return this;
-    }
-
-    public void setCategories(Set<QuestionCategory> questionCategories) {
-        this.categories = questionCategories;
+    public void setCategory(QuestionCategory questionCategory) {
+        this.category = questionCategory;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

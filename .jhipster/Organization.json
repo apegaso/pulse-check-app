@@ -8,10 +8,10 @@
     ],
     "relationships": [
         {
-            "relationshipType": "many-to-one",
+            "relationshipType": "one-to-many",
             "relationshipName": "events",
             "otherEntityName": "event",
-            "otherEntityField": "id"
+            "otherEntityRelationshipName": "organization"
         },
         {
             "relationshipType": "many-to-many",

@@ -1,7 +1,6 @@
 package com.ncr.project.pulsecheck.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -30,9 +29,9 @@ public class Organization implements Serializable {
     @Column(name = "organization_name")
     private String organizationName;
 
-    @ManyToOne
-    @JsonIgnoreProperties("organizations")
-    private Event events;
+    @OneToMany(mappedBy = "organization")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Event> events = new HashSet<>();
 
     @ManyToMany(mappedBy = "organizations")
     @JsonIgnore
@@ -61,17 +60,29 @@ public class Organization implements Serializable {
         this.organizationName = organizationName;
     }
 
-    public Event getEvents() {
+    public Set<Event> getEvents() {
         return events;
     }
 
-    public Organization events(Event event) {
-        this.events = event;
+    public Organization events(Set<Event> events) {
+        this.events = events;
         return this;
     }
 
-    public void setEvents(Event event) {
-        this.events = event;
+    public Organization addEvents(Event event) {
+        this.events.add(event);
+        event.setOrganization(this);
+        return this;
+    }
+
+    public Organization removeEvents(Event event) {
+        this.events.remove(event);
+        event.setOrganization(null);
+        return this;
+    }
+
+    public void setEvents(Set<Event> events) {
+        this.events = events;
     }
 
     public Set<OrgAdmin> getAdmins() {

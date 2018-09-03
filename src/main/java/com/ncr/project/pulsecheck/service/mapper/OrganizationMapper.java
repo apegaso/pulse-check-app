@@ -8,13 +8,11 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity Organization and its DTO OrganizationDTO.
  */
-@Mapper(componentModel = "spring", uses = {EventMapper.class})
+@Mapper(componentModel = "spring", uses = {})
 public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organization> {
 
-    @Mapping(source = "events.id", target = "eventsId")
-    OrganizationDTO toDto(Organization organization);
 
-    @Mapping(source = "eventsId", target = "events")
+    @Mapping(target = "events", ignore = true)
     @Mapping(target = "admins", ignore = true)
     Organization toEntity(OrganizationDTO organizationDTO);
 

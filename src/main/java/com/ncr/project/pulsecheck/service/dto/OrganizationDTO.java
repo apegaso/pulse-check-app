@@ -12,8 +12,6 @@ public class OrganizationDTO implements Serializable {
 
     private String organizationName;
 
-    private Long eventsId;
-
     public Long getId() {
         return id;
     }
@@ -28,14 +26,6 @@ public class OrganizationDTO implements Serializable {
 
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
-    }
-
-    public Long getEventsId() {
-        return eventsId;
-    }
-
-    public void setEventsId(Long eventId) {
-        this.eventsId = eventId;
     }
 
     @Override
@@ -64,7 +54,6 @@ public class OrganizationDTO implements Serializable {
         return "OrganizationDTO{" +
             "id=" + getId() +
             ", organizationName='" + getOrganizationName() + "'" +
-            ", events=" + getEventsId() +
             "}";
     }
 }

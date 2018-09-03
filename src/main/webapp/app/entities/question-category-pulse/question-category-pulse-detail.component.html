@@ -13,16 +13,16 @@
                 <dd>
                     <span>{{questionCategory.level}}</span>
                 </dd>
-                <dt><span>Soons</span></dt>
+                <dt><span>Father</span></dt>
                 <dd>
-                    <div *ngIf="questionCategory.soonsId">
-                        <a [routerLink]="['/question-category-pulse', questionCategory.soonsId, 'view']">{{questionCategory.soonsId}}</a>
+                    <div *ngIf="questionCategory.fatherId">
+                        <a [routerLink]="['/question-category-pulse', questionCategory.fatherId, 'view']">{{questionCategory.fatherId}}</a>
                     </div>
                 </dd>
-                <dt><span>Questions</span></dt>
+                <dt><span>Father</span></dt>
                 <dd>
-                    <div *ngIf="questionCategory.questionsId">
-                        <a [routerLink]="['/question-pulse', questionCategory.questionsId, 'view']">{{questionCategory.questionsId}}</a>
+                    <div *ngIf="questionCategory.fatherId">
+                        <a [routerLink]="['/question-category-pulse', questionCategory.fatherId, 'view']">{{questionCategory.fatherId}}</a>
                     </div>
                 </dd>
             </dl>

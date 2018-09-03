@@ -6,8 +6,6 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { IOrganizationPulse } from 'app/shared/model/organization-pulse.model';
 import { OrganizationPulseService } from './organization-pulse.service';
-import { IEventPulse } from 'app/shared/model/event-pulse.model';
-import { EventPulseService } from 'app/entities/event-pulse';
 import { IOrgAdminPulse } from 'app/shared/model/org-admin-pulse.model';
 import { OrgAdminPulseService } from 'app/entities/org-admin-pulse';
 
@@ -19,14 +17,11 @@ export class OrganizationPulseUpdateComponent implements OnInit {
     private _organization: IOrganizationPulse;
     isSaving: boolean;
 
-    events: IEventPulse[];
-
     orgadmins: IOrgAdminPulse[];
 
     constructor(
         private jhiAlertService: JhiAlertService,
         private organizationService: OrganizationPulseService,
-        private eventService: EventPulseService,
         private orgAdminService: OrgAdminPulseService,
         private activatedRoute: ActivatedRoute
     ) {}
@@ -36,12 +31,6 @@ export class OrganizationPulseUpdateComponent implements OnInit {
         this.activatedRoute.data.subscribe(({ organization }) => {
             this.organization = organization;
         });
-        this.eventService.query().subscribe(
-            (res: HttpResponse<IEventPulse[]>) => {
-                this.events = res.body;
-            },
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
         this.orgAdminService.query().subscribe(
             (res: HttpResponse<IOrgAdminPulse[]>) => {
                 this.orgadmins = res.body;
@@ -78,10 +67,6 @@ export class OrganizationPulseUpdateComponent implements OnInit {
 
     private onError(errorMessage: string) {
         this.jhiAlertService.error(errorMessage, null, null);
-    }
-
-    trackEventById(index: number, item: IEventPulse) {
-        return item.id;
     }
 
     trackOrgAdminById(index: number, item: IOrgAdminPulse) {

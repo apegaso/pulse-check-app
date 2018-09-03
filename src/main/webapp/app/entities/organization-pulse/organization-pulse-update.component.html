@@ -15,13 +15,6 @@
                         [(ngModel)]="organization.organizationName" />
                 </div>
 
-                <div class="form-group">
-                    <label class="form-control-label" for="field_events">Events</label>
-                    <select class="form-control" id="field_events" name="events" [(ngModel)]="organization.eventsId" >
-                        <option [ngValue]="null"></option>
-                        <option [ngValue]="eventOption.id" *ngFor="let eventOption of events; trackBy: trackEventById">{{eventOption.id}}</option>
-                    </select>
-                </div>
             </div>
             <div>
                 <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">

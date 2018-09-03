@@ -15,6 +15,8 @@ public class EventDTO implements Serializable {
 
     private Instant eventDate;
 
+    private Long organizationId;
+
     public Long getId() {
         return id;
     }
@@ -37,6 +39,14 @@ public class EventDTO implements Serializable {
 
     public void setEventDate(Instant eventDate) {
         this.eventDate = eventDate;
+    }
+
+    public Long getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(Long organizationId) {
+        this.organizationId = organizationId;
     }
 
     @Override
@@ -66,6 +76,7 @@ public class EventDTO implements Serializable {
             "id=" + getId() +
             ", eventName='" + getEventName() + "'" +
             ", eventDate='" + getEventDate() + "'" +
+            ", organization=" + getOrganizationId() +
             "}";
     }
 }

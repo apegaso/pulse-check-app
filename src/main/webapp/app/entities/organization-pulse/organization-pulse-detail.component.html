@@ -9,12 +9,6 @@
                 <dd>
                     <span>{{organization.organizationName}}</span>
                 </dd>
-                <dt><span>Events</span></dt>
-                <dd>
-                    <div *ngIf="organization.eventsId">
-                        <a [routerLink]="['/event-pulse', organization.eventsId, 'view']">{{organization.eventsId}}</a>
-                    </div>
-                </dd>
             </dl>
 
             <button type="submit"

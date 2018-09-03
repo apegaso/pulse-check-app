@@ -17,6 +17,7 @@
             <th jhiSortBy="id"><span>ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="eventName"><span>Event Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="eventDate"><span>Event Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="organizationId"><span>Organization</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -25,6 +26,11 @@
                 <td><a [routerLink]="['/event-pulse', event.id, 'view' ]">{{event.id}}</a></td>
                 <td>{{event.eventName}}</td>
                 <td>{{event.eventDate | date:'medium'}}</td>
+                <td>
+                    <div *ngIf="event.organizationId">
+                        <a [routerLink]="['../organization-pulse', event.organizationId , 'view' ]" >{{event.organizationId}}</a>
+                    </div>
+                </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"

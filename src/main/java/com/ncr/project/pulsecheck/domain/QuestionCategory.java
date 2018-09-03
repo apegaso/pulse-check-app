@@ -33,17 +33,25 @@ public class QuestionCategory implements Serializable {
     @Column(name = "jhi_level")
     private Integer level;
 
-    @ManyToOne
-    @JsonIgnoreProperties("fathers")
-    private QuestionCategory soons;
-
-    @ManyToOne
-    @JsonIgnoreProperties("categories")
-    private Question questions;
-
-    @OneToMany(mappedBy = "soons")
+    @OneToMany(mappedBy = "father")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<QuestionCategory> fathers = new HashSet<>();
+    private Set<QuestionCategory> soons = new HashSet<>();
+
+    @ManyToOne
+    @JsonIgnoreProperties("soons")
+    private QuestionCategory father;
+
+    @ManyToOne
+    @JsonIgnoreProperties("soons")
+    private QuestionCategory father;
+
+    @OneToMany(mappedBy = "father")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<QuestionCategory> soons = new HashSet<>();
+
+    @OneToMany(mappedBy = "category")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Question> questions = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -80,55 +88,105 @@ public class QuestionCategory implements Serializable {
         this.level = level;
     }
 
-    public QuestionCategory getSoons() {
+    public Set<QuestionCategory> getSoons() {
         return soons;
     }
 
-    public QuestionCategory soons(QuestionCategory questionCategory) {
-        this.soons = questionCategory;
+    public QuestionCategory soons(Set<QuestionCategory> questionCategories) {
+        this.soons = questionCategories;
         return this;
     }
 
-    public void setSoons(QuestionCategory questionCategory) {
-        this.soons = questionCategory;
+    public QuestionCategory addSoons(QuestionCategory questionCategory) {
+        this.soons.add(questionCategory);
+        questionCategory.setFather(this);
+        return this;
     }
 
-    public Question getQuestions() {
+    public QuestionCategory removeSoons(QuestionCategory questionCategory) {
+        this.soons.remove(questionCategory);
+        questionCategory.setFather(null);
+        return this;
+    }
+
+    public void setSoons(Set<QuestionCategory> questionCategories) {
+        this.soons = questionCategories;
+    }
+
+    public QuestionCategory getFather() {
+        return father;
+    }
+
+    public QuestionCategory father(QuestionCategory questionCategory) {
+        this.father = questionCategory;
+        return this;
+    }
+
+    public void setFather(QuestionCategory questionCategory) {
+        this.father = questionCategory;
+    }
+
+    public QuestionCategory getFather() {
+        return father;
+    }
+
+    public QuestionCategory father(QuestionCategory questionCategory) {
+        this.father = questionCategory;
+        return this;
+    }
+
+    public void setFather(QuestionCategory questionCategory) {
+        this.father = questionCategory;
+    }
+
+    public Set<QuestionCategory> getSoons() {
+        return soons;
+    }
+
+    public QuestionCategory soons(Set<QuestionCategory> questionCategories) {
+        this.soons = questionCategories;
+        return this;
+    }
+
+    public QuestionCategory addSoons(QuestionCategory questionCategory) {
+        this.soons.add(questionCategory);
+        questionCategory.setFather(this);
+        return this;
+    }
+
+    public QuestionCategory removeSoons(QuestionCategory questionCategory) {
+        this.soons.remove(questionCategory);
+        questionCategory.setFather(null);
+        return this;
+    }
+
+    public void setSoons(Set<QuestionCategory> questionCategories) {
+        this.soons = questionCategories;
+    }
+
+    public Set<Question> getQuestions() {
         return questions;
     }
 
-    public QuestionCategory questions(Question question) {
-        this.questions = question;
+    public QuestionCategory questions(Set<Question> questions) {
+        this.questions = questions;
         return this;
     }
 
-    public void setQuestions(Question question) {
-        this.questions = question;
-    }
-
-    public Set<QuestionCategory> getFathers() {
-        return fathers;
-    }
-
-    public QuestionCategory fathers(Set<QuestionCategory> questionCategories) {
-        this.fathers = questionCategories;
+    public QuestionCategory addQuestions(Question question) {
+        this.questions.add(question);
+        question.setCategory(this);
         return this;
     }
 
-    public QuestionCategory addFather(QuestionCategory questionCategory) {
-        this.fathers.add(questionCategory);
-        questionCategory.setSoons(this);
+    public QuestionCategory removeQuestions(Question question) {
+        this.questions.remove(question);
+        question.setCategory(null);
         return this;
     }
 
-    public QuestionCategory removeFather(QuestionCategory questionCategory) {
-        this.fathers.remove(questionCategory);
-        questionCategory.setSoons(null);
-        return this;
-    }
-
-    public void setFathers(Set<QuestionCategory> questionCategories) {
-        this.fathers = questionCategories;
+    public void setQuestions(Set<Question> questions) {
+        this.questions = questions;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

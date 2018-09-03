@@ -56,6 +56,9 @@ public class CacheConfiguration {
             cm.createCache(com.ncr.project.pulsecheck.domain.QuestionCategory.class.getName() + ".fathers", jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.Questionnaire.class.getName(), jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.QuestionnaireAnswer.class.getName(), jcacheConfiguration);
+            cm.createCache(com.ncr.project.pulsecheck.domain.Organization.class.getName() + ".events", jcacheConfiguration);
+            cm.createCache(com.ncr.project.pulsecheck.domain.QuestionCategory.class.getName() + ".soons", jcacheConfiguration);
+            cm.createCache(com.ncr.project.pulsecheck.domain.QuestionCategory.class.getName() + ".questions", jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }
