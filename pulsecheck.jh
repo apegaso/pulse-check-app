@@ -37,15 +37,17 @@ entity QuestionnaireAnswer {
 }
 
 relationship ManyToOne{
-	QuestionCategory{soons} to QuestionCategory{father},
-    QuestionCategory{questions} to Question{category},
-    Organization{events} to Event{organization},
+	QuestionCategory{father} to QuestionCategory{soons},
+    Question{category} to QuestionCategory{questions},
+    Event{organization} to Organization{events},
     QuestionnaireAnswer{questionaire} to Questionnaire,
     Questionnaire{event} to Event,
     Questionnaire{participant} to Participant,
     QuestionnaireAnswer{question} to Question
 }	
-
+relationship OneToMany{
+	QuestionCategory{soons} to QuestionCategory{father}
+}
 relationship ManyToMany{
 	Participant{events} to Event{participants},
     ClientLead{events} to Event{leads},
