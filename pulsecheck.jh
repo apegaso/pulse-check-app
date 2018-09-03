@@ -1,0 +1,65 @@
+entity Organization{
+	organizationName String
+}
+
+entity Event {
+	eventName String
+    eventDate Instant
+}
+
+entity ClientLead {
+	
+}
+
+entity OrgAdmin	{
+
+}
+
+entity Participant{
+
+}
+
+entity Question {
+	question String
+}
+
+entity QuestionCategory {
+	label String
+    level Integer
+}
+entity Questionnaire{
+	dateStart Instant
+    dateEnd Instant
+}
+entity QuestionnaireAnswer {
+	importance Number
+    performance Number
+}
+
+relationship ManyToOne{
+	QuestionCategory{soons} to QuestionCategory{father},
+    QuestionCategory{questions} to Question{category}
+    Organization{events} to Event{organization}
+    QuestionnaireAnswer{questionaire} to Questionaire
+    Questionaire{event} to Event
+    Questionaire{participant} to Participant
+    QuestionnaireAnswer{question} to Question
+}	
+
+relationship ManyToMany{
+	Participant{events} to Event{participants}
+    ClientLead{events} to Event{leads}
+    OrgAdmin{organizations} to Organization{admins}
+}
+
+
+
+// Set pagination options
+paginate QuestionnaireAnswer, Question, Organization, Event, Participant, ClientLead, OrgAdmin with pagination
+
+dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl
+// Set an angular suffix
+angularSuffix * with pulse
