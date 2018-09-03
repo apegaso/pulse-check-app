@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { JhiAlertService } from 'ng-jhipster';
 
 import { IQuestionPulse } from 'app/shared/model/question-pulse.model';
 import { QuestionPulseService } from './question-pulse.service';
+import { IQuestionCategoryPulse } from 'app/shared/model/question-category-pulse.model';
+import { QuestionCategoryPulseService } from 'app/entities/question-category-pulse';
 
 @Component({
     selector: 'jhi-question-pulse-update',
@@ -14,13 +17,26 @@ export class QuestionPulseUpdateComponent implements OnInit {
     private _question: IQuestionPulse;
     isSaving: boolean;
 
-    constructor(private questionService: QuestionPulseService, private activatedRoute: ActivatedRoute) {}
+    questioncategories: IQuestionCategoryPulse[];
+
+    constructor(
+        private jhiAlertService: JhiAlertService,
+        private questionService: QuestionPulseService,
+        private questionCategoryService: QuestionCategoryPulseService,
+        private activatedRoute: ActivatedRoute
+    ) {}
 
     ngOnInit() {
         this.isSaving = false;
         this.activatedRoute.data.subscribe(({ question }) => {
             this.question = question;
         });
+        this.questionCategoryService.query().subscribe(
+            (res: HttpResponse<IQuestionCategoryPulse[]>) => {
+                this.questioncategories = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
     }
 
     previousState() {
@@ -47,6 +63,14 @@ export class QuestionPulseUpdateComponent implements OnInit {
 
     private onSaveError() {
         this.isSaving = false;
+    }
+
+    private onError(errorMessage: string) {
+        this.jhiAlertService.error(errorMessage, null, null);
+    }
+
+    trackQuestionCategoryById(index: number, item: IQuestionCategoryPulse) {
+        return item.id;
     }
     get question() {
         return this._question;

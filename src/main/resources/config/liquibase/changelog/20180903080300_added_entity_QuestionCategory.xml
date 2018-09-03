@@ -29,11 +29,11 @@
                 <constraints nullable="true" />
             </column>
 
-            <column name="soons_id" type="bigint">
+            <column name="father_id" type="bigint">
                 <constraints nullable="true" />
             </column>
 
-            <column name="questions_id" type="bigint">
+            <column name="father_id" type="bigint">
                 <constraints nullable="true" />
             </column>
 

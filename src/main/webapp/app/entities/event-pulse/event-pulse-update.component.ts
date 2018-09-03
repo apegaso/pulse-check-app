@@ -8,6 +8,8 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { IEventPulse } from 'app/shared/model/event-pulse.model';
 import { EventPulseService } from './event-pulse.service';
+import { IOrganizationPulse } from 'app/shared/model/organization-pulse.model';
+import { OrganizationPulseService } from 'app/entities/organization-pulse';
 import { IParticipantPulse } from 'app/shared/model/participant-pulse.model';
 import { ParticipantPulseService } from 'app/entities/participant-pulse';
 import { IClientLeadPulse } from 'app/shared/model/client-lead-pulse.model';
@@ -21,6 +23,8 @@ export class EventPulseUpdateComponent implements OnInit {
     private _event: IEventPulse;
     isSaving: boolean;
 
+    organizations: IOrganizationPulse[];
+
     participants: IParticipantPulse[];
 
     clientleads: IClientLeadPulse[];
@@ -29,6 +33,7 @@ export class EventPulseUpdateComponent implements OnInit {
     constructor(
         private jhiAlertService: JhiAlertService,
         private eventService: EventPulseService,
+        private organizationService: OrganizationPulseService,
         private participantService: ParticipantPulseService,
         private clientLeadService: ClientLeadPulseService,
         private activatedRoute: ActivatedRoute
@@ -39,6 +44,12 @@ export class EventPulseUpdateComponent implements OnInit {
         this.activatedRoute.data.subscribe(({ event }) => {
             this.event = event;
         });
+        this.organizationService.query().subscribe(
+            (res: HttpResponse<IOrganizationPulse[]>) => {
+                this.organizations = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
         this.participantService.query().subscribe(
             (res: HttpResponse<IParticipantPulse[]>) => {
                 this.participants = res.body;
@@ -82,6 +93,10 @@ export class EventPulseUpdateComponent implements OnInit {
 
     private onError(errorMessage: string) {
         this.jhiAlertService.error(errorMessage, null, null);
+    }
+
+    trackOrganizationById(index: number, item: IOrganizationPulse) {
+        return item.id;
     }
 
     trackParticipantById(index: number, item: IParticipantPulse) {

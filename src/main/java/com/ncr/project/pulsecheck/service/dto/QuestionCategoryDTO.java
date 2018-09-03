@@ -14,9 +14,9 @@ public class QuestionCategoryDTO implements Serializable {
 
     private Integer level;
 
-    private Long soonsId;
+    private Long fatherId;
 
-    private Long questionsId;
+    private Long fatherId;
 
     public Long getId() {
         return id;
@@ -42,20 +42,20 @@ public class QuestionCategoryDTO implements Serializable {
         this.level = level;
     }
 
-    public Long getSoonsId() {
-        return soonsId;
+    public Long getFatherId() {
+        return fatherId;
     }
 
-    public void setSoonsId(Long questionCategoryId) {
-        this.soonsId = questionCategoryId;
+    public void setFatherId(Long questionCategoryId) {
+        this.fatherId = questionCategoryId;
     }
 
-    public Long getQuestionsId() {
-        return questionsId;
+    public Long getFatherId() {
+        return fatherId;
     }
 
-    public void setQuestionsId(Long questionId) {
-        this.questionsId = questionId;
+    public void setFatherId(Long questionCategoryId) {
+        this.fatherId = questionCategoryId;
     }
 
     @Override
@@ -85,8 +85,8 @@ public class QuestionCategoryDTO implements Serializable {
             "id=" + getId() +
             ", label='" + getLabel() + "'" +
             ", level=" + getLevel() +
-            ", soons=" + getSoonsId() +
-            ", questions=" + getQuestionsId() +
+            ", father=" + getFatherId() +
+            ", father=" + getFatherId() +
             "}";
     }
 }

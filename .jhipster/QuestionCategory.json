@@ -12,22 +12,34 @@
     ],
     "relationships": [
         {
-            "relationshipType": "many-to-one",
+            "relationshipType": "one-to-many",
             "relationshipName": "soons",
+            "otherEntityName": "questionCategory",
+            "otherEntityRelationshipName": "father"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "father",
             "otherEntityName": "questionCategory",
             "otherEntityField": "id"
         },
         {
             "relationshipType": "many-to-one",
-            "relationshipName": "questions",
-            "otherEntityName": "question",
+            "relationshipName": "father",
+            "otherEntityName": "questionCategory",
             "otherEntityField": "id"
         },
         {
             "relationshipType": "one-to-many",
-            "relationshipName": "father",
+            "relationshipName": "soons",
             "otherEntityName": "questionCategory",
-            "otherEntityRelationshipName": "soons"
+            "otherEntityRelationshipName": "father"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "questions",
+            "otherEntityName": "question",
+            "otherEntityRelationshipName": "category"
         }
     ],
     "changelogDate": "20180903080300",

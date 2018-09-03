@@ -12,6 +12,8 @@ public class QuestionDTO implements Serializable {
 
     private String question;
 
+    private Long categoryId;
+
     public Long getId() {
         return id;
     }
@@ -26,6 +28,14 @@ public class QuestionDTO implements Serializable {
 
     public void setQuestion(String question) {
         this.question = question;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long questionCategoryId) {
+        this.categoryId = questionCategoryId;
     }
 
     @Override
@@ -54,6 +64,7 @@ public class QuestionDTO implements Serializable {
         return "QuestionDTO{" +
             "id=" + getId() +
             ", question='" + getQuestion() + "'" +
+            ", category=" + getCategoryId() +
             "}";
     }
 }

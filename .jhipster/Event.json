@@ -12,10 +12,10 @@
     ],
     "relationships": [
         {
-            "relationshipType": "one-to-many",
+            "relationshipType": "many-to-one",
             "relationshipName": "organization",
             "otherEntityName": "organization",
-            "otherEntityRelationshipName": "events"
+            "otherEntityField": "id"
         },
         {
             "relationshipType": "many-to-many",

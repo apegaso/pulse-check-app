@@ -6,8 +6,6 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { IQuestionCategoryPulse } from 'app/shared/model/question-category-pulse.model';
 import { QuestionCategoryPulseService } from './question-category-pulse.service';
-import { IQuestionPulse } from 'app/shared/model/question-pulse.model';
-import { QuestionPulseService } from 'app/entities/question-pulse';
 
 @Component({
     selector: 'jhi-question-category-pulse-update',
@@ -19,12 +17,9 @@ export class QuestionCategoryPulseUpdateComponent implements OnInit {
 
     questioncategories: IQuestionCategoryPulse[];
 
-    questions: IQuestionPulse[];
-
     constructor(
         private jhiAlertService: JhiAlertService,
         private questionCategoryService: QuestionCategoryPulseService,
-        private questionService: QuestionPulseService,
         private activatedRoute: ActivatedRoute
     ) {}
 
@@ -36,12 +31,6 @@ export class QuestionCategoryPulseUpdateComponent implements OnInit {
         this.questionCategoryService.query().subscribe(
             (res: HttpResponse<IQuestionCategoryPulse[]>) => {
                 this.questioncategories = res.body;
-            },
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
-        this.questionService.query().subscribe(
-            (res: HttpResponse<IQuestionPulse[]>) => {
-                this.questions = res.body;
             },
             (res: HttpErrorResponse) => this.onError(res.message)
         );
@@ -81,10 +70,6 @@ export class QuestionCategoryPulseUpdateComponent implements OnInit {
     }
 
     trackQuestionCategoryById(index: number, item: IQuestionCategoryPulse) {
-        return item.id;
-    }
-
-    trackQuestionById(index: number, item: IQuestionPulse) {
         return item.id;
     }
     get questionCategory() {
