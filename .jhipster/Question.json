@@ -1,0 +1,27 @@
+{
+    "name": "Question",
+    "fields": [
+        {
+            "fieldName": "question",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "category",
+            "otherEntityName": "questionCategory",
+            "otherEntityRelationshipName": "questions"
+        }
+    ],
+    "changelogDate": "20180903080259",
+    "entityTableName": "question",
+    "dto": "mapstruct",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*",
+    "angularJSSuffix": "pulse"
+}

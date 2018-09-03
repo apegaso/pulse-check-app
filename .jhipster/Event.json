@@ -1,0 +1,45 @@
+{
+    "name": "Event",
+    "fields": [
+        {
+            "fieldName": "eventName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "eventDate",
+            "fieldType": "Instant"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "organization",
+            "otherEntityName": "organization",
+            "otherEntityRelationshipName": "events"
+        },
+        {
+            "relationshipType": "many-to-many",
+            "relationshipName": "participants",
+            "otherEntityName": "participant",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "events"
+        },
+        {
+            "relationshipType": "many-to-many",
+            "relationshipName": "leads",
+            "otherEntityName": "clientLead",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "events"
+        }
+    ],
+    "changelogDate": "20180903080255",
+    "entityTableName": "event",
+    "dto": "mapstruct",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*",
+    "angularJSSuffix": "pulse"
+}

@@ -1,0 +1,37 @@
+{
+    "name": "QuestionnaireAnswer",
+    "fields": [
+        {
+            "fieldName": "importance",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "performance",
+            "fieldType": "Double"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "questionaire",
+            "otherEntityName": "questionnaire",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "question",
+            "otherEntityName": "question",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20180903080302",
+    "entityTableName": "questionnaire_answer",
+    "dto": "mapstruct",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*",
+    "angularJSSuffix": "pulse"
+}
