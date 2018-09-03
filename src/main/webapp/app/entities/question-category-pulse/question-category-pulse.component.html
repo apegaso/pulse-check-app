@@ -1,0 +1,68 @@
+<div>
+    <h2 id="page-heading">
+        <span>Question Categories</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-question-category-pulse" [routerLink]="['/question-category-pulse/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span >
+            Create new Question Category
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="questionCategories">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+            <th><span>ID</span></th>
+            <th><span>Label</span></th>
+            <th><span>Level</span></th>
+            <th><span>Soons</span></th>
+            <th><span>Questions</span></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let questionCategory of questionCategories ;trackBy: trackId">
+                <td><a [routerLink]="['/question-category-pulse', questionCategory.id, 'view' ]">{{questionCategory.id}}</a></td>
+                <td>{{questionCategory.label}}</td>
+                <td>{{questionCategory.level}}</td>
+                <td>
+                    <div *ngIf="questionCategory.soonsId">
+                        <a [routerLink]="['../question-category-pulse', questionCategory.soonsId , 'view' ]" >{{questionCategory.soonsId}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="questionCategory.questionsId">
+                        <a [routerLink]="['../question-pulse', questionCategory.questionsId , 'view' ]" >{{questionCategory.questionsId}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/question-category-pulse', questionCategory.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/question-category-pulse', questionCategory.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'question-category-pulse/'+ questionCategory.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

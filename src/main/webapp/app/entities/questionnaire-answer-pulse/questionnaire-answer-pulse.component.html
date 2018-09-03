@@ -1,0 +1,76 @@
+<div>
+    <h2 id="page-heading">
+        <span>Questionnaire Answers</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-questionnaire-answer-pulse" [routerLink]="['/questionnaire-answer-pulse/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span >
+            Create new Questionnaire Answer
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="questionnaireAnswers">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span>ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="importance"><span>Importance</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="performance"><span>Performance</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="questionaireId"><span>Questionaire</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="questionId"><span>Question</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let questionnaireAnswer of questionnaireAnswers ;trackBy: trackId">
+                <td><a [routerLink]="['/questionnaire-answer-pulse', questionnaireAnswer.id, 'view' ]">{{questionnaireAnswer.id}}</a></td>
+                <td>{{questionnaireAnswer.importance}}</td>
+                <td>{{questionnaireAnswer.performance}}</td>
+                <td>
+                    <div *ngIf="questionnaireAnswer.questionaireId">
+                        <a [routerLink]="['../questionnaire-pulse', questionnaireAnswer.questionaireId , 'view' ]" >{{questionnaireAnswer.questionaireId}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="questionnaireAnswer.questionId">
+                        <a [routerLink]="['../question-pulse', questionnaireAnswer.questionId , 'view' ]" >{{questionnaireAnswer.questionId}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/questionnaire-answer-pulse', questionnaireAnswer.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/questionnaire-answer-pulse', questionnaireAnswer.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'questionnaire-answer-pulse/'+ questionnaireAnswer.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="questionnaireAnswers && questionnaireAnswers.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

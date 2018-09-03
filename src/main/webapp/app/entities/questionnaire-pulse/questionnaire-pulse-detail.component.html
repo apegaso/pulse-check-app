@@ -1,0 +1,43 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="questionnaire">
+            <h2><span>Questionnaire</span> {{questionnaire.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span>Date Start</span></dt>
+                <dd>
+                    <span>{{questionnaire.dateStart}}</span>
+                </dd>
+                <dt><span>Date End</span></dt>
+                <dd>
+                    <span>{{questionnaire.dateEnd}}</span>
+                </dd>
+                <dt><span>Event</span></dt>
+                <dd>
+                    <div *ngIf="questionnaire.eventId">
+                        <a [routerLink]="['/event-pulse', questionnaire.eventId, 'view']">{{questionnaire.eventId}}</a>
+                    </div>
+                </dd>
+                <dt><span>Participant</span></dt>
+                <dd>
+                    <div *ngIf="questionnaire.participantId">
+                        <a [routerLink]="['/participant-pulse', questionnaire.participantId, 'view']">{{questionnaire.participantId}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/questionnaire-pulse', questionnaire.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>
