@@ -1,0 +1,171 @@
+id;jhi_label;father_id;level_id
+1;Digital activity (WHAT);NULL;1
+2;Transformation Intensity (HOW);NULL;1
+3;Business model;NULL;2
+4;Customer Experience;NULL;2
+5;Data and IT;NULL;2
+6;Operational process;NULL;2
+7;Customer;NULL;3
+8;Ecosystem;NULL;3
+9;Innovation;NULL;3
+10;Operations;NULL;3
+11;Organization;NULL;3
+12;Strategy;NULL;3
+13;Technology;NULL;3
+14;Applying customer analytics;7;4
+15;Customer experience management;7;4
+16;Deriving customer understanding through digital channels;7;4
+17;Partner Engagement;8;4
+18;Third Parties;8;4
+19;Agile;9;4
+20;Collaboration;9;4
+21;Innovation activity;9;4
+22;Product launches;9;4
+23;Business Processes;10;4
+24;Digital Architecture;10;4
+25;Integrating mechanisms;10;4
+26;IT Architecture & Infrastructure;10;4
+27;Logistics & Production;10;4
+28;Culture;11;4
+29;Investing in skills and initiatives;11;4
+30;IT and Business alignment;11;4
+31;Managing change;11;4
+32;Responsibility and Capability;11;4
+33;Sales, Marketing & Channels;11;4
+34;Talent;11;4
+3;Business Model;12;4
+36;Digital vision;12;4
+12;Strategy;12;4
+38;Automation;13;4
+39;Data Analytics & Insights;13;4
+40;Security, Privacy & Digital Risk;13;4
+41;Analytics and display advertising;14;5
+42;Analytics and marketing;14;5
+43;Analytics and micro-conversions;14;5
+44;Analytics and personalisation;14;5
+45;Analytics and pricing;14;5
+46;Analytics and sales;14;5
+47;Mobile/instore sales conversion;14;5
+48;Social media - service;14;5
+49;Social media -community;14;5
+50;Cross-channel campaign management;15;5
+51;Cross-channel consistency;15;5
+52;Cross-channel experience management;15;5
+53;Customer feedback and UGC;15;5
+54;Customer insight;15;5
+55;Customer journey;15;5
+56;Customer satisfaction;15;5
+57;Customer vs business centric;15;5
+58;Customer-driven products and services;15;5
+59;Feedback;15;5
+60;Geo-location;15;5
+61;Improvement based on insight;15;5
+62;Personalisation;15;5
+63;Self-service;15;5
+64;Social proof;15;5
+65;Analytics;16;5
+66;Augmented customer segmentation;16;5
+67;Customer understanding;16;5
+68;Digital services analytics;16;5
+69;Embedded devices/product usage;16;5
+70;Mobile analytics;16;5
+71;Online/offline integration;16;5
+72;Segmentation;16;5
+73;Single view of the customer;16;5
+74;Social media analytics;16;5
+75;Business model enablement;17;5
+76;Product development;17;5
+77;Service enablement;17;5
+78;Targeted partnership development;17;5
+79;Branded third-party enablement;18;5
+80;Third-party enablement;18;5
+81;White-labelled third-party enablement;18;5
+82;Agile development;19;5
+83;Physical to digital;19;5
+84;Contextualisation;20;5
+85;Culture of innovation (i.e. fail fast) ;20;5
+86;Data-driven decision making;20;5
+87;Encouraging creative thinking;20;5
+88;Hackathons;21;5
+89;Innovation activity;21;5
+90;Innovation process;21;5
+91;Catalogue-based;22;5
+92;Agile process adaptation;23;5
+93;Analytics influencing operations;23;5
+94;New processes;23;5
+95;operations improvement;23;5
+96;Process automation;23;5
+97;Process data analysis;23;5
+98;Process data gathering;23;5
+99;Process design;23;5
+100;Processes support;23;5
+101;Real time monitoring;23;5
+102;Business processes ;24;5
+103;Channels;24;5
+104;Data & information;24;5
+105;IT architecture;24;5
+106;Organisation structure ;24;5
+107;Physical infrastructure ;24;5
+108;Culture and Leadership;25;5
+109;Digital Recruiting;25;5
+110;Employee engagement 2.0;25;5
+111;Enterprise Performance Management;25;5
+112;Governance;25;5
+113;Integrating mechanisms;25;5
+114;Data visibility;26;5
+115;Enterprise architecture;26;5
+116;Integrated enterprise systems;26;5
+117;Platform integration;26;5
+118;Usability of enterprise systems;26;5
+119;Physical goods;27;5
+120;Supply chain improvement;27;5
+121;Supply chain monitoring;27;5
+122;Collaboration;28;5
+123;Collaborative culture;28;5
+124;Innovation;28;5
+125;Transparency;28;5
+126;Investment in Digital;29;5
+127;Investment in skills;29;5
+128;Competitive alignment;30;5
+129;Investment alignment;30;5
+130;IT and Business collaboration;30;5
+131;Productivity alignment;30;5
+132;Business case;31;5
+133;KPI;31;5
+134;Vision includes technology;31;5
+135;Cross-functional coordination;32;5
+136;DT Governance;32;5
+137;Process & strategy alignment ;32;5
+138;Channel measurement;33;5
+139;Community building;33;5
+140;Digital Marketing;33;5
+141;Digital Sales;33;5
+142;Digital Service;33;5
+143;Display advertising/geolocation;33;5
+144;mobile channels - promotion;33;5
+145;mobile channels - sales;33;5
+146;mobile channels - services;33;5
+147;Reputation management;33;5
+148;Testing new sales channels;33;5
+149;Developing digital skills;34;5
+150;Employee enablement;34;5
+151;Open collaboration;34;5
+152;Revenue generation;3;5
+153;Value proposition diversification;3;5
+154;Common vision;36;5
+155;Cross-unit vision;36;5
+156;Roadmap;36;5
+157;Transformative change;36;5
+158;Vision;36;5
+159;Cross-organizational digital strategy;12;5
+160;Digital investment;12;5
+161;Digital strategy informed by company strategy;12;5
+162;Production automation;38;5
+163;Supply chain automation;38;5
+164;Data Analytics & Insights;39;5
+165;Data-driven decision making;39;5
+166;Insights;39;5
+167;Cyber security;40;5
+168;Digital risk;40;5
+169;Security;40;5
+170;Social media risk management;40;5
