@@ -52,9 +52,7 @@
                   file="config/liquibase/organization.csv"
                   separator=";"
                   identityInsertEnabled="true"
-                  tableName="question">
-                  <column name="category_id" type="numeric"/>
-                  <column name="jhi_order" type="numeric"/>
+                  tableName="organization">
                   <column name="id" type="numeric"/>
          </ext:loadData>
         
