@@ -181,6 +181,27 @@ public class UserService {
         user.setResetDate(Instant.now());
         user.setActivated(true);
         userRepository.save(user);
+        
+        Optional<UserExt> userext = userExtRepository.findByEmail(userDTO.getEmail());
+        if(userext.isPresent()) {
+        	UserExt userExt2 = userext.get();
+			userExt2.setUser(user);
+			userExt2.setJobRole(userDTO.getJobRole());
+			
+        }else {
+        	UserExt newUserExt = new UserExt();
+            newUserExt.setUser(user);
+            newUserExt.setJobRole(userDTO.getJobRole());
+            
+            if(userDTO.getOrganizationId() != null && userDTO.getOrganizationId() > 0) {
+            	organizationRepository.findById(userDTO.getOrganizationId()).ifPresent(newUserExt::setOrganization);
+            } else {
+            	organizationRepository.findByOrganizationName(userDTO.getOrganizationName()).ifPresent(newUserExt::setOrganization);
+            }
+            userExtRepository.save(newUserExt);
+        }
+        
+        
         this.clearUserCaches(user);
         log.debug("Created Information for User: {}", user);
         return user;
