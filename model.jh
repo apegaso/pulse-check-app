@@ -57,6 +57,7 @@ entity QuestionnaireAnswer {
 
 entity UserExt{
 	jobRole String maxlength(255)
+	email String required 
 }
 
 relationship ManyToOne{
