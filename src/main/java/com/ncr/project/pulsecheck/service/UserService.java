@@ -1,8 +1,15 @@
 package com.ncr.project.pulsecheck.service;
 
 import com.ncr.project.pulsecheck.domain.Authority;
+import com.ncr.project.pulsecheck.domain.ClientLead;
+import com.ncr.project.pulsecheck.domain.OrgAdmin;
+import com.ncr.project.pulsecheck.domain.Organization;
+import com.ncr.project.pulsecheck.domain.Participant;
 import com.ncr.project.pulsecheck.domain.User;
+import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.AuthorityRepository;
+import com.ncr.project.pulsecheck.repository.OrganizationRepository;
+import com.ncr.project.pulsecheck.repository.UserExtRepository;
 import com.ncr.project.pulsecheck.config.Constants;
 import com.ncr.project.pulsecheck.repository.UserRepository;
 import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
@@ -24,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +44,8 @@ public class UserService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
+    private final UserExtRepository userExtRepository;
+    private final OrganizationRepository organizationRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -43,11 +53,13 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, UserExtRepository userExtRepository, OrganizationRepository organizationRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+		this.userExtRepository = userExtRepository;
+		this.organizationRepository = organizationRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -107,7 +119,37 @@ public class UserService {
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
+        
         userRepository.save(newUser);
+        
+        Optional<UserExt> userext = userExtRepository.findByEmail(userDTO.getEmail());
+        if(userext.isPresent()) {
+        	UserExt userExt2 = userext.get();
+			userExt2.setUser(newUser);
+			userExt2.setJobRole(userDTO.getJobRole());
+			
+			if(userExt2.getClientLead() != null)
+				authorityRepository.findById(AuthoritiesConstants.CLIENT_LEAD).ifPresent(authorities::add);
+			if(userExt2.getOrgAdmin() != null)
+				authorityRepository.findById(AuthoritiesConstants.NCR_ADMIN).ifPresent(authorities::add);
+			if(userExt2.getParticipant() != null)
+				authorityRepository.findById(AuthoritiesConstants.PARTICIPANT).ifPresent(authorities::add);
+			
+			
+        }else {
+        	UserExt newUserExt = new UserExt();
+            newUserExt.setUser(newUser);
+            newUserExt.setJobRole(userDTO.getJobRole());
+            
+            if(userDTO.getOrganizationId() != null && userDTO.getOrganizationId() > 0) {
+            	organizationRepository.findById(userDTO.getOrganizationId()).ifPresent(newUserExt::setOrganization);
+            } else {
+            	organizationRepository.findByOrganizationName(userDTO.getOrganizationName()).ifPresent(newUserExt::setOrganization);
+            }
+            userExtRepository.save(newUserExt);
+        }
+        
+        
         this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
         return newUser;

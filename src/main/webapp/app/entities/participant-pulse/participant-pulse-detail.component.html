@@ -1,0 +1,35 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="participant">
+            <h2><span>Participant</span> {{participant.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span>User Ext</span></dt>
+                <dd>
+                    <div *ngIf="participant.userExtId">
+                        <a [routerLink]="['/user-ext-pulse', participant.userExtId, 'view']">{{participant.userExtId}}</a>
+                    </div>
+                </dd>
+                <dt><span>Events</span></dt>
+                <dd>
+                    <span *ngFor="let events of participant.events; let last = last">
+                        <a [routerLink]="['/event-pulse', events?.id, 'view' ]">{{events.id}}</a>{{last ? '' : ', '}}
+                    </span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/participant-pulse', participant.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

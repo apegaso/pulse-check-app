@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <!--
+        Added the constraints for entity ClientLead.
+    -->
+    <changeSet id="20180904153932-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="user_ext_id"
+                                 baseTableName="client_lead"
+                                 constraintName="fk_client_lead_user_ext_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user_ext"/>
+
+        <addForeignKeyConstraint baseColumnNames="client_leads_id"
+                                 baseTableName="client_lead_events"
+                                 constraintName="fk_client_lead_events_client_leads_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="client_lead"/>
+        <addForeignKeyConstraint baseColumnNames="events_id"
+                                 baseTableName="client_lead_events"
+                                 constraintName="fk_client_lead_events_events_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="event"/>
+        
+    </changeSet>
+</databaseChangeLog>

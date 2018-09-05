@@ -1,0 +1,45 @@
+{
+    "name": "QuestionnaireAnswer",
+    "fields": [
+        {
+            "fieldName": "importance",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "performance",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "note",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 2048
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "questionnaire",
+            "otherEntityName": "questionnaire",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "question",
+            "otherEntityName": "question",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20180904153939",
+    "entityTableName": "questionnaire_answer",
+    "dto": "mapstruct",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*",
+    "angularJSSuffix": "pulse"
+}

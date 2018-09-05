@@ -1,0 +1,52 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="jhi-questionnaire-pulse-heading">Create or edit a Questionnaire</h2>
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+                <div class="form-group" [hidden]="!questionnaire.id">
+                    <label for="id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="questionnaire.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_dateStart">Date Start</label>
+                    <div class="d-flex">
+                        <input id="field_dateStart" type="datetime-local" class="form-control" name="dateStart" [(ngModel)]="dateStart"
+                        />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_dateEnd">Date End</label>
+                    <div class="d-flex">
+                        <input id="field_dateEnd" type="datetime-local" class="form-control" name="dateEnd" [(ngModel)]="dateEnd"
+                        />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_event">Event</label>
+                    <select class="form-control" id="field_event" name="event" [(ngModel)]="questionnaire.eventId" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="eventOption.id" *ngFor="let eventOption of events; trackBy: trackEventById">{{eventOption.id}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_participant">Participant</label>
+                    <select class="form-control" id="field_participant" name="participant" [(ngModel)]="questionnaire.participantId" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="participantOption.id" *ngFor="let participantOption of participants; trackBy: trackParticipantById">{{participantOption.id}}</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span>Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span>Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

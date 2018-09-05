@@ -1,0 +1,47 @@
+{
+    "name": "Email",
+    "fields": [
+        {
+            "fieldName": "from",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "addresses",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "subject",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "body",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "isHtml",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "isSent",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "dateInsert",
+            "fieldType": "Instant"
+        },
+        {
+            "fieldName": "dateSent",
+            "fieldType": "Instant"
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20180905082924",
+    "entityTableName": "email",
+    "dto": "no",
+    "pagination": "no",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

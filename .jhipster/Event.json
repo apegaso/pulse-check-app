@@ -1,0 +1,63 @@
+{
+    "name": "Event",
+    "fields": [
+        {
+            "fieldName": "eventName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "minlength",
+                "maxlength"
+            ],
+            "fieldValidateRulesMinlength": 1,
+            "fieldValidateRulesMaxlength": 255
+        },
+        {
+            "fieldName": "eventDescription",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "eventDate",
+            "fieldType": "Instant",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "closed",
+            "fieldType": "Boolean"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "organization",
+            "otherEntityName": "organization",
+            "otherEntityField": "organizationName"
+        },
+        {
+            "relationshipType": "many-to-many",
+            "relationshipName": "participants",
+            "otherEntityName": "participant",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "events"
+        },
+        {
+            "relationshipType": "many-to-many",
+            "relationshipName": "leads",
+            "otherEntityName": "clientLead",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "events"
+        }
+    ],
+    "changelogDate": "20180904153931",
+    "entityTableName": "event",
+    "dto": "mapstruct",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*",
+    "angularJSSuffix": "pulse"
+}

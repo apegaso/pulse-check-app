@@ -1,0 +1,39 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="category">
+            <h2><span>Category</span> {{category.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span>Label</span></dt>
+                <dd>
+                    <span>{{category.label}}</span>
+                </dd>
+                <dt><span>Father</span></dt>
+                <dd>
+                    <div *ngIf="category.fatherId">
+                        <a [routerLink]="['/category-pulse', category.fatherId, 'view']">{{category.fatherLabel}}</a>
+                    </div>
+                </dd>
+                <dt><span>Level</span></dt>
+                <dd>
+                    <div *ngIf="category.levelId">
+                        <a [routerLink]="['/category-level-pulse', category.levelId, 'view']">{{category.levelLabel}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/category-pulse', category.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

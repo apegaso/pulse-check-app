@@ -1,0 +1,32 @@
+{
+    "name": "Participant",
+    "fields": [],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "userExt",
+            "otherEntityName": "userExt",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "participant"
+        },
+        {
+            "relationshipType": "many-to-many",
+            "otherEntityRelationshipName": "participants",
+            "relationshipName": "events",
+            "otherEntityName": "event",
+            "otherEntityField": "id",
+            "ownerSide": true
+        }
+    ],
+    "changelogDate": "20180904153934",
+    "entityTableName": "participant",
+    "dto": "mapstruct",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*",
+    "angularJSSuffix": "pulse"
+}

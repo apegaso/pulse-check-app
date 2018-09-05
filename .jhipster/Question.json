@@ -1,0 +1,43 @@
+{
+    "name": "Question",
+    "fields": [
+        {
+            "fieldName": "question",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "minlength",
+                "maxlength"
+            ],
+            "fieldValidateRulesMinlength": 1,
+            "fieldValidateRulesMaxlength": 2048
+        },
+        {
+            "fieldName": "order",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-many",
+            "otherEntityRelationshipName": "questions",
+            "relationshipName": "category",
+            "otherEntityName": "category",
+            "otherEntityField": "label",
+            "ownerSide": true
+        }
+    ],
+    "changelogDate": "20180904153935",
+    "entityTableName": "question",
+    "dto": "mapstruct",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*",
+    "angularJSSuffix": "pulse"
+}

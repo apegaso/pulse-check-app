@@ -52,6 +52,12 @@ public class UserDTO {
     private Instant lastModifiedDate;
 
     private Set<String> authorities;
+    
+    private String jobRole; 
+    
+    private String organizationName;
+    
+    private Long organizationId;
 
     public UserDTO() {
         // Empty constructor needed for Jackson.
@@ -194,6 +200,33 @@ public class UserDTO {
             ", lastModifiedBy='" + lastModifiedBy + '\'' +
             ", lastModifiedDate=" + lastModifiedDate +
             ", authorities=" + authorities +
+            ", organizationName=" + organizationName +
+            ", organizationId=" + organizationId +
+            ", jobRole=" + jobRole +
             "}";
     }
+
+	public String getJobRole() {
+		return jobRole;
+	}
+
+	public void setJobRole(String jobRole) {
+		this.jobRole = jobRole;
+	}
+
+	public String getOrganizationName() {
+		return organizationName;
+	}
+
+	public void setOrganizationName(String organizationName) {
+		this.organizationName = organizationName;
+	}
+
+	public Long getOrganizationId() {
+		return organizationId;
+	}
+
+	public void setOrganizationId(Long organizationId) {
+		this.organizationId = organizationId;
+	}
 }

@@ -1,0 +1,32 @@
+{
+    "name": "OrgAdmin",
+    "fields": [],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "userExt",
+            "otherEntityName": "userExt",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "orgAdmin"
+        },
+        {
+            "relationshipType": "many-to-many",
+            "otherEntityRelationshipName": "admins",
+            "relationshipName": "organizations",
+            "otherEntityName": "organization",
+            "otherEntityField": "id",
+            "ownerSide": true
+        }
+    ],
+    "changelogDate": "20180904153933",
+    "entityTableName": "org_admin",
+    "dto": "mapstruct",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*",
+    "angularJSSuffix": "pulse"
+}

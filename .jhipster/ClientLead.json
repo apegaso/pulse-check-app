@@ -1,0 +1,32 @@
+{
+    "name": "ClientLead",
+    "fields": [],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "userExt",
+            "otherEntityName": "userExt",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "clientLead"
+        },
+        {
+            "relationshipType": "many-to-many",
+            "otherEntityRelationshipName": "leads",
+            "relationshipName": "events",
+            "otherEntityName": "event",
+            "otherEntityField": "id",
+            "ownerSide": true
+        }
+    ],
+    "changelogDate": "20180904153932",
+    "entityTableName": "client_lead",
+    "dto": "mapstruct",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*",
+    "angularJSSuffix": "pulse"
+}
