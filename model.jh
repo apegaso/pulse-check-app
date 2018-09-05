@@ -1,3 +1,14 @@
+entity Email{
+	from String
+    addresses String
+	subject String
+    body String
+    isHtml Boolean
+    isSent Boolean
+    dateInsert Instant
+    dateSent Instant
+}
+
 entity Organization{
 	organizationName String required minlength(1) maxlength(255)
 }
@@ -76,11 +87,11 @@ relationship ManyToMany{
 
 
 // Set pagination options
-paginate QuestionnaireAnswer, Question, Organization, Event, Participant, ClientLead, OrgAdmin, UserExt, Category with pagination
+paginate QuestionnaireAnswer, Question, Organization, Event, Participant, ClientLead, OrgAdmin, UserExt, Category with pagination 
 
-dto * with mapstruct
+dto * with mapstruct except Email
 
 // Set service options to all except few
-service all with serviceImpl
+service all with serviceImpl 
 // Set an angular suffix
-angularSuffix * with pulse
+angularSuffix * with pulse except Email
