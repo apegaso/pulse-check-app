@@ -33,9 +33,9 @@ id;jhi_label;father_id;level_id
 32;Responsibility and Capability;11;4
 33;Sales, Marketing & Channels;11;4
 34;Talent;11;4
-3;Business Model;12;4
+35;Business Model;12;4
 36;Digital vision;12;4
-12;Strategy;12;4
+37;Strategy;12;4
 38;Automation;13;4
 39;Data Analytics & Insights;13;4
 40;Security, Privacy & Digital Risk;13;4
@@ -150,16 +150,16 @@ id;jhi_label;father_id;level_id
 149;Developing digital skills;34;5
 150;Employee enablement;34;5
 151;Open collaboration;34;5
-152;Revenue generation;3;5
-153;Value proposition diversification;3;5
+152;Revenue generation;35;5
+153;Value proposition diversification;35;5
 154;Common vision;36;5
 155;Cross-unit vision;36;5
 156;Roadmap;36;5
 157;Transformative change;36;5
 158;Vision;36;5
-159;Cross-organizational digital strategy;12;5
-160;Digital investment;12;5
-161;Digital strategy informed by company strategy;12;5
+159;Cross-organizational digital strategy;37;5
+160;Digital investment;37;5
+161;Digital strategy informed by company strategy;37;5
 162;Production automation;38;5
 163;Supply chain automation;38;5
 164;Data Analytics & Insights;39;5
