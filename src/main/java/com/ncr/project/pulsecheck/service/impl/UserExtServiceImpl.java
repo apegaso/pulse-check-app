@@ -40,7 +40,7 @@ public class UserExtServiceImpl implements UserExtService {
      * Save a userExt.
      *
      * @param userExtDTO the entity to save
-     * @return the persisted entity
+     * @retrn the persisted entity
      */
     @Override
     public UserExtDTO save(UserExtDTO userExtDTO) {
@@ -121,6 +121,19 @@ public class UserExtServiceImpl implements UserExtService {
     public Optional<UserExtDTO> findOne(Long id) {
         log.debug("Request to get UserExt : {}", id);
         return userExtRepository.findById(id)
+            .map(userExtMapper::toDto);
+    }
+    /**
+     * Get one userExt by email.
+     *
+     * @param email the email of the entity
+     * @return the entity
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<UserExtDTO> findOneByEmail(String email) {
+        log.debug("Request to get UserExt : {}", email);
+        return userExtRepository.findByEmail(email)
             .map(userExtMapper::toDto);
     }
 

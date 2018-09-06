@@ -55,7 +55,13 @@ public interface UserExtService {
      * @return the entity
      */
     Optional<UserExtDTO> findOne(Long id);
-
+/**
+     * Get one userExt by email.
+     *
+     * @param email the email of the entity
+     * @return the entity
+     */
+    Optional<UserExtDTO> findOneByEmail(String email);
     /**
      * Delete the "id" userExt.
      *
