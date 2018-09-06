@@ -1,10 +1,12 @@
 package com.ncr.project.pulsecheck.service;
 
 import com.ncr.project.pulsecheck.service.dto.CategoryDTO;
+import com.ncr.project.pulsecheck.service.dto.QuestionDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -37,6 +39,8 @@ public interface CategoryService {
      */
     Optional<CategoryDTO> findOne(Long id);
 
+
+    Optional<List<QuestionDTO>> findQuestionsById(Long id);
     /**
      * Delete the "id" category.
      *

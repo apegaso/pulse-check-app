@@ -21,6 +21,8 @@ public class UserExtDTO implements Serializable {
 
     private Long organizationId;
 
+    private String organizationName;
+
     public Long getId() {
         return id;
     }
@@ -60,6 +62,15 @@ public class UserExtDTO implements Serializable {
     public void setOrganizationId(Long organizationId) {
         this.organizationId = organizationId;
     }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
 
     @Override
     public boolean equals(Object o) {

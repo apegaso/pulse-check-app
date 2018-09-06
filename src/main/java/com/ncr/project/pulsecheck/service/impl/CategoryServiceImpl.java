@@ -4,6 +4,7 @@ import com.ncr.project.pulsecheck.service.CategoryService;
 import com.ncr.project.pulsecheck.domain.Category;
 import com.ncr.project.pulsecheck.repository.CategoryRepository;
 import com.ncr.project.pulsecheck.service.dto.CategoryDTO;
+import com.ncr.project.pulsecheck.service.dto.QuestionDTO;
 import com.ncr.project.pulsecheck.service.mapper.CategoryMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import java.util.List;
 import java.util.Optional;
 /**
  * Service Implementation for managing Category.
@@ -86,4 +87,12 @@ public class CategoryServiceImpl implements CategoryService {
         log.debug("Request to delete Category : {}", id);
         categoryRepository.deleteById(id);
     }
+
+    @Override
+    public Optional<List<QuestionDTO>> findQuestionsById(Long id) {
+        // log.debug("Request to get Category : {}", id);
+        // return categoryRepository.findById(id)
+        //     .map(categoryMapper::toDto);
+        return null;
+	}
 }

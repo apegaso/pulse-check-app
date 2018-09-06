@@ -13,6 +13,7 @@ public interface UserExtMapper extends EntityMapper<UserExtDTO, UserExt> {
 
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "organization.id", target = "organizationId")
+    @Mapping(source = "organization.organizationName", target = "organizationName")
     UserExtDTO toDto(UserExt userExt);
 
     @Mapping(source = "userId", target = "user")

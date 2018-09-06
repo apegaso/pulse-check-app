@@ -6,6 +6,8 @@ import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
 import com.ncr.project.pulsecheck.web.rest.util.PaginationUtil;
 import com.ncr.project.pulsecheck.service.dto.CategoryDTO;
+import com.ncr.project.pulsecheck.service.dto.QuestionDTO;
+
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,6 +111,21 @@ public class CategoryResource {
         log.debug("REST request to get Category : {}", id);
         Optional<CategoryDTO> categoryDTO = categoryService.findOne(id);
         return ResponseUtil.wrapOrNotFound(categoryDTO);
+    }
+
+
+    /**
+     * GET  /categories/:id : get the "id" category.
+     *
+     * @param id the id of the categoryDTO to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the categoryDTO, or with status 404 (Not Found)
+     */
+    @GetMapping("/categories/{id}/questions")
+    @Timed
+    public ResponseEntity<List<QuestionDTO>> getCategoryQuestions(@PathVariable Long id) {
+        log.debug("REST request to get Category : {}", id);
+        Optional<List<QuestionDTO>> questionDTO = categoryService.findQuestionsById(id);
+        return ResponseUtil.wrapOrNotFound(questionDTO);
     }
 
     /**

@@ -310,7 +310,11 @@ public class UserService {
         UserDTO ret = new UserDTO(t);
         Optional<UserExtDTO> ext = userExtService.findOneByEmail(t.getEmail());
         if(ext.isPresent()){
-            ret.setJobRole(ext.get().getJobRole());
+            UserExtDTO userExtDTO = ext.get();
+            ret.setJobRole(userExtDTO.getJobRole());
+            ret.setOrganizationId(userExtDTO.getOrganizationId());
+            ret.setOrganizationName(userExtDTO.getOrganizationName());
+
         }
         return ret;
     }
