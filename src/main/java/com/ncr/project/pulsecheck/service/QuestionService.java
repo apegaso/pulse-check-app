@@ -44,6 +44,19 @@ public interface QuestionService {
     Optional<QuestionDTO> findOne(Long id);
 
     /**
+     * Get the "order id" question.
+     *
+     * @param orderid the order id of the entity
+     * @return the entity
+     */
+    Optional<QuestionDTO> findOneByOrder(Integer orderid);
+    /**
+     * Count total number of questions
+     *
+     */
+    public Long countAll() ;
+    
+    /**
      * Delete the "id" question.
      *
      * @param id the id of the entity

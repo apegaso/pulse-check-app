@@ -6,6 +6,8 @@ import com.ncr.project.pulsecheck.repository.CategoryRepository;
 import com.ncr.project.pulsecheck.service.dto.CategoryDTO;
 import com.ncr.project.pulsecheck.service.dto.QuestionDTO;
 import com.ncr.project.pulsecheck.service.mapper.CategoryMapper;
+import com.ncr.project.pulsecheck.service.mapper.QuestionMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 /**
  * Service Implementation for managing Category.
  */
@@ -29,9 +32,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryMapper categoryMapper;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
+    private final QuestionMapper questionMapper;
+    
+    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper, QuestionMapper questionMapper) {
         this.categoryRepository = categoryRepository;
         this.categoryMapper = categoryMapper;
+        this.questionMapper = questionMapper;
     }
 
     /**
@@ -90,9 +96,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Optional<List<QuestionDTO>> findQuestionsById(Long id) {
-        // log.debug("Request to get Category : {}", id);
-        // return categoryRepository.findById(id)
-        //     .map(categoryMapper::toDto);
-        return null;
+        log.debug("Request to get Category Questions : {}", id);
+        Optional<Category> category = categoryRepository.findById(id);
+        List<QuestionDTO> ret = null;
+        if(category.isPresent()){
+            ret = category.get().getQuestions().stream().map(questionMapper::toDto).collect(Collectors.toList());
+        }
+        return Optional.of(ret);
 	}
 }

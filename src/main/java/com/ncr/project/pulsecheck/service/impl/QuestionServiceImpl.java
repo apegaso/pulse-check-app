@@ -95,4 +95,30 @@ public class QuestionServiceImpl implements QuestionService {
         log.debug("Request to delete Question : {}", id);
         questionRepository.deleteById(id);
     }
+
+    /**
+     * find one Question by order ID
+     *
+     * @param orderid the order id of the entity
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<QuestionDTO> findOneByOrder(Integer orderid) {
+        log.debug("Request to get Question by Order : {}", orderid);
+        return questionRepository.findOneByOrderWithEagerRelationships(orderid)
+            .map(questionMapper::toDto);
+        
+    }
+    /**
+     * Count total number of questions
+     *
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Long countAll() {
+        log.debug("Count all Questions");
+        return questionRepository.count();
+            
+        
+    }
 }

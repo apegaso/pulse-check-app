@@ -26,5 +26,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Query("select question from Question question left join fetch question.categories where question.id =:id")
     Optional<Question> findOneWithEagerRelationships(@Param("id") Long id);
+    
+    @Query("select question from Question question left join fetch question.categories where question.order =:orderid")
+    Optional<Question> findOneByOrderWithEagerRelationships(@Param("orderid") Integer orderid);
 
 }

@@ -118,6 +118,23 @@ public class QuestionResource {
     }
 
     /**
+     * GET  /questions/byorder/:orderid : get the "order id" question.
+     *
+     * @param orderid the order id of the questionDTO to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the questionDTO, or with status 404 (Not Found)
+     */
+    @GetMapping("/questions/byorder/{orderid}")
+    @Timed
+    public ResponseEntity<QuestionDTO> getQuestionByOrderId(@PathVariable Integer orderid) {
+        log.debug("REST request to get Question by Order Id: {}", orderid);
+        Optional<QuestionDTO> questionDTO = questionService.findOneByOrder(orderid);
+        Long total = questionService.countAll();
+        Long nextId = orderid < total ? new Long(orderid + 1) : null;
+        Long prevId = orderid > 1 ? new Long(orderid - 1) : null;
+        return ResponseUtil.wrapOrNotFound(questionDTO, PaginationUtil.generateQuestionHttpHeaders(nextId, prevId, total));
+    }
+
+    /**
      * DELETE  /questions/:id : delete the "id" question.
      *
      * @param id the id of the questionDTO to delete
