@@ -1,15 +1,8 @@
 package com.ncr.project.pulsecheck.service;
 
 import com.ncr.project.pulsecheck.domain.Authority;
-import com.ncr.project.pulsecheck.domain.ClientLead;
-import com.ncr.project.pulsecheck.domain.OrgAdmin;
-import com.ncr.project.pulsecheck.domain.Organization;
-import com.ncr.project.pulsecheck.domain.Participant;
 import com.ncr.project.pulsecheck.domain.User;
-import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.AuthorityRepository;
-import com.ncr.project.pulsecheck.repository.OrganizationRepository;
-import com.ncr.project.pulsecheck.repository.UserExtRepository;
 import com.ncr.project.pulsecheck.config.Constants;
 import com.ncr.project.pulsecheck.repository.UserRepository;
 import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
@@ -32,8 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +38,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserExtService userExtService;
-    private final OrganizationRepository organizationRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -55,13 +45,12 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, UserExtService userExtService, OrganizationRepository organizationRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, UserExtService userExtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
 		this.userExtService = userExtService;
-		this.organizationRepository = organizationRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
