@@ -2,6 +2,7 @@ package com.ncr.project.pulsecheck.service.impl;
 
 import com.ncr.project.pulsecheck.service.CategoryService;
 import com.ncr.project.pulsecheck.domain.Category;
+import com.ncr.project.pulsecheck.domain.Question;
 import com.ncr.project.pulsecheck.repository.CategoryRepository;
 import com.ncr.project.pulsecheck.service.dto.CategoryDTO;
 import com.ncr.project.pulsecheck.service.dto.QuestionDTO;
@@ -16,8 +17,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 /**
  * Service Implementation for managing Category.
@@ -95,13 +100,30 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Optional<List<QuestionDTO>> findQuestionsById(Long id) {
+    public Optional<Set<QuestionDTO>> findQuestionsById(Long id) {
         log.debug("Request to get Category Questions : {}", id);
-        Optional<Category> category = categoryRepository.findById(id);
-        List<QuestionDTO> ret = null;
-        if(category.isPresent()){
-            ret = category.get().getQuestions().stream().map(questionMapper::toDto).collect(Collectors.toList());
+        Optional<Category> categoryOpt = categoryRepository.findById(id);
+        Set<QuestionDTO> ret = null;
+        if(categoryOpt.isPresent()){
+            Category category = categoryOpt.get();
+            ret = category.getQuestions().stream().map(questionMapper::toDto).collect(Collectors.toSet());
+            ret.addAll(getSonsQuestions(category));
+            
         }
         return Optional.of(ret);
 	}
+
+	private Set<QuestionDTO> getSonsQuestions(Category category) {
+        Set<Category> sons = category.getSons();
+		Set<QuestionDTO> ret = sons
+		.stream()
+		.map(c -> {
+		    log.debug("map -> {}",c);
+                    List<Question> collect = c.getQuestions().stream().collect(Collectors.toList());
+                    return collect;
+            }).map(questionMapper::toDto).collect(HashSet::new, HashSet::addAll, HashSet::addAll);
+            
+        sons.forEach(c -> {ret.addAll(getSonsQuestions(c));});
+        return ret;
+    }
 }

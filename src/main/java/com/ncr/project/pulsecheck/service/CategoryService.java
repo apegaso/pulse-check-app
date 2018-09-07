@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service Interface for managing Category.
@@ -40,7 +41,7 @@ public interface CategoryService {
     Optional<CategoryDTO> findOne(Long id);
 
 
-    Optional<List<QuestionDTO>> findQuestionsById(Long id);
+    Optional<Set<QuestionDTO>> findQuestionsById(Long id);
     /**
      * Delete the "id" category.
      *

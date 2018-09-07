@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * REST controller for managing Category.
@@ -122,9 +123,9 @@ public class CategoryResource {
      */
     @GetMapping("/categories/{id}/questions")
     @Timed
-    public ResponseEntity<List<QuestionDTO>> getCategoryQuestions(@PathVariable Long id) {
+    public ResponseEntity<Set<QuestionDTO>> getCategoryQuestions(@PathVariable Long id) {
         log.debug("REST request to get Category : {}", id);
-        Optional<List<QuestionDTO>> questionDTO = categoryService.findQuestionsById(id);
+        Optional<Set<QuestionDTO>> questionDTO = categoryService.findQuestionsById(id);
         return ResponseUtil.wrapOrNotFound(questionDTO);
     }
 
