@@ -11,6 +11,7 @@ import com.ncr.project.pulsecheck.service.dto.UserDTO;
 import com.ncr.project.pulsecheck.web.rest.errors.*;
 import com.ncr.project.pulsecheck.web.rest.vm.KeyAndPasswordVM;
 import com.ncr.project.pulsecheck.web.rest.vm.ManagedUserVM;
+import com.ncr.project.pulsecheck.web.rest.vm.UserEventsVM;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -104,8 +105,17 @@ public class AccountResource {
     @Timed
     public UserDTO getAccount() {
         return userService.getUserWithAuthorities()
-            .map(UserDTO::new)
+            .map(userService::newUserDTO)
             .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
+    }
+
+    @GetMapping("/account/events")
+    @Timed
+    public UserEventsVM getAccountEvents() {
+        // return userService.getUserWithAuthorities()
+        //     .map(userService::newUserDTO)
+        //     .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
+        return null;
     }
 
     /**
