@@ -116,10 +116,10 @@ public class CategoryResource {
 
 
     /**
-     * GET  /categories/:id : get the "id" category.
+     * GET  /categories/:id/questions : get the questions belonging to "id" category. Nested categories are resolved. 
      *
      * @param id the id of the categoryDTO to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the categoryDTO, or with status 404 (Not Found)
+     * @return the ResponseEntity with status 200 (OK) and with body the Set<QuestionDTO>, or with status 404 (Not Found)
      */
     @GetMapping("/categories/{id}/questions")
     @Timed
