@@ -9,19 +9,19 @@ import com.ncr.project.pulsecheck.service.dto.EventDTO;
  */
 public class UserEventsVM {
 
-    private List<EventDTO> participant;
+    private List<UserEventVM> participant;
     private List<EventDTO> lead;
     /**
      * @param participant the participant to set
      */
-    public void setParticipant(List<EventDTO> participant) {
+    public void setParticipant(List<UserEventVM> participant) {
         this.participant = participant;
     }
     
     /**
      * @return the participant
      */
-    public List<EventDTO> getParticipant() {
+    public List<UserEventVM> getParticipant() {
         return participant;
     }
     
