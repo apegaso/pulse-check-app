@@ -6,6 +6,7 @@ import com.ncr.project.pulsecheck.domain.User;
 import com.ncr.project.pulsecheck.repository.UserRepository;
 import com.ncr.project.pulsecheck.security.SecurityUtils;
 import com.ncr.project.pulsecheck.service.MailService;
+import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.service.dto.UserDTO;
 import com.ncr.project.pulsecheck.web.rest.errors.*;
@@ -37,10 +38,12 @@ public class AccountResource {
 
     private final UserService userService;
 
+    private final UserExtService userExtService;
+
     private final MailService mailService;
 
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
-
+    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService, UserExtService userExtService) {
+        this.userExtService = userExtService;
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
@@ -108,14 +111,23 @@ public class AccountResource {
             .map(userService::newUserDTO)
             .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
     }
-
+    
+    /**
+     * GET  /account/events : get the events associated to current logged user. Events are grouped into participant and lead group.
+     *
+     * @return events for current logged user
+     * @throws RuntimeException 500 (Internal Server Error) if the user couldn't be returned
+     */
     @GetMapping("/account/events")
     @Timed
     public UserEventsVM getAccountEvents() {
         // return userService.getUserWithAuthorities()
         //     .map(userService::newUserDTO)
         //     .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
-        return null;
+        Optional<User> loggedUser = userService.getUserWithAuthorities();
+        Optional<UserEventsVM> ret = loggedUser.map(u -> u.getEmail()).flatMap(userExtService::findUserEventsVMByEmail);
+
+        return ret.get();
     }
 
     /**

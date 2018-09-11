@@ -4,7 +4,10 @@ import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.UserExtRepository;
 import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
+import com.ncr.project.pulsecheck.service.mapper.UserEventsVMMapper;
 import com.ncr.project.pulsecheck.service.mapper.UserExtMapper;
+import com.ncr.project.pulsecheck.web.rest.vm.UserEventsVM;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,10 +33,13 @@ public class UserExtServiceImpl implements UserExtService {
     private final UserExtRepository userExtRepository;
 
     private final UserExtMapper userExtMapper;
+    
+    private final UserEventsVMMapper userEventsVMMapper;
 
-    public UserExtServiceImpl(UserExtRepository userExtRepository, UserExtMapper userExtMapper) {
+    public UserExtServiceImpl(UserExtRepository userExtRepository, UserExtMapper userExtMapper, UserEventsVMMapper userEventsVMMapper) {
         this.userExtRepository = userExtRepository;
         this.userExtMapper = userExtMapper;
+        this.userEventsVMMapper = userEventsVMMapper;
     }
 
     /**
@@ -147,4 +153,12 @@ public class UserExtServiceImpl implements UserExtService {
         log.debug("Request to delete UserExt : {}", id);
         userExtRepository.deleteById(id);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<UserEventsVM> findUserEventsVMByEmail(String email) {
+        log.debug("Request to get UserExt : {}", email);
+        return userExtRepository.findByEmail(email)
+            .map(userEventsVMMapper::userToUserEventsVM);
+	}
 }

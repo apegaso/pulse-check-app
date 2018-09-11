@@ -1,6 +1,7 @@
 package com.ncr.project.pulsecheck.service;
 
 import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
+import com.ncr.project.pulsecheck.web.rest.vm.UserEventsVM;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -68,4 +69,12 @@ public interface UserExtService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+    /**
+     * Get User Events by user email.
+     *
+     * @param email the email of the entity
+     * @return the entity
+     */
+	Optional<UserEventsVM> findUserEventsVMByEmail(String email);
 }
