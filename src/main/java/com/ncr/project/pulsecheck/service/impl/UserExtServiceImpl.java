@@ -5,7 +5,6 @@ import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.UserExtRepository;
 import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
 import com.ncr.project.pulsecheck.service.mapper.OrganizationAndEventsVMMapper;
-import com.ncr.project.pulsecheck.service.mapper.OrganizationMapper;
 import com.ncr.project.pulsecheck.service.mapper.UserEventsVMMapper;
 import com.ncr.project.pulsecheck.service.mapper.UserExtMapper;
 import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
@@ -40,19 +39,16 @@ public class UserExtServiceImpl implements UserExtService {
     
     private final UserEventsVMMapper userEventsVMMapper;
     
-    private final OrganizationMapper organizationMapper;
     private final OrganizationAndEventsVMMapper organizationAndEventsVMMapper;
     
 
     public UserExtServiceImpl(UserExtRepository userExtRepository
     , UserExtMapper userExtMapper
     , UserEventsVMMapper userEventsVMMapper
-    , OrganizationMapper organizationMapper
     , OrganizationAndEventsVMMapper organizationAndEventsVMMapper) {
         this.userExtRepository = userExtRepository;
         this.userExtMapper = userExtMapper;
         this.userEventsVMMapper = userEventsVMMapper;
-        this.organizationMapper = organizationMapper;
         this.organizationAndEventsVMMapper = organizationAndEventsVMMapper;
     }
 

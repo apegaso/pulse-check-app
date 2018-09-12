@@ -1,7 +1,6 @@
 package com.ncr.project.pulsecheck.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import com.ncr.project.pulsecheck.domain.Authority;
 import com.ncr.project.pulsecheck.domain.User;
 import com.ncr.project.pulsecheck.repository.UserRepository;
 import com.ncr.project.pulsecheck.security.SecurityUtils;

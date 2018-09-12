@@ -10,6 +10,8 @@ import java.util.Objects;
  */
 public class EventDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private Long id;
 
     @NotNull

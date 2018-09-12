@@ -1,12 +1,7 @@
 package com.ncr.project.pulsecheck.service.mapper;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.ncr.project.pulsecheck.domain.*;
-import com.ncr.project.pulsecheck.service.dto.EventDTO;
 import com.ncr.project.pulsecheck.service.dto.OrganizationDTO;
-import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
 
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;

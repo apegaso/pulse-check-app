@@ -2,7 +2,6 @@ package com.ncr.project.pulsecheck.service.impl;
 
 import com.ncr.project.pulsecheck.service.OrgAdminService;
 import com.ncr.project.pulsecheck.service.OrganizationService;
-import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.domain.Organization;
 import com.ncr.project.pulsecheck.domain.User;
@@ -40,21 +39,17 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final UserService userService;
     
-    private final UserExtService userExtService;
-    
     private final OrgAdminService orgAdminService;
 
     public OrganizationServiceImpl(OrganizationRepository organizationRepository
     , OrganizationMapper organizationMapper,
     OrganizationAndEventsVMMapper organizationAndEventsVMMapper, 
     UserService userService, 
-    UserExtService userExtService, 
     OrgAdminService orgAdminService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.organizationAndEventsVMMapper = organizationAndEventsVMMapper;
         this.userService = userService;
-        this.userExtService = userExtService;
         this.orgAdminService = orgAdminService;
     }
 

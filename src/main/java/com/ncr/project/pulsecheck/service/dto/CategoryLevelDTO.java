@@ -9,6 +9,8 @@ import java.util.Objects;
  */
 public class CategoryLevelDTO implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private Long id;
 
     @NotNull

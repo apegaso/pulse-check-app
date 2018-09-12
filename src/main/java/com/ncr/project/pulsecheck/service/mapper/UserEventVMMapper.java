@@ -5,7 +5,6 @@ import java.util.Optional;
 import com.ncr.project.pulsecheck.domain.Event;
 import com.ncr.project.pulsecheck.domain.EventStatus;
 import com.ncr.project.pulsecheck.domain.Participant;
-import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.service.QuestionnaireService;
 import com.ncr.project.pulsecheck.service.dto.QuestionnaireDTO;
 import com.ncr.project.pulsecheck.web.rest.vm.UserEventVM;

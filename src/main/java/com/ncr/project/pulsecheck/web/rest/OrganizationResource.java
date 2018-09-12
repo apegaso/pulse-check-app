@@ -1,11 +1,7 @@
 package com.ncr.project.pulsecheck.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import com.ncr.project.pulsecheck.domain.User;
-import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
-import com.ncr.project.pulsecheck.service.OrgAdminService;
 import com.ncr.project.pulsecheck.service.OrganizationService;
-import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
 import com.ncr.project.pulsecheck.web.rest.util.PaginationUtil;
@@ -40,14 +36,10 @@ public class OrganizationResource {
     private static final String ENTITY_NAME = "organization";
 
     private final OrganizationService organizationService;
-    private final UserService userService;
-    private final OrgAdminService orgAdminService;
     
 
-    public OrganizationResource(OrganizationService organizationService, UserService userService, OrgAdminService orgAdminService) {
+    public OrganizationResource(OrganizationService organizationService) {
         this.organizationService = organizationService;
-        this.userService = userService;
-        this.orgAdminService = orgAdminService;
     }
 
     /**
