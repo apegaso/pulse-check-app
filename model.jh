@@ -1,0 +1,98 @@
+entity Email{
+	from String
+    addresses String
+	subject String
+    body String
+    isHtml Boolean
+    isSent Boolean
+    dateInsert Instant
+    dateSent Instant
+}
+
+entity Organization{
+	organizationName String required minlength(1) maxlength(255)
+}
+
+entity Event {
+	eventName String required minlength(1) maxlength(255)
+	eventDescription String
+    eventDate Instant required
+    closed Boolean
+}
+
+entity ClientLead {
+	
+}
+
+entity OrgAdmin	{
+
+}
+
+entity Participant{
+
+}
+
+entity Question {
+	question String required minlength(1) maxlength(2048)
+	order Integer required
+}
+
+entity Category {
+	label String required minlength(1) maxlength(255)
+}
+entity CategoryLevel {
+	label String required minlength(1) maxlength(255)
+	
+}
+
+entity Questionnaire{
+	dateStart Instant
+    dateEnd Instant
+}
+entity QuestionnaireAnswer {
+	importance Double
+    performance Double
+    note String maxlength(2048)
+}
+
+entity UserExt{
+	jobRole String maxlength(255)
+	email String required 
+}
+
+relationship ManyToOne{
+	Category{father(label)} to Category{sons},
+	Category{level(label)} to CategoryLevel{categories},
+    Event{organization(organizationName)} to Organization{events},
+    UserExt{organization} to Organization{users},
+    QuestionnaireAnswer{questionnaire} to Questionnaire,
+    Questionnaire{event} to Event,
+    Questionnaire{participant} to Participant,
+    QuestionnaireAnswer{question} to Question
+}	
+
+relationship OneToOne{
+	UserExt to User,
+	ClientLead to UserExt,
+    OrgAdmin to UserExt,
+    Participant to UserExt
+}
+
+relationship ManyToMany{
+	Participant{events} to Event{participants},
+    ClientLead{events} to Event{leads},
+    OrgAdmin{organizations} to Organization{admins},
+    Question{category(label)} to Category{questions}
+}
+
+
+
+// Set pagination options
+paginate QuestionnaireAnswer, Question, Organization, Event, Participant, ClientLead, OrgAdmin, UserExt, Category with pagination 
+
+dto * with mapstruct except Email
+
+// Set service options to all except few
+service all with serviceImpl 
+// Set an angular suffix
+angularSuffix * with pulse except Email

@@ -3,18 +3,34 @@
     "fields": [
         {
             "fieldName": "question",
-            "fieldType": "String"
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "minlength",
+                "maxlength"
+            ],
+            "fieldValidateRulesMinlength": 1,
+            "fieldValidateRulesMaxlength": 2048
+        },
+        {
+            "fieldName": "order",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
     "relationships": [
         {
-            "relationshipType": "many-to-one",
+            "relationshipType": "many-to-many",
+            "otherEntityRelationshipName": "questions",
             "relationshipName": "category",
-            "otherEntityName": "questionCategory",
-            "otherEntityField": "id"
+            "otherEntityName": "category",
+            "otherEntityField": "label",
+            "ownerSide": true
         }
     ],
-    "changelogDate": "20180903080259",
+    "changelogDate": "20180904153935",
     "entityTableName": "question",
     "dto": "mapstruct",
     "pagination": "pagination",

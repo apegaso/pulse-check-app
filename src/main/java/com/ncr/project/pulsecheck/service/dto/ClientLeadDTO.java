@@ -12,6 +12,8 @@ public class ClientLeadDTO implements Serializable {
 
     private Long id;
 
+    private Long userExtId;
+
     private Set<EventDTO> events = new HashSet<>();
 
     public Long getId() {
@@ -20,6 +22,14 @@ public class ClientLeadDTO implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserExtId() {
+        return userExtId;
+    }
+
+    public void setUserExtId(Long userExtId) {
+        this.userExtId = userExtId;
     }
 
     public Set<EventDTO> getEvents() {
@@ -55,6 +65,7 @@ public class ClientLeadDTO implements Serializable {
     public String toString() {
         return "ClientLeadDTO{" +
             "id=" + getId() +
+            ", userExt=" + getUserExtId() +
             "}";
     }
 }

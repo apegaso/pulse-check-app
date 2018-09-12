@@ -86,4 +86,10 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         log.debug("Request to delete Questionnaire : {}", id);
         questionnaireRepository.deleteById(id);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<QuestionnaireDTO> findOneByUserExtAndEvent(Long userid, Long eventid) {
+        return questionnaireRepository.findByUserExtIdAndEventId(userid,eventid).map(questionnaireMapper::toDto);
+    }
 }

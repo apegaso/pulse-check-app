@@ -6,6 +6,8 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { IParticipantPulse } from 'app/shared/model/participant-pulse.model';
 import { ParticipantPulseService } from './participant-pulse.service';
+import { IUserExtPulse } from 'app/shared/model/user-ext-pulse.model';
+import { UserExtPulseService } from 'app/entities/user-ext-pulse';
 import { IEventPulse } from 'app/shared/model/event-pulse.model';
 import { EventPulseService } from 'app/entities/event-pulse';
 
@@ -17,11 +19,14 @@ export class ParticipantPulseUpdateComponent implements OnInit {
     private _participant: IParticipantPulse;
     isSaving: boolean;
 
+    userexts: IUserExtPulse[];
+
     events: IEventPulse[];
 
     constructor(
         private jhiAlertService: JhiAlertService,
         private participantService: ParticipantPulseService,
+        private userExtService: UserExtPulseService,
         private eventService: EventPulseService,
         private activatedRoute: ActivatedRoute
     ) {}
@@ -31,6 +36,21 @@ export class ParticipantPulseUpdateComponent implements OnInit {
         this.activatedRoute.data.subscribe(({ participant }) => {
             this.participant = participant;
         });
+        this.userExtService.query({ filter: 'participant-is-null' }).subscribe(
+            (res: HttpResponse<IUserExtPulse[]>) => {
+                if (!this.participant.userExtId) {
+                    this.userexts = res.body;
+                } else {
+                    this.userExtService.find(this.participant.userExtId).subscribe(
+                        (subRes: HttpResponse<IUserExtPulse>) => {
+                            this.userexts = [subRes.body].concat(res.body);
+                        },
+                        (subRes: HttpErrorResponse) => this.onError(subRes.message)
+                    );
+                }
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
         this.eventService.query().subscribe(
             (res: HttpResponse<IEventPulse[]>) => {
                 this.events = res.body;
@@ -67,6 +87,10 @@ export class ParticipantPulseUpdateComponent implements OnInit {
 
     private onError(errorMessage: string) {
         this.jhiAlertService.error(errorMessage, null, null);
+    }
+
+    trackUserExtById(index: number, item: IUserExtPulse) {
+        return item.id;
     }
 
     trackEventById(index: number, item: IEventPulse) {

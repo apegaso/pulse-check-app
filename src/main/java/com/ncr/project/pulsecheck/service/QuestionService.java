@@ -28,7 +28,13 @@ public interface QuestionService {
      */
     Page<QuestionDTO> findAll(Pageable pageable);
 
-
+    /**
+     * Get all the Question with eager load of many-to-many relationships.
+     *
+     * @return the list of entities
+     */
+    Page<QuestionDTO> findAllWithEagerRelationships(Pageable pageable);
+    
     /**
      * Get the "id" question.
      *
@@ -37,6 +43,19 @@ public interface QuestionService {
      */
     Optional<QuestionDTO> findOne(Long id);
 
+    /**
+     * Get the "order id" question.
+     *
+     * @param orderid the order id of the entity
+     * @return the entity
+     */
+    Optional<QuestionDTO> findOneByOrder(Integer orderid);
+    /**
+     * Count total number of questions
+     *
+     */
+    public Long countAll() ;
+    
     /**
      * Delete the "id" question.
      *

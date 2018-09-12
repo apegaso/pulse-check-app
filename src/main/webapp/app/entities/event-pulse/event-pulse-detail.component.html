@@ -9,14 +9,22 @@
                 <dd>
                     <span>{{event.eventName}}</span>
                 </dd>
+                <dt><span>Event Description</span></dt>
+                <dd>
+                    <span>{{event.eventDescription}}</span>
+                </dd>
                 <dt><span>Event Date</span></dt>
                 <dd>
                     <span>{{event.eventDate}}</span>
                 </dd>
+                <dt><span>Closed</span></dt>
+                <dd>
+                    <span>{{event.closed}}</span>
+                </dd>
                 <dt><span>Organization</span></dt>
                 <dd>
                     <div *ngIf="event.organizationId">
-                        <a [routerLink]="['/organization-pulse', event.organizationId, 'view']">{{event.organizationId}}</a>
+                        <a [routerLink]="['/organization-pulse', event.organizationId, 'view']">{{event.organizationOrganizationName}}</a>
                     </div>
                 </dd>
             </dl>

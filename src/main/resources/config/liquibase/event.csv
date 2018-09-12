@@ -1,0 +1,2 @@
+id;event_name;event_description;event_date;closed;organization_id
+1;test event;test event description;2018-09-11T10:01:00Z;false;2

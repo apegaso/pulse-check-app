@@ -1,6 +1,9 @@
 package com.ncr.project.pulsecheck.service.dto;
 
+import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -10,9 +13,14 @@ public class QuestionDTO implements Serializable {
 
     private Long id;
 
+    @NotNull
+    @Size(min = 1, max = 2048)
     private String question;
 
-    private Long categoryId;
+    @NotNull
+    private Integer order;
+
+    private Set<CategoryDTO> categories = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -30,12 +38,20 @@ public class QuestionDTO implements Serializable {
         this.question = question;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public Integer getOrder() {
+        return order;
     }
 
-    public void setCategoryId(Long questionCategoryId) {
-        this.categoryId = questionCategoryId;
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+
+    public Set<CategoryDTO> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<CategoryDTO> categories) {
+        this.categories = categories;
     }
 
     @Override
@@ -64,7 +80,7 @@ public class QuestionDTO implements Serializable {
         return "QuestionDTO{" +
             "id=" + getId() +
             ", question='" + getQuestion() + "'" +
-            ", category=" + getCategoryId() +
+            ", order=" + getOrder() +
             "}";
     }
 }

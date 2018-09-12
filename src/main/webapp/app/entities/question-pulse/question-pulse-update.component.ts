@@ -6,8 +6,8 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { IQuestionPulse } from 'app/shared/model/question-pulse.model';
 import { QuestionPulseService } from './question-pulse.service';
-import { IQuestionCategoryPulse } from 'app/shared/model/question-category-pulse.model';
-import { QuestionCategoryPulseService } from 'app/entities/question-category-pulse';
+import { ICategoryPulse } from 'app/shared/model/category-pulse.model';
+import { CategoryPulseService } from 'app/entities/category-pulse';
 
 @Component({
     selector: 'jhi-question-pulse-update',
@@ -17,12 +17,12 @@ export class QuestionPulseUpdateComponent implements OnInit {
     private _question: IQuestionPulse;
     isSaving: boolean;
 
-    questioncategories: IQuestionCategoryPulse[];
+    categories: ICategoryPulse[];
 
     constructor(
         private jhiAlertService: JhiAlertService,
         private questionService: QuestionPulseService,
-        private questionCategoryService: QuestionCategoryPulseService,
+        private categoryService: CategoryPulseService,
         private activatedRoute: ActivatedRoute
     ) {}
 
@@ -31,9 +31,9 @@ export class QuestionPulseUpdateComponent implements OnInit {
         this.activatedRoute.data.subscribe(({ question }) => {
             this.question = question;
         });
-        this.questionCategoryService.query().subscribe(
-            (res: HttpResponse<IQuestionCategoryPulse[]>) => {
-                this.questioncategories = res.body;
+        this.categoryService.query().subscribe(
+            (res: HttpResponse<ICategoryPulse[]>) => {
+                this.categories = res.body;
             },
             (res: HttpErrorResponse) => this.onError(res.message)
         );
@@ -69,8 +69,19 @@ export class QuestionPulseUpdateComponent implements OnInit {
         this.jhiAlertService.error(errorMessage, null, null);
     }
 
-    trackQuestionCategoryById(index: number, item: IQuestionCategoryPulse) {
+    trackCategoryById(index: number, item: ICategoryPulse) {
         return item.id;
+    }
+
+    getSelected(selectedVals: Array<any>, option: any) {
+        if (selectedVals) {
+            for (let i = 0; i < selectedVals.length; i++) {
+                if (option.id === selectedVals[i].id) {
+                    return selectedVals[i];
+                }
+            }
+        }
+        return option;
     }
     get question() {
         return this._question;

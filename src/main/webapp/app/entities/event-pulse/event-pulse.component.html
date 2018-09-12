@@ -16,8 +16,10 @@
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
             <th jhiSortBy="id"><span>ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="eventName"><span>Event Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="eventDescription"><span>Event Description</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="eventDate"><span>Event Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="organizationId"><span>Organization</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="closed"><span>Closed</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="organizationOrganizationName"><span>Organization</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -25,10 +27,12 @@
             <tr *ngFor="let event of events ;trackBy: trackId">
                 <td><a [routerLink]="['/event-pulse', event.id, 'view' ]">{{event.id}}</a></td>
                 <td>{{event.eventName}}</td>
+                <td>{{event.eventDescription}}</td>
                 <td>{{event.eventDate | date:'medium'}}</td>
+                <td>{{event.closed}}</td>
                 <td>
                     <div *ngIf="event.organizationId">
-                        <a [routerLink]="['../organization-pulse', event.organizationId , 'view' ]" >{{event.organizationId}}</a>
+                        <a [routerLink]="['../organization-pulse', event.organizationId , 'view' ]" >{{event.organizationOrganizationName}}</a>
                     </div>
                 </td>
                 <td class="text-right">

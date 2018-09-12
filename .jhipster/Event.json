@@ -3,11 +3,29 @@
     "fields": [
         {
             "fieldName": "eventName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "minlength",
+                "maxlength"
+            ],
+            "fieldValidateRulesMinlength": 1,
+            "fieldValidateRulesMaxlength": 255
+        },
+        {
+            "fieldName": "eventDescription",
             "fieldType": "String"
         },
         {
             "fieldName": "eventDate",
-            "fieldType": "Instant"
+            "fieldType": "Instant",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "closed",
+            "fieldType": "Boolean"
         }
     ],
     "relationships": [
@@ -15,7 +33,7 @@
             "relationshipType": "many-to-one",
             "relationshipName": "organization",
             "otherEntityName": "organization",
-            "otherEntityField": "id"
+            "otherEntityField": "organizationName"
         },
         {
             "relationshipType": "many-to-many",
@@ -32,7 +50,7 @@
             "otherEntityRelationshipName": "events"
         }
     ],
-    "changelogDate": "20180903080255",
+    "changelogDate": "20180904153931",
     "entityTableName": "event",
     "dto": "mapstruct",
     "pagination": "pagination",

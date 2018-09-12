@@ -3,6 +3,14 @@
     "fields": [],
     "relationships": [
         {
+            "relationshipType": "one-to-one",
+            "relationshipName": "userExt",
+            "otherEntityName": "userExt",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "participant"
+        },
+        {
             "relationshipType": "many-to-many",
             "otherEntityRelationshipName": "participants",
             "relationshipName": "events",
@@ -11,7 +19,7 @@
             "ownerSide": true
         }
     ],
-    "changelogDate": "20180903080258",
+    "changelogDate": "20180904153934",
     "entityTableName": "participant",
     "dto": "mapstruct",
     "pagination": "pagination",

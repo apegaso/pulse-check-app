@@ -2,7 +2,8 @@ export interface IQuestionnaireAnswerPulse {
     id?: number;
     importance?: number;
     performance?: number;
-    questionaireId?: number;
+    note?: string;
+    questionnaireId?: number;
     questionId?: number;
 }
 
@@ -11,7 +12,8 @@ export class QuestionnaireAnswerPulse implements IQuestionnaireAnswerPulse {
         public id?: number,
         public importance?: number,
         public performance?: number,
-        public questionaireId?: number,
+        public note?: string,
+        public questionnaireId?: number,
         public questionId?: number
     ) {}
 }

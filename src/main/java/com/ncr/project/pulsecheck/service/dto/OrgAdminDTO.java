@@ -12,6 +12,8 @@ public class OrgAdminDTO implements Serializable {
 
     private Long id;
 
+    private Long userExtId;
+
     private Set<OrganizationDTO> organizations = new HashSet<>();
 
     public Long getId() {
@@ -20,6 +22,14 @@ public class OrgAdminDTO implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserExtId() {
+        return userExtId;
+    }
+
+    public void setUserExtId(Long userExtId) {
+        this.userExtId = userExtId;
     }
 
     public Set<OrganizationDTO> getOrganizations() {
@@ -55,6 +65,7 @@ public class OrgAdminDTO implements Serializable {
     public String toString() {
         return "OrgAdminDTO{" +
             "id=" + getId() +
+            ", userExt=" + getUserExtId() +
             "}";
     }
 }

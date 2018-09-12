@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -48,7 +49,7 @@ public class QuestionResource {
      */
     @PostMapping("/questions")
     @Timed
-    public ResponseEntity<QuestionDTO> createQuestion(@RequestBody QuestionDTO questionDTO) throws URISyntaxException {
+    public ResponseEntity<QuestionDTO> createQuestion(@Valid @RequestBody QuestionDTO questionDTO) throws URISyntaxException {
         log.debug("REST request to save Question : {}", questionDTO);
         if (questionDTO.getId() != null) {
             throw new BadRequestAlertException("A new question cannot already have an ID", ENTITY_NAME, "idexists");
@@ -70,7 +71,7 @@ public class QuestionResource {
      */
     @PutMapping("/questions")
     @Timed
-    public ResponseEntity<QuestionDTO> updateQuestion(@RequestBody QuestionDTO questionDTO) throws URISyntaxException {
+    public ResponseEntity<QuestionDTO> updateQuestion(@Valid @RequestBody QuestionDTO questionDTO) throws URISyntaxException {
         log.debug("REST request to update Question : {}", questionDTO);
         if (questionDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -85,14 +86,20 @@ public class QuestionResource {
      * GET  /questions : get all the questions.
      *
      * @param pageable the pagination information
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many)
      * @return the ResponseEntity with status 200 (OK) and the list of questions in body
      */
     @GetMapping("/questions")
     @Timed
-    public ResponseEntity<List<QuestionDTO>> getAllQuestions(Pageable pageable) {
+    public ResponseEntity<List<QuestionDTO>> getAllQuestions(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get a page of Questions");
-        Page<QuestionDTO> page = questionService.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/questions");
+        Page<QuestionDTO> page;
+        if (eagerload) {
+            page = questionService.findAllWithEagerRelationships(pageable);
+        } else {
+            page = questionService.findAll(pageable);
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, String.format("/api/questions?eagerload=%b", eagerload));
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
@@ -108,6 +115,23 @@ public class QuestionResource {
         log.debug("REST request to get Question : {}", id);
         Optional<QuestionDTO> questionDTO = questionService.findOne(id);
         return ResponseUtil.wrapOrNotFound(questionDTO);
+    }
+
+    /**
+     * GET  /questions/byorder/:orderid : get the "order id" question.
+     *
+     * @param orderid the order id of the questionDTO to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the questionDTO, or with status 404 (Not Found)
+     */
+    @GetMapping("/questions/byorder/{orderid}")
+    @Timed
+    public ResponseEntity<QuestionDTO> getQuestionByOrderId(@PathVariable Integer orderid) {
+        log.debug("REST request to get Question by Order Id: {}", orderid);
+        Optional<QuestionDTO> questionDTO = questionService.findOneByOrder(orderid);
+        Long total = questionService.countAll();
+        Long nextId = orderid < total ? new Long(orderid + 1) : null;
+        Long prevId = orderid > 1 ? new Long(orderid - 1) : null;
+        return ResponseUtil.wrapOrNotFound(questionDTO, PaginationUtil.generateQuestionHttpHeaders(nextId, prevId, total));
     }
 
     /**

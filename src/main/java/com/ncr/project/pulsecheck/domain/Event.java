@@ -6,6 +6,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -28,11 +29,20 @@ public class Event implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
-    @Column(name = "event_name")
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "event_name", length = 255, nullable = false)
     private String eventName;
 
-    @Column(name = "event_date")
+    @Column(name = "event_description")
+    private String eventDescription;
+
+    @NotNull
+    @Column(name = "event_date", nullable = false)
     private Instant eventDate;
+
+    @Column(name = "closed")
+    private Boolean closed;
 
     @ManyToOne
     @JsonIgnoreProperties("events")
@@ -70,6 +80,19 @@ public class Event implements Serializable {
         this.eventName = eventName;
     }
 
+    public String getEventDescription() {
+        return eventDescription;
+    }
+
+    public Event eventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
+        return this;
+    }
+
+    public void setEventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
+    }
+
     public Instant getEventDate() {
         return eventDate;
     }
@@ -81,6 +104,19 @@ public class Event implements Serializable {
 
     public void setEventDate(Instant eventDate) {
         this.eventDate = eventDate;
+    }
+
+    public Boolean isClosed() {
+        return closed;
+    }
+
+    public Event closed(Boolean closed) {
+        this.closed = closed;
+        return this;
+    }
+
+    public void setClosed(Boolean closed) {
+        this.closed = closed;
     }
 
     public Organization getOrganization() {
@@ -172,7 +208,9 @@ public class Event implements Serializable {
         return "Event{" +
             "id=" + getId() +
             ", eventName='" + getEventName() + "'" +
+            ", eventDescription='" + getEventDescription() + "'" +
             ", eventDate='" + getEventDate() + "'" +
+            ", closed='" + isClosed() + "'" +
             "}";
     }
 }

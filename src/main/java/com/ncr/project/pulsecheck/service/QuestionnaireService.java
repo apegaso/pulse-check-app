@@ -34,6 +34,16 @@ public interface QuestionnaireService {
      */
     Optional<QuestionnaireDTO> findOne(Long id);
 
+
+    /**
+     * Get the questionnaire by participant and event.
+     *
+     * @param userid the id of the UserExt
+     * @param eventid the id of the Event
+     * @return the entity
+     */
+    Optional<QuestionnaireDTO> findOneByUserExtAndEvent(Long userid, Long eventid);
+
     /**
      * Delete the "id" questionnaire.
      *

@@ -3,6 +3,14 @@
     "fields": [],
     "relationships": [
         {
+            "relationshipType": "one-to-one",
+            "relationshipName": "userExt",
+            "otherEntityName": "userExt",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "orgAdmin"
+        },
+        {
             "relationshipType": "many-to-many",
             "otherEntityRelationshipName": "admins",
             "relationshipName": "organizations",
@@ -11,7 +19,7 @@
             "ownerSide": true
         }
     ],
-    "changelogDate": "20180903080257",
+    "changelogDate": "20180904153933",
     "entityTableName": "org_admin",
     "dto": "mapstruct",
     "pagination": "pagination",

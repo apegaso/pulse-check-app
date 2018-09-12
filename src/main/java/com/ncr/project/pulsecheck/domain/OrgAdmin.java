@@ -25,6 +25,10 @@ public class OrgAdmin implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
+    @OneToOne
+    @JoinColumn(unique = true)
+    private UserExt userExt;
+
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "org_admin_organizations",
@@ -39,6 +43,19 @@ public class OrgAdmin implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public UserExt getUserExt() {
+        return userExt;
+    }
+
+    public OrgAdmin userExt(UserExt userExt) {
+        this.userExt = userExt;
+        return this;
+    }
+
+    public void setUserExt(UserExt userExt) {
+        this.userExt = userExt;
     }
 
     public Set<Organization> getOrganizations() {

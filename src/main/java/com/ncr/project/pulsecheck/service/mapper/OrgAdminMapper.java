@@ -8,10 +8,14 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity OrgAdmin and its DTO OrgAdminDTO.
  */
-@Mapper(componentModel = "spring", uses = {OrganizationMapper.class})
+@Mapper(componentModel = "spring", uses = {UserExtMapper.class, OrganizationMapper.class})
 public interface OrgAdminMapper extends EntityMapper<OrgAdminDTO, OrgAdmin> {
 
+    @Mapping(source = "userExt.id", target = "userExtId")
+    OrgAdminDTO toDto(OrgAdmin orgAdmin);
 
+    @Mapping(source = "userExtId", target = "userExt")
+    OrgAdmin toEntity(OrgAdminDTO orgAdminDTO);
 
     default OrgAdmin fromId(Long id) {
         if (id == null) {

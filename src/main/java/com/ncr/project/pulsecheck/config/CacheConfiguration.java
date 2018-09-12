@@ -39,9 +39,10 @@ public class CacheConfiguration {
             cm.createCache(com.ncr.project.pulsecheck.domain.Authority.class.getName(), jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.User.class.getName() + ".authorities", jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.Organization.class.getName(), jcacheConfiguration);
+            cm.createCache(com.ncr.project.pulsecheck.domain.Organization.class.getName() + ".events", jcacheConfiguration);
+            cm.createCache(com.ncr.project.pulsecheck.domain.Organization.class.getName() + ".users", jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.Organization.class.getName() + ".admins", jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.Event.class.getName(), jcacheConfiguration);
-            cm.createCache(com.ncr.project.pulsecheck.domain.Event.class.getName() + ".organizations", jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.Event.class.getName() + ".participants", jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.Event.class.getName() + ".leads", jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.ClientLead.class.getName(), jcacheConfiguration);
@@ -52,13 +53,15 @@ public class CacheConfiguration {
             cm.createCache(com.ncr.project.pulsecheck.domain.Participant.class.getName() + ".events", jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.Question.class.getName(), jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.Question.class.getName() + ".categories", jcacheConfiguration);
-            cm.createCache(com.ncr.project.pulsecheck.domain.QuestionCategory.class.getName(), jcacheConfiguration);
-            cm.createCache(com.ncr.project.pulsecheck.domain.QuestionCategory.class.getName() + ".fathers", jcacheConfiguration);
+            cm.createCache(com.ncr.project.pulsecheck.domain.Category.class.getName(), jcacheConfiguration);
+            cm.createCache(com.ncr.project.pulsecheck.domain.Category.class.getName() + ".sons", jcacheConfiguration);
+            cm.createCache(com.ncr.project.pulsecheck.domain.Category.class.getName() + ".questions", jcacheConfiguration);
+            cm.createCache(com.ncr.project.pulsecheck.domain.CategoryLevel.class.getName(), jcacheConfiguration);
+            cm.createCache(com.ncr.project.pulsecheck.domain.CategoryLevel.class.getName() + ".categories", jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.Questionnaire.class.getName(), jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.QuestionnaireAnswer.class.getName(), jcacheConfiguration);
-            cm.createCache(com.ncr.project.pulsecheck.domain.Organization.class.getName() + ".events", jcacheConfiguration);
-            cm.createCache(com.ncr.project.pulsecheck.domain.QuestionCategory.class.getName() + ".soons", jcacheConfiguration);
-            cm.createCache(com.ncr.project.pulsecheck.domain.QuestionCategory.class.getName() + ".questions", jcacheConfiguration);
+            cm.createCache(com.ncr.project.pulsecheck.domain.UserExt.class.getName(), jcacheConfiguration);
+            cm.createCache(com.ncr.project.pulsecheck.domain.Email.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

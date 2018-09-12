@@ -6,6 +6,8 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { IOrgAdminPulse } from 'app/shared/model/org-admin-pulse.model';
 import { OrgAdminPulseService } from './org-admin-pulse.service';
+import { IUserExtPulse } from 'app/shared/model/user-ext-pulse.model';
+import { UserExtPulseService } from 'app/entities/user-ext-pulse';
 import { IOrganizationPulse } from 'app/shared/model/organization-pulse.model';
 import { OrganizationPulseService } from 'app/entities/organization-pulse';
 
@@ -17,11 +19,14 @@ export class OrgAdminPulseUpdateComponent implements OnInit {
     private _orgAdmin: IOrgAdminPulse;
     isSaving: boolean;
 
+    userexts: IUserExtPulse[];
+
     organizations: IOrganizationPulse[];
 
     constructor(
         private jhiAlertService: JhiAlertService,
         private orgAdminService: OrgAdminPulseService,
+        private userExtService: UserExtPulseService,
         private organizationService: OrganizationPulseService,
         private activatedRoute: ActivatedRoute
     ) {}
@@ -31,6 +36,21 @@ export class OrgAdminPulseUpdateComponent implements OnInit {
         this.activatedRoute.data.subscribe(({ orgAdmin }) => {
             this.orgAdmin = orgAdmin;
         });
+        this.userExtService.query({ filter: 'orgadmin-is-null' }).subscribe(
+            (res: HttpResponse<IUserExtPulse[]>) => {
+                if (!this.orgAdmin.userExtId) {
+                    this.userexts = res.body;
+                } else {
+                    this.userExtService.find(this.orgAdmin.userExtId).subscribe(
+                        (subRes: HttpResponse<IUserExtPulse>) => {
+                            this.userexts = [subRes.body].concat(res.body);
+                        },
+                        (subRes: HttpErrorResponse) => this.onError(subRes.message)
+                    );
+                }
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
         this.organizationService.query().subscribe(
             (res: HttpResponse<IOrganizationPulse[]>) => {
                 this.organizations = res.body;
@@ -67,6 +87,10 @@ export class OrgAdminPulseUpdateComponent implements OnInit {
 
     private onError(errorMessage: string) {
         this.jhiAlertService.error(errorMessage, null, null);
+    }
+
+    trackUserExtById(index: number, item: IUserExtPulse) {
+        return item.id;
     }
 
     trackOrganizationById(index: number, item: IOrganizationPulse) {

@@ -5,6 +5,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -26,12 +27,18 @@ public class Organization implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
-    @Column(name = "organization_name")
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "organization_name", length = 255, nullable = false)
     private String organizationName;
 
     @OneToMany(mappedBy = "organization")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Event> events = new HashSet<>();
+
+    @OneToMany(mappedBy = "organization")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<UserExt> users = new HashSet<>();
 
     @ManyToMany(mappedBy = "organizations")
     @JsonIgnore
@@ -83,6 +90,31 @@ public class Organization implements Serializable {
 
     public void setEvents(Set<Event> events) {
         this.events = events;
+    }
+
+    public Set<UserExt> getUsers() {
+        return users;
+    }
+
+    public Organization users(Set<UserExt> userExts) {
+        this.users = userExts;
+        return this;
+    }
+
+    public Organization addUsers(UserExt userExt) {
+        this.users.add(userExt);
+        userExt.setOrganization(this);
+        return this;
+    }
+
+    public Organization removeUsers(UserExt userExt) {
+        this.users.remove(userExt);
+        userExt.setOrganization(null);
+        return this;
+    }
+
+    public void setUsers(Set<UserExt> userExts) {
+        this.users = userExts;
     }
 
     public Set<OrgAdmin> getAdmins() {

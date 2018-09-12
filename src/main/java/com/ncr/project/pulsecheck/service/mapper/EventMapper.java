@@ -12,6 +12,7 @@ import org.mapstruct.*;
 public interface EventMapper extends EntityMapper<EventDTO, Event> {
 
     @Mapping(source = "organization.id", target = "organizationId")
+    @Mapping(source = "organization.organizationName", target = "organizationOrganizationName")
     EventDTO toDto(Event event);
 
     @Mapping(source = "organizationId", target = "organization")

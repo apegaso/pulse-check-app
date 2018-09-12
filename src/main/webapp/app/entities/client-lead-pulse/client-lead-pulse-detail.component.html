@@ -5,6 +5,12 @@
             <hr>
             <jhi-alert-error></jhi-alert-error>
             <dl class="row-md jh-entity-details">
+                <dt><span>User Ext</span></dt>
+                <dd>
+                    <div *ngIf="clientLead.userExtId">
+                        <a [routerLink]="['/user-ext-pulse', clientLead.userExtId, 'view']">{{clientLead.userExtId}}</a>
+                    </div>
+                </dd>
                 <dt><span>Events</span></dt>
                 <dd>
                     <span *ngFor="let events of clientLead.events; let last = last">

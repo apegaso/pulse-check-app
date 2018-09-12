@@ -3,7 +3,14 @@
     "fields": [
         {
             "fieldName": "organizationName",
-            "fieldType": "String"
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "minlength",
+                "maxlength"
+            ],
+            "fieldValidateRulesMinlength": 1,
+            "fieldValidateRulesMaxlength": 255
         }
     ],
     "relationships": [
@@ -14,6 +21,12 @@
             "otherEntityRelationshipName": "organization"
         },
         {
+            "relationshipType": "one-to-many",
+            "relationshipName": "users",
+            "otherEntityName": "userExt",
+            "otherEntityRelationshipName": "organization"
+        },
+        {
             "relationshipType": "many-to-many",
             "relationshipName": "admins",
             "otherEntityName": "orgAdmin",
@@ -21,7 +34,7 @@
             "otherEntityRelationshipName": "organizations"
         }
     ],
-    "changelogDate": "20180903080254",
+    "changelogDate": "20180904153930",
     "entityTableName": "organization",
     "dto": "mapstruct",
     "pagination": "pagination",

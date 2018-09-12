@@ -17,7 +17,8 @@
             <th jhiSortBy="id"><span>ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="importance"><span>Importance</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="performance"><span>Performance</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="questionaireId"><span>Questionaire</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="note"><span>Note</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="questionnaireId"><span>Questionnaire</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="questionId"><span>Question</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
@@ -27,9 +28,10 @@
                 <td><a [routerLink]="['/questionnaire-answer-pulse', questionnaireAnswer.id, 'view' ]">{{questionnaireAnswer.id}}</a></td>
                 <td>{{questionnaireAnswer.importance}}</td>
                 <td>{{questionnaireAnswer.performance}}</td>
+                <td>{{questionnaireAnswer.note}}</td>
                 <td>
-                    <div *ngIf="questionnaireAnswer.questionaireId">
-                        <a [routerLink]="['../questionnaire-pulse', questionnaireAnswer.questionaireId , 'view' ]" >{{questionnaireAnswer.questionaireId}}</a>
+                    <div *ngIf="questionnaireAnswer.questionnaireId">
+                        <a [routerLink]="['../questionnaire-pulse', questionnaireAnswer.questionnaireId , 'view' ]" >{{questionnaireAnswer.questionnaireId}}</a>
                     </div>
                 </td>
                 <td>

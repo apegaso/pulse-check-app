@@ -9,11 +9,15 @@
                 <dd>
                     <span>{{question.question}}</span>
                 </dd>
+                <dt><span>Order</span></dt>
+                <dd>
+                    <span>{{question.order}}</span>
+                </dd>
                 <dt><span>Category</span></dt>
                 <dd>
-                    <div *ngIf="question.categoryId">
-                        <a [routerLink]="['/question-category-pulse', question.categoryId, 'view']">{{question.categoryId}}</a>
-                    </div>
+                    <span *ngFor="let category of question.categories; let last = last">
+                        <a [routerLink]="['/category-pulse', category?.id, 'view' ]">{{category.label}}</a>{{last ? '' : ', '}}
+                    </span>
                 </dd>
             </dl>
 

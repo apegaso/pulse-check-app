@@ -25,6 +25,10 @@ public class Participant implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
+    @OneToOne
+    @JoinColumn(unique = true)
+    private UserExt userExt;
+
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JoinTable(name = "participant_events",
@@ -39,6 +43,19 @@ public class Participant implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public UserExt getUserExt() {
+        return userExt;
+    }
+
+    public Participant userExt(UserExt userExt) {
+        this.userExt = userExt;
+        return this;
+    }
+
+    public void setUserExt(UserExt userExt) {
+        this.userExt = userExt;
     }
 
     public Set<Event> getEvents() {

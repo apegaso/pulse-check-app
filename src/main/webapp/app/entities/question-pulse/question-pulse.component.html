@@ -16,7 +16,7 @@
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
             <th jhiSortBy="id"><span>ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="question"><span>Question</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="categoryId"><span>Category</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="order"><span>Order</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -24,11 +24,7 @@
             <tr *ngFor="let question of questions ;trackBy: trackId">
                 <td><a [routerLink]="['/question-pulse', question.id, 'view' ]">{{question.id}}</a></td>
                 <td>{{question.question}}</td>
-                <td>
-                    <div *ngIf="question.categoryId">
-                        <a [routerLink]="['../question-category-pulse', question.categoryId , 'view' ]" >{{question.categoryId}}</a>
-                    </div>
-                </td>
+                <td>{{question.order}}</td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"

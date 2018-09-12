@@ -6,9 +6,12 @@ import { PulseCheckAppClientLeadPulseModule } from './client-lead-pulse/client-l
 import { PulseCheckAppOrgAdminPulseModule } from './org-admin-pulse/org-admin-pulse.module';
 import { PulseCheckAppParticipantPulseModule } from './participant-pulse/participant-pulse.module';
 import { PulseCheckAppQuestionPulseModule } from './question-pulse/question-pulse.module';
-import { PulseCheckAppQuestionCategoryPulseModule } from './question-category-pulse/question-category-pulse.module';
+import { PulseCheckAppCategoryPulseModule } from './category-pulse/category-pulse.module';
+import { PulseCheckAppCategoryLevelPulseModule } from './category-level-pulse/category-level-pulse.module';
 import { PulseCheckAppQuestionnairePulseModule } from './questionnaire-pulse/questionnaire-pulse.module';
 import { PulseCheckAppQuestionnaireAnswerPulseModule } from './questionnaire-answer-pulse/questionnaire-answer-pulse.module';
+import { PulseCheckAppUserExtPulseModule } from './user-ext-pulse/user-ext-pulse.module';
+import { PulseCheckAppEmailModule } from './email/email.module';
 /* jhipster-needle-add-entity-module-import - JHipster will add entity modules imports here */
 
 @NgModule({
@@ -20,9 +23,12 @@ import { PulseCheckAppQuestionnaireAnswerPulseModule } from './questionnaire-ans
         PulseCheckAppOrgAdminPulseModule,
         PulseCheckAppParticipantPulseModule,
         PulseCheckAppQuestionPulseModule,
-        PulseCheckAppQuestionCategoryPulseModule,
+        PulseCheckAppCategoryPulseModule,
+        PulseCheckAppCategoryLevelPulseModule,
         PulseCheckAppQuestionnairePulseModule,
         PulseCheckAppQuestionnaireAnswerPulseModule,
+        PulseCheckAppUserExtPulseModule,
+        PulseCheckAppEmailModule,
         /* jhipster-needle-add-entity-module - JHipster will add entity modules here */
     ],
     declarations: [],

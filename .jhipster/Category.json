@@ -1,0 +1,53 @@
+{
+    "name": "Category",
+    "fields": [
+        {
+            "fieldName": "label",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "minlength",
+                "maxlength"
+            ],
+            "fieldValidateRulesMinlength": 1,
+            "fieldValidateRulesMaxlength": 255
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "father",
+            "otherEntityName": "category",
+            "otherEntityField": "label"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "level",
+            "otherEntityName": "categoryLevel",
+            "otherEntityField": "label"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "sons",
+            "otherEntityName": "category",
+            "otherEntityRelationshipName": "father"
+        },
+        {
+            "relationshipType": "many-to-many",
+            "relationshipName": "questions",
+            "otherEntityName": "question",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "category"
+        }
+    ],
+    "changelogDate": "20180904153936",
+    "entityTableName": "category",
+    "dto": "mapstruct",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*",
+    "angularJSSuffix": "pulse"
+}

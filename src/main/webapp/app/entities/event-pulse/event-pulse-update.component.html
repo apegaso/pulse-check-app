@@ -12,21 +12,55 @@
                 <div class="form-group">
                     <label class="form-control-label" for="field_eventName">Event Name</label>
                     <input type="text" class="form-control" name="eventName" id="field_eventName"
-                        [(ngModel)]="event.eventName" />
+                        [(ngModel)]="event.eventName" required minlength="1" maxlength="255"/>
+                    <div [hidden]="!(editForm.controls.eventName?.dirty && editForm.controls.eventName?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.eventName?.errors?.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.eventName?.errors?.minlength">
+                        This field is required to be at least 1 characters.
+                        </small>
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.eventName?.errors?.maxlength">
+                        This field cannot be longer than 255 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_eventDescription">Event Description</label>
+                    <input type="text" class="form-control" name="eventDescription" id="field_eventDescription"
+                        [(ngModel)]="event.eventDescription" />
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="field_eventDate">Event Date</label>
                     <div class="d-flex">
                         <input id="field_eventDate" type="datetime-local" class="form-control" name="eventDate" [(ngModel)]="eventDate"
-                        />
+                        required/>
                     </div>
+                    <div [hidden]="!(editForm.controls.eventDate?.dirty && editForm.controls.eventDate?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.eventDate?.errors?.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.eventDate?.errors?.ZonedDateTimelocal">
+                            This field should be a date and time.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_closed">Closed</label>
+                    <input type="checkbox" class="form-control" name="closed" id="field_closed"
+                        [(ngModel)]="event.closed" />
                 </div>
 
                 <div class="form-group">
                     <label class="form-control-label" for="field_organization">Organization</label>
                     <select class="form-control" id="field_organization" name="organization" [(ngModel)]="event.organizationId" >
                         <option [ngValue]="null"></option>
-                        <option [ngValue]="organizationOption.id" *ngFor="let organizationOption of organizations; trackBy: trackOrganizationById">{{organizationOption.id}}</option>
+                        <option [ngValue]="organizationOption.id" *ngFor="let organizationOption of organizations; trackBy: trackOrganizationById">{{organizationOption.organizationName}}</option>
                     </select>
                 </div>
             </div>

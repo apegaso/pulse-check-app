@@ -1,12 +1,14 @@
 package com.ncr.project.pulsecheck.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -24,12 +26,21 @@ public class Question implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
-    @Column(name = "question")
+    @NotNull
+    @Size(min = 1, max = 2048)
+    @Column(name = "question", length = 2048, nullable = false)
     private String question;
 
-    @ManyToOne
-    @JsonIgnoreProperties("questions")
-    private QuestionCategory category;
+    @NotNull
+    @Column(name = "jhi_order", nullable = false)
+    private Integer order;
+
+    @ManyToMany
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JoinTable(name = "question_category",
+               joinColumns = @JoinColumn(name = "questions_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "categories_id", referencedColumnName = "id"))
+    private Set<Category> categories = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -53,17 +64,42 @@ public class Question implements Serializable {
         this.question = question;
     }
 
-    public QuestionCategory getCategory() {
-        return category;
+    public Integer getOrder() {
+        return order;
     }
 
-    public Question category(QuestionCategory questionCategory) {
-        this.category = questionCategory;
+    public Question order(Integer order) {
+        this.order = order;
         return this;
     }
 
-    public void setCategory(QuestionCategory questionCategory) {
-        this.category = questionCategory;
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public Question categories(Set<Category> categories) {
+        this.categories = categories;
+        return this;
+    }
+
+    public Question addCategory(Category category) {
+        this.categories.add(category);
+        category.getQuestions().add(this);
+        return this;
+    }
+
+    public Question removeCategory(Category category) {
+        this.categories.remove(category);
+        category.getQuestions().remove(this);
+        return this;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -92,6 +128,7 @@ public class Question implements Serializable {
         return "Question{" +
             "id=" + getId() +
             ", question='" + getQuestion() + "'" +
+            ", order=" + getOrder() +
             "}";
     }
 }

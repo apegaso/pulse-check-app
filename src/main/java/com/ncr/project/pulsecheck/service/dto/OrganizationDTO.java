@@ -1,5 +1,6 @@
 package com.ncr.project.pulsecheck.service.dto;
 
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -10,6 +11,8 @@ public class OrganizationDTO implements Serializable {
 
     private Long id;
 
+    @NotNull
+    @Size(min = 1, max = 255)
     private String organizationName;
 
     public Long getId() {

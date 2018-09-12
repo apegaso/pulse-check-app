@@ -13,10 +13,14 @@
                 <dd>
                     <span>{{questionnaireAnswer.performance}}</span>
                 </dd>
-                <dt><span>Questionaire</span></dt>
+                <dt><span>Note</span></dt>
                 <dd>
-                    <div *ngIf="questionnaireAnswer.questionaireId">
-                        <a [routerLink]="['/questionnaire-pulse', questionnaireAnswer.questionaireId, 'view']">{{questionnaireAnswer.questionaireId}}</a>
+                    <span>{{questionnaireAnswer.note}}</span>
+                </dd>
+                <dt><span>Questionnaire</span></dt>
+                <dd>
+                    <div *ngIf="questionnaireAnswer.questionnaireId">
+                        <a [routerLink]="['/questionnaire-pulse', questionnaireAnswer.questionnaireId, 'view']">{{questionnaireAnswer.questionnaireId}}</a>
                     </div>
                 </dd>
                 <dt><span>Question</span></dt>

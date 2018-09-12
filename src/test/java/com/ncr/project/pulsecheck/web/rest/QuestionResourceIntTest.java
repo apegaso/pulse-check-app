@@ -12,9 +12,12 @@ import com.ncr.project.pulsecheck.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -24,12 +27,14 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
 
 import static com.ncr.project.pulsecheck.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -45,13 +50,19 @@ public class QuestionResourceIntTest {
     private static final String DEFAULT_QUESTION = "AAAAAAAAAA";
     private static final String UPDATED_QUESTION = "BBBBBBBBBB";
 
+    private static final Integer DEFAULT_ORDER = 1;
+    private static final Integer UPDATED_ORDER = 2;
+
     @Autowired
     private QuestionRepository questionRepository;
-
+    @Mock
+    private QuestionRepository questionRepositoryMock;
 
     @Autowired
     private QuestionMapper questionMapper;
     
+    @Mock
+    private QuestionService questionServiceMock;
 
     @Autowired
     private QuestionService questionService;
@@ -91,7 +102,8 @@ public class QuestionResourceIntTest {
      */
     public static Question createEntity(EntityManager em) {
         Question question = new Question()
-            .question(DEFAULT_QUESTION);
+            .question(DEFAULT_QUESTION)
+            .order(DEFAULT_ORDER);
         return question;
     }
 
@@ -117,6 +129,7 @@ public class QuestionResourceIntTest {
         assertThat(questionList).hasSize(databaseSizeBeforeCreate + 1);
         Question testQuestion = questionList.get(questionList.size() - 1);
         assertThat(testQuestion.getQuestion()).isEqualTo(DEFAULT_QUESTION);
+        assertThat(testQuestion.getOrder()).isEqualTo(DEFAULT_ORDER);
     }
 
     @Test
@@ -141,6 +154,44 @@ public class QuestionResourceIntTest {
 
     @Test
     @Transactional
+    public void checkQuestionIsRequired() throws Exception {
+        int databaseSizeBeforeTest = questionRepository.findAll().size();
+        // set the field null
+        question.setQuestion(null);
+
+        // Create the Question, which fails.
+        QuestionDTO questionDTO = questionMapper.toDto(question);
+
+        restQuestionMockMvc.perform(post("/api/questions")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(questionDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Question> questionList = questionRepository.findAll();
+        assertThat(questionList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkOrderIsRequired() throws Exception {
+        int databaseSizeBeforeTest = questionRepository.findAll().size();
+        // set the field null
+        question.setOrder(null);
+
+        // Create the Question, which fails.
+        QuestionDTO questionDTO = questionMapper.toDto(question);
+
+        restQuestionMockMvc.perform(post("/api/questions")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(questionDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Question> questionList = questionRepository.findAll();
+        assertThat(questionList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllQuestions() throws Exception {
         // Initialize the database
         questionRepository.saveAndFlush(question);
@@ -150,9 +201,40 @@ public class QuestionResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(question.getId().intValue())))
-            .andExpect(jsonPath("$.[*].question").value(hasItem(DEFAULT_QUESTION.toString())));
+            .andExpect(jsonPath("$.[*].question").value(hasItem(DEFAULT_QUESTION.toString())))
+            .andExpect(jsonPath("$.[*].order").value(hasItem(DEFAULT_ORDER)));
     }
     
+    public void getAllQuestionsWithEagerRelationshipsIsEnabled() throws Exception {
+        QuestionResource questionResource = new QuestionResource(questionServiceMock);
+        when(questionServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        MockMvc restQuestionMockMvc = MockMvcBuilders.standaloneSetup(questionResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restQuestionMockMvc.perform(get("/api/questions?eagerload=true"))
+        .andExpect(status().isOk());
+
+        verify(questionServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    public void getAllQuestionsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        QuestionResource questionResource = new QuestionResource(questionServiceMock);
+            when(questionServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+            MockMvc restQuestionMockMvc = MockMvcBuilders.standaloneSetup(questionResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restQuestionMockMvc.perform(get("/api/questions?eagerload=true"))
+        .andExpect(status().isOk());
+
+            verify(questionServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
 
     @Test
     @Transactional
@@ -165,7 +247,8 @@ public class QuestionResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(question.getId().intValue()))
-            .andExpect(jsonPath("$.question").value(DEFAULT_QUESTION.toString()));
+            .andExpect(jsonPath("$.question").value(DEFAULT_QUESTION.toString()))
+            .andExpect(jsonPath("$.order").value(DEFAULT_ORDER));
     }
     @Test
     @Transactional
@@ -188,7 +271,8 @@ public class QuestionResourceIntTest {
         // Disconnect from session so that the updates on updatedQuestion are not directly saved in db
         em.detach(updatedQuestion);
         updatedQuestion
-            .question(UPDATED_QUESTION);
+            .question(UPDATED_QUESTION)
+            .order(UPDATED_ORDER);
         QuestionDTO questionDTO = questionMapper.toDto(updatedQuestion);
 
         restQuestionMockMvc.perform(put("/api/questions")
@@ -201,6 +285,7 @@ public class QuestionResourceIntTest {
         assertThat(questionList).hasSize(databaseSizeBeforeUpdate);
         Question testQuestion = questionList.get(questionList.size() - 1);
         assertThat(testQuestion.getQuestion()).isEqualTo(UPDATED_QUESTION);
+        assertThat(testQuestion.getOrder()).isEqualTo(UPDATED_ORDER);
     }
 
     @Test

@@ -13,6 +13,7 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
 
 
     @Mapping(target = "events", ignore = true)
+    @Mapping(target = "users", ignore = true)
     @Mapping(target = "admins", ignore = true)
     Organization toEntity(OrganizationDTO organizationDTO);
 

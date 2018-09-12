@@ -5,6 +5,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -30,9 +31,13 @@ public class QuestionnaireAnswer implements Serializable {
     @Column(name = "performance")
     private Double performance;
 
+    @Size(max = 2048)
+    @Column(name = "note", length = 2048)
+    private String note;
+
     @ManyToOne
     @JsonIgnoreProperties("")
-    private Questionnaire questionaire;
+    private Questionnaire questionnaire;
 
     @ManyToOne
     @JsonIgnoreProperties("")
@@ -73,17 +78,30 @@ public class QuestionnaireAnswer implements Serializable {
         this.performance = performance;
     }
 
-    public Questionnaire getQuestionaire() {
-        return questionaire;
+    public String getNote() {
+        return note;
     }
 
-    public QuestionnaireAnswer questionaire(Questionnaire questionnaire) {
-        this.questionaire = questionnaire;
+    public QuestionnaireAnswer note(String note) {
+        this.note = note;
         return this;
     }
 
-    public void setQuestionaire(Questionnaire questionnaire) {
-        this.questionaire = questionnaire;
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public Questionnaire getQuestionnaire() {
+        return questionnaire;
+    }
+
+    public QuestionnaireAnswer questionnaire(Questionnaire questionnaire) {
+        this.questionnaire = questionnaire;
+        return this;
+    }
+
+    public void setQuestionnaire(Questionnaire questionnaire) {
+        this.questionnaire = questionnaire;
     }
 
     public Question getQuestion() {
@@ -126,6 +144,7 @@ public class QuestionnaireAnswer implements Serializable {
             "id=" + getId() +
             ", importance=" + getImportance() +
             ", performance=" + getPerformance() +
+            ", note='" + getNote() + "'" +
             "}";
     }
 }

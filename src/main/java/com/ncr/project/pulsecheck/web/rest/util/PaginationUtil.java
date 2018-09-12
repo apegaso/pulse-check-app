@@ -15,7 +15,15 @@ public final class PaginationUtil {
 
     private PaginationUtil() {
     }
+    public static <T> HttpHeaders generateQuestionHttpHeaders(Long nextId, Long prevId, Long total) {
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", Long.toString(total));
+        if(nextId != null) headers.add("X-Next-Id", Long.toString(nextId));
+        if(prevId != null) headers.add("X-Prev-Id", Long.toString(prevId));
+
+        return headers;
+    }
     public static <T> HttpHeaders generatePaginationHttpHeaders(Page<T> page, String baseUrl) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -42,4 +50,5 @@ public final class PaginationUtil {
     private static String generateUri(String baseUrl, int page, int size) {
         return UriComponentsBuilder.fromUriString(baseUrl).queryParam("page", page).queryParam("size", size).toUriString();
     }
+    
 }

@@ -24,7 +24,7 @@
             "otherEntityField": "id"
         }
     ],
-    "changelogDate": "20180903080301",
+    "changelogDate": "20180904153938",
     "entityTableName": "questionnaire",
     "dto": "mapstruct",
     "pagination": "no",

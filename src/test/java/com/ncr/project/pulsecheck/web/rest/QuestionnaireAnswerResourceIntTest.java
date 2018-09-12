@@ -48,6 +48,9 @@ public class QuestionnaireAnswerResourceIntTest {
     private static final Double DEFAULT_PERFORMANCE = 1D;
     private static final Double UPDATED_PERFORMANCE = 2D;
 
+    private static final String DEFAULT_NOTE = "AAAAAAAAAA";
+    private static final String UPDATED_NOTE = "BBBBBBBBBB";
+
     @Autowired
     private QuestionnaireAnswerRepository questionnaireAnswerRepository;
 
@@ -95,7 +98,8 @@ public class QuestionnaireAnswerResourceIntTest {
     public static QuestionnaireAnswer createEntity(EntityManager em) {
         QuestionnaireAnswer questionnaireAnswer = new QuestionnaireAnswer()
             .importance(DEFAULT_IMPORTANCE)
-            .performance(DEFAULT_PERFORMANCE);
+            .performance(DEFAULT_PERFORMANCE)
+            .note(DEFAULT_NOTE);
         return questionnaireAnswer;
     }
 
@@ -122,6 +126,7 @@ public class QuestionnaireAnswerResourceIntTest {
         QuestionnaireAnswer testQuestionnaireAnswer = questionnaireAnswerList.get(questionnaireAnswerList.size() - 1);
         assertThat(testQuestionnaireAnswer.getImportance()).isEqualTo(DEFAULT_IMPORTANCE);
         assertThat(testQuestionnaireAnswer.getPerformance()).isEqualTo(DEFAULT_PERFORMANCE);
+        assertThat(testQuestionnaireAnswer.getNote()).isEqualTo(DEFAULT_NOTE);
     }
 
     @Test
@@ -156,7 +161,8 @@ public class QuestionnaireAnswerResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(questionnaireAnswer.getId().intValue())))
             .andExpect(jsonPath("$.[*].importance").value(hasItem(DEFAULT_IMPORTANCE.doubleValue())))
-            .andExpect(jsonPath("$.[*].performance").value(hasItem(DEFAULT_PERFORMANCE.doubleValue())));
+            .andExpect(jsonPath("$.[*].performance").value(hasItem(DEFAULT_PERFORMANCE.doubleValue())))
+            .andExpect(jsonPath("$.[*].note").value(hasItem(DEFAULT_NOTE.toString())));
     }
     
 
@@ -172,7 +178,8 @@ public class QuestionnaireAnswerResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(questionnaireAnswer.getId().intValue()))
             .andExpect(jsonPath("$.importance").value(DEFAULT_IMPORTANCE.doubleValue()))
-            .andExpect(jsonPath("$.performance").value(DEFAULT_PERFORMANCE.doubleValue()));
+            .andExpect(jsonPath("$.performance").value(DEFAULT_PERFORMANCE.doubleValue()))
+            .andExpect(jsonPath("$.note").value(DEFAULT_NOTE.toString()));
     }
     @Test
     @Transactional
@@ -196,7 +203,8 @@ public class QuestionnaireAnswerResourceIntTest {
         em.detach(updatedQuestionnaireAnswer);
         updatedQuestionnaireAnswer
             .importance(UPDATED_IMPORTANCE)
-            .performance(UPDATED_PERFORMANCE);
+            .performance(UPDATED_PERFORMANCE)
+            .note(UPDATED_NOTE);
         QuestionnaireAnswerDTO questionnaireAnswerDTO = questionnaireAnswerMapper.toDto(updatedQuestionnaireAnswer);
 
         restQuestionnaireAnswerMockMvc.perform(put("/api/questionnaire-answers")
@@ -210,6 +218,7 @@ public class QuestionnaireAnswerResourceIntTest {
         QuestionnaireAnswer testQuestionnaireAnswer = questionnaireAnswerList.get(questionnaireAnswerList.size() - 1);
         assertThat(testQuestionnaireAnswer.getImportance()).isEqualTo(UPDATED_IMPORTANCE);
         assertThat(testQuestionnaireAnswer.getPerformance()).isEqualTo(UPDATED_PERFORMANCE);
+        assertThat(testQuestionnaireAnswer.getNote()).isEqualTo(UPDATED_NOTE);
     }
 
     @Test

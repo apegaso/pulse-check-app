@@ -9,6 +9,7 @@ import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
 import com.ncr.project.pulsecheck.security.SecurityUtils;
 import com.ncr.project.pulsecheck.service.util.RandomUtil;
 import com.ncr.project.pulsecheck.service.dto.UserDTO;
+import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ public class UserService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
+    private final UserExtService userExtService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -43,11 +45,12 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, UserExtService userExtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+		this.userExtService = userExtService;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -107,10 +110,60 @@ public class UserService {
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
-        userRepository.save(newUser);
+        
+        newUser = userRepository.save(newUser);
+        updateExtDTO(userDTO, newUser);
+        
+            
+        
+        // Optional<UserExt> userext = userExtRepository.findByEmail(userDTO.getEmail());
+        // if(userext.isPresent()) {
+        // 	UserExt userExt2 = userext.get();
+		// 	userExt2.setUser(newUser);
+		// 	userExt2.setJobRole(userDTO.getJobRole());
+			
+		// 	if(userExt2.getClientLead() != null)
+		// 		authorityRepository.findById(AuthoritiesConstants.CLIENT_LEAD).ifPresent(authorities::add);
+		// 	if(userExt2.getOrgAdmin() != null)
+		// 		authorityRepository.findById(AuthoritiesConstants.NCR_ADMIN).ifPresent(authorities::add);
+		// 	if(userExt2.getParticipant() != null)
+		// 		authorityRepository.findById(AuthoritiesConstants.PARTICIPANT).ifPresent(authorities::add);
+			
+			
+        // }else {
+        // 	UserExt newUserExt = new UserExt();
+        //     newUserExt.setUser(newUser);
+        //     newUserExt.setJobRole(userDTO.getJobRole());
+            
+        //     if(userDTO.getOrganizationId() != null && userDTO.getOrganizationId() > 0) {
+        //     	organizationRepository.findById(userDTO.getOrganizationId()).ifPresent(newUserExt::setOrganization);
+        //     } else {
+        //     	organizationRepository.findByOrganizationName(userDTO.getOrganizationName()).ifPresent(newUserExt::setOrganization);
+        //     }
+        //     userExtRepository.save(newUserExt);
+        // }
+        
+        
         this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
         return newUser;
+    }
+
+	private void updateExtDTO(UserDTO userDTO, User newUser) {
+		Optional<UserExtDTO> userExtDTOopt = userExtService.findOneByEmail(userDTO.getEmail());
+        if(userExtDTOopt.isPresent()){
+            UserExtDTO userExtDTO = userExtDTOopt.get();
+            userExtDTO.setJobRole(userDTO.getJobRole());
+            userExtDTO.setOrganizationId(userDTO.getOrganizationId());
+            userExtService.save(userExtDTO);
+        }else{
+            UserExtDTO userExtDTO = new UserExtDTO();
+            userExtDTO.setEmail(userDTO.getEmail());
+            userExtDTO.setUserId(newUser.getId());
+            userExtDTO.setJobRole(userDTO.getJobRole());
+            userExtDTO.setOrganizationId(userDTO.getOrganizationId());
+            userExtService.save(userExtDTO);
+        }
     }
 
     public User createUser(UserDTO userDTO) {
@@ -139,27 +192,32 @@ public class UserService {
         user.setResetDate(Instant.now());
         user.setActivated(true);
         userRepository.save(user);
+        
+        updateExtDTO(userDTO, user);
+        
+        
         this.clearUserCaches(user);
         log.debug("Created Information for User: {}", user);
         return user;
     }
 
+	
+
     /**
-     * Update basic information (first name, last name, email, language) for the current user.
+     * Update basic information (first name, last name, email, language) for the
+     * current user.
      *
      * @param firstName first name of user
-     * @param lastName last name of user
-     * @param email email id of user
-     * @param langKey language key
-     * @param imageUrl image URL of user
+     * @param lastName  last name of user
+     * @param email     email id of user
+     * @param langKey   language key
+     * @param imageUrl  image URL of user
      */
     public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
-        SecurityUtils.getCurrentUserLogin()
-            .flatMap(userRepository::findOneByLogin)
-            .ifPresent(user -> {
-                user.setFirstName(firstName);
-                user.setLastName(lastName);
-                user.setEmail(email);
+        SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneByLogin).ifPresent(user -> {
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
                 user.setLangKey(langKey);
                 user.setImageUrl(imageUrl);
                 this.clearUserCaches(user);
@@ -174,7 +232,7 @@ public class UserService {
      * @return updated user
      */
     public Optional<UserDTO> updateUser(UserDTO userDTO) {
-        return Optional.of(userRepository
+        Optional<UserDTO> ret = Optional.of(userRepository
             .findById(userDTO.getId()))
             .filter(Optional::isPresent)
             .map(Optional::get)
@@ -194,14 +252,22 @@ public class UserService {
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .forEach(managedAuthorities::add);
+                
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
                 return user;
             })
             .map(UserDTO::new);
+            userRepository
+            .findById(userDTO.getId())
+            .ifPresent(user -> {
+                updateExtDTO(userDTO,user);
+            });
+        return ret;
     }
 
     public void deleteUser(String login) {
+        //TODO: delete ext user
         userRepository.findOneByLogin(login).ifPresent(user -> {
             userRepository.delete(user);
             this.clearUserCaches(user);
@@ -226,8 +292,22 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Page<UserDTO> getAllManagedUsers(Pageable pageable) {
-        return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
+        return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(this::newUserDTO);
     }
+
+    public UserDTO newUserDTO(User t) {
+        UserDTO ret = new UserDTO(t);
+        Optional<UserExtDTO> ext = userExtService.findOneByEmail(t.getEmail());
+        if(ext.isPresent()){
+            UserExtDTO userExtDTO = ext.get();
+            ret.setJobRole(userExtDTO.getJobRole());
+            ret.setOrganizationId(userExtDTO.getOrganizationId());
+            ret.setOrganizationName(userExtDTO.getOrganizationName());
+
+        }
+        return ret;
+    }
+
 
     @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthoritiesByLogin(String login) {

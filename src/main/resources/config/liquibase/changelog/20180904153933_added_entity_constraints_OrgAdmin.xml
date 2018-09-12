@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <!--
+        Added the constraints for entity OrgAdmin.
+    -->
+    <changeSet id="20180904153933-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="user_ext_id"
+                                 baseTableName="org_admin"
+                                 constraintName="fk_org_admin_user_ext_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user_ext"/>
+
+        <addForeignKeyConstraint baseColumnNames="org_admins_id"
+                                 baseTableName="org_admin_organizations"
+                                 constraintName="fk_org_admin_organizations_org_admins_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="org_admin"/>
+        <addForeignKeyConstraint baseColumnNames="organizations_id"
+                                 baseTableName="org_admin_organizations"
+                                 constraintName="fk_org_admin_organizations_organizations_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="organization"/>
+        
+    </changeSet>
+</databaseChangeLog>

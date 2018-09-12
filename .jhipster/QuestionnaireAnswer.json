@@ -8,12 +8,20 @@
         {
             "fieldName": "performance",
             "fieldType": "Double"
+        },
+        {
+            "fieldName": "note",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": 2048
         }
     ],
     "relationships": [
         {
             "relationshipType": "many-to-one",
-            "relationshipName": "questionaire",
+            "relationshipName": "questionnaire",
             "otherEntityName": "questionnaire",
             "otherEntityField": "id"
         },
@@ -24,7 +32,7 @@
             "otherEntityField": "id"
         }
     ],
-    "changelogDate": "20180903080302",
+    "changelogDate": "20180904153939",
     "entityTableName": "questionnaire_answer",
     "dto": "mapstruct",
     "pagination": "pagination",

@@ -47,8 +47,14 @@ public class EventResourceIntTest {
     private static final String DEFAULT_EVENT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_EVENT_NAME = "BBBBBBBBBB";
 
+    private static final String DEFAULT_EVENT_DESCRIPTION = "AAAAAAAAAA";
+    private static final String UPDATED_EVENT_DESCRIPTION = "BBBBBBBBBB";
+
     private static final Instant DEFAULT_EVENT_DATE = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_EVENT_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
+    private static final Boolean DEFAULT_CLOSED = false;
+    private static final Boolean UPDATED_CLOSED = true;
 
     @Autowired
     private EventRepository eventRepository;
@@ -97,7 +103,9 @@ public class EventResourceIntTest {
     public static Event createEntity(EntityManager em) {
         Event event = new Event()
             .eventName(DEFAULT_EVENT_NAME)
-            .eventDate(DEFAULT_EVENT_DATE);
+            .eventDescription(DEFAULT_EVENT_DESCRIPTION)
+            .eventDate(DEFAULT_EVENT_DATE)
+            .closed(DEFAULT_CLOSED);
         return event;
     }
 
@@ -123,7 +131,9 @@ public class EventResourceIntTest {
         assertThat(eventList).hasSize(databaseSizeBeforeCreate + 1);
         Event testEvent = eventList.get(eventList.size() - 1);
         assertThat(testEvent.getEventName()).isEqualTo(DEFAULT_EVENT_NAME);
+        assertThat(testEvent.getEventDescription()).isEqualTo(DEFAULT_EVENT_DESCRIPTION);
         assertThat(testEvent.getEventDate()).isEqualTo(DEFAULT_EVENT_DATE);
+        assertThat(testEvent.isClosed()).isEqualTo(DEFAULT_CLOSED);
     }
 
     @Test
@@ -148,6 +158,44 @@ public class EventResourceIntTest {
 
     @Test
     @Transactional
+    public void checkEventNameIsRequired() throws Exception {
+        int databaseSizeBeforeTest = eventRepository.findAll().size();
+        // set the field null
+        event.setEventName(null);
+
+        // Create the Event, which fails.
+        EventDTO eventDTO = eventMapper.toDto(event);
+
+        restEventMockMvc.perform(post("/api/events")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(eventDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Event> eventList = eventRepository.findAll();
+        assertThat(eventList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkEventDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = eventRepository.findAll().size();
+        // set the field null
+        event.setEventDate(null);
+
+        // Create the Event, which fails.
+        EventDTO eventDTO = eventMapper.toDto(event);
+
+        restEventMockMvc.perform(post("/api/events")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(eventDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Event> eventList = eventRepository.findAll();
+        assertThat(eventList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllEvents() throws Exception {
         // Initialize the database
         eventRepository.saveAndFlush(event);
@@ -158,7 +206,9 @@ public class EventResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(event.getId().intValue())))
             .andExpect(jsonPath("$.[*].eventName").value(hasItem(DEFAULT_EVENT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].eventDate").value(hasItem(DEFAULT_EVENT_DATE.toString())));
+            .andExpect(jsonPath("$.[*].eventDescription").value(hasItem(DEFAULT_EVENT_DESCRIPTION.toString())))
+            .andExpect(jsonPath("$.[*].eventDate").value(hasItem(DEFAULT_EVENT_DATE.toString())))
+            .andExpect(jsonPath("$.[*].closed").value(hasItem(DEFAULT_CLOSED.booleanValue())));
     }
     
 
@@ -174,7 +224,9 @@ public class EventResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(event.getId().intValue()))
             .andExpect(jsonPath("$.eventName").value(DEFAULT_EVENT_NAME.toString()))
-            .andExpect(jsonPath("$.eventDate").value(DEFAULT_EVENT_DATE.toString()));
+            .andExpect(jsonPath("$.eventDescription").value(DEFAULT_EVENT_DESCRIPTION.toString()))
+            .andExpect(jsonPath("$.eventDate").value(DEFAULT_EVENT_DATE.toString()))
+            .andExpect(jsonPath("$.closed").value(DEFAULT_CLOSED.booleanValue()));
     }
     @Test
     @Transactional
@@ -198,7 +250,9 @@ public class EventResourceIntTest {
         em.detach(updatedEvent);
         updatedEvent
             .eventName(UPDATED_EVENT_NAME)
-            .eventDate(UPDATED_EVENT_DATE);
+            .eventDescription(UPDATED_EVENT_DESCRIPTION)
+            .eventDate(UPDATED_EVENT_DATE)
+            .closed(UPDATED_CLOSED);
         EventDTO eventDTO = eventMapper.toDto(updatedEvent);
 
         restEventMockMvc.perform(put("/api/events")
@@ -211,7 +265,9 @@ public class EventResourceIntTest {
         assertThat(eventList).hasSize(databaseSizeBeforeUpdate);
         Event testEvent = eventList.get(eventList.size() - 1);
         assertThat(testEvent.getEventName()).isEqualTo(UPDATED_EVENT_NAME);
+        assertThat(testEvent.getEventDescription()).isEqualTo(UPDATED_EVENT_DESCRIPTION);
         assertThat(testEvent.getEventDate()).isEqualTo(UPDATED_EVENT_DATE);
+        assertThat(testEvent.isClosed()).isEqualTo(UPDATED_CLOSED);
     }
 
     @Test

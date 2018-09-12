@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -48,7 +49,7 @@ public class QuestionnaireAnswerResource {
      */
     @PostMapping("/questionnaire-answers")
     @Timed
-    public ResponseEntity<QuestionnaireAnswerDTO> createQuestionnaireAnswer(@RequestBody QuestionnaireAnswerDTO questionnaireAnswerDTO) throws URISyntaxException {
+    public ResponseEntity<QuestionnaireAnswerDTO> createQuestionnaireAnswer(@Valid @RequestBody QuestionnaireAnswerDTO questionnaireAnswerDTO) throws URISyntaxException {
         log.debug("REST request to save QuestionnaireAnswer : {}", questionnaireAnswerDTO);
         if (questionnaireAnswerDTO.getId() != null) {
             throw new BadRequestAlertException("A new questionnaireAnswer cannot already have an ID", ENTITY_NAME, "idexists");
@@ -70,7 +71,7 @@ public class QuestionnaireAnswerResource {
      */
     @PutMapping("/questionnaire-answers")
     @Timed
-    public ResponseEntity<QuestionnaireAnswerDTO> updateQuestionnaireAnswer(@RequestBody QuestionnaireAnswerDTO questionnaireAnswerDTO) throws URISyntaxException {
+    public ResponseEntity<QuestionnaireAnswerDTO> updateQuestionnaireAnswer(@Valid @RequestBody QuestionnaireAnswerDTO questionnaireAnswerDTO) throws URISyntaxException {
         log.debug("REST request to update QuestionnaireAnswer : {}", questionnaireAnswerDTO);
         if (questionnaireAnswerDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");

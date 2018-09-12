@@ -1,6 +1,7 @@
 package com.ncr.project.pulsecheck.service.dto;
 
 import java.time.Instant;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -11,13 +12,22 @@ public class EventDTO implements Serializable {
 
     private Long id;
 
+    @NotNull
+    @Size(min = 1, max = 255)
     private String eventName;
 
+    private String eventDescription;
+
+    @NotNull
     private Instant eventDate;
+
+    private Boolean closed;
 
     private Long organizationId;
 
-    public Long getId() {
+    private String organizationOrganizationName;
+
+	public Long getId() {
         return id;
     }
 
@@ -33,6 +43,14 @@ public class EventDTO implements Serializable {
         this.eventName = eventName;
     }
 
+    public String getEventDescription() {
+        return eventDescription;
+    }
+
+    public void setEventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
+    }
+
     public Instant getEventDate() {
         return eventDate;
     }
@@ -41,12 +59,28 @@ public class EventDTO implements Serializable {
         this.eventDate = eventDate;
     }
 
+    public Boolean isClosed() {
+        return closed;
+    }
+
+    public void setClosed(Boolean closed) {
+        this.closed = closed;
+    }
+
     public Long getOrganizationId() {
         return organizationId;
     }
 
     public void setOrganizationId(Long organizationId) {
         this.organizationId = organizationId;
+    }
+
+    public String getOrganizationOrganizationName() {
+        return organizationOrganizationName;
+    }
+
+    public void setOrganizationOrganizationName(String organizationOrganizationName) {
+        this.organizationOrganizationName = organizationOrganizationName;
     }
 
     @Override
@@ -75,8 +109,11 @@ public class EventDTO implements Serializable {
         return "EventDTO{" +
             "id=" + getId() +
             ", eventName='" + getEventName() + "'" +
+            ", eventDescription='" + getEventDescription() + "'" +
             ", eventDate='" + getEventDate() + "'" +
+            ", closed='" + isClosed() + "'" +
             ", organization=" + getOrganizationId() +
+            ", organization='" + getOrganizationOrganizationName() + "'" +
             "}";
     }
 }

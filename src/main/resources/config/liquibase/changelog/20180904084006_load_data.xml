@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <property name="now" value="now()" dbms="h2"/>
+
+    <property name="now" value="GETDATE()" dbms="mssql"/>
+
+    <property name="floatType" value="float4" dbms="postgresql, h2"/>
+    <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
+
+    <!--
+        Added the entity UserExt.
+    -->
+    <changeSet id="20180904084006-load" author="diego">
+        <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/category_level.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="category_level"/>
+        <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/category.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="category">
+                  <column name="father_id" type="numeric"/>
+                  <column name="level_id" type="numeric"/>
+                  <column name="id" type="numeric"/>
+         </ext:loadData>
+         <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/question.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="question">
+                  <column name="category_id" type="numeric"/>
+                  <column name="jhi_order" type="numeric"/>
+                  <column name="id" type="numeric"/>
+         </ext:loadData>
+         <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/question_category.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="question_category">
+                  <column name="questions_id" type="numeric"/>
+                  <column name="categories_id" type="numeric"/>
+         </ext:loadData>
+         <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/organization.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="organization">
+                  <column name="id" type="numeric"/>
+         </ext:loadData>
+        
+    </changeSet>
+    <changeSet id="20180911174600-load" author="diego">
+        <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/event.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="event">
+                  <column name="id" type="numeric"/>
+                  <column name="closed" type="boolean"/>
+                  <column name="organization_id" type="numeric"/>
+         </ext:loadData>
+        <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/user_ext.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="user_ext">
+                  <column name="id" type="numeric"/>
+                  <column name="user_id" type="numeric"/>
+                  <column name="organization_id" type="numeric"/>
+         </ext:loadData>
+        <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/client_lead.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="client_lead">
+                  <column name="id" type="numeric"/>
+                  <column name="user_ext_id" type="numeric"/>
+         </ext:loadData>
+         <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/org_admin.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="org_admin">
+                  <column name="id" type="numeric"/>
+                  <column name="user_ext_id" type="numeric"/>
+         </ext:loadData>
+         <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/participant.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="participant">
+                  <column name="id" type="numeric"/>
+                  <column name="user_ext_id" type="numeric"/>
+         </ext:loadData>
+         <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/client_lead_events.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="client_lead_events">
+                  <column name="events_id" type="numeric"/>
+                  <column name="client_leads_id" type="numeric"/>
+         </ext:loadData>
+         <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/org_admin_organizations.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="org_admin_organizations">
+                  <column name="organizations_id" type="numeric"/>
+                  <column name="org_admins_id" type="numeric"/>
+         </ext:loadData>
+         <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/participant_events.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="participant_events">
+                  <column name="events_id" type="numeric"/>
+                  <column name="participants_id" type="numeric"/>
+         </ext:loadData>
+          <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/questionnaire.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="questionnaire">
+                  <column name="id" type="numeric"/>
+                  <column name="event_id" type="numeric"/>
+                  <column name="date_start" type="date"/>
+                  <column name="date_end" type="date"/>
+                  <column name="participant_id" type="numeric"/>
+         </ext:loadData>
+         <ext:loadData encoding="UTF-8"
+                  file="config/liquibase/questionnaire_answer.csv"
+                  separator=";"
+                  identityInsertEnabled="true"
+                  tableName="questionnaire_answer">
+                  <column name="id" type="numeric"/>
+                  <column name="importance" type="numeric"/>
+                  <column name="performance" type="numeric"/>
+                  <column name="questionnaire_id" type="numeric"/>
+                  <column name="question_id" type="numeric"/>
+         </ext:loadData>
+    </changeSet>
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
+</databaseChangeLog>

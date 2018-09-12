@@ -1,5 +1,6 @@
 package com.ncr.project.pulsecheck.service.dto;
 
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -14,7 +15,10 @@ public class QuestionnaireAnswerDTO implements Serializable {
 
     private Double performance;
 
-    private Long questionaireId;
+    @Size(max = 2048)
+    private String note;
+
+    private Long questionnaireId;
 
     private Long questionId;
 
@@ -42,12 +46,20 @@ public class QuestionnaireAnswerDTO implements Serializable {
         this.performance = performance;
     }
 
-    public Long getQuestionaireId() {
-        return questionaireId;
+    public String getNote() {
+        return note;
     }
 
-    public void setQuestionaireId(Long questionnaireId) {
-        this.questionaireId = questionnaireId;
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public Long getQuestionnaireId() {
+        return questionnaireId;
+    }
+
+    public void setQuestionnaireId(Long questionnaireId) {
+        this.questionnaireId = questionnaireId;
     }
 
     public Long getQuestionId() {
@@ -85,7 +97,8 @@ public class QuestionnaireAnswerDTO implements Serializable {
             "id=" + getId() +
             ", importance=" + getImportance() +
             ", performance=" + getPerformance() +
-            ", questionaire=" + getQuestionaireId() +
+            ", note='" + getNote() + "'" +
+            ", questionnaire=" + getQuestionnaireId() +
             ", question=" + getQuestionId() +
             "}";
     }
