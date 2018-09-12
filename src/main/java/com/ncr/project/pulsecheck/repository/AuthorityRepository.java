@@ -1,9 +1,6 @@
 package com.ncr.project.pulsecheck.repository;
 
-import java.util.List;
-
 import com.ncr.project.pulsecheck.domain.Authority;
-import com.ncr.project.pulsecheck.domain.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
