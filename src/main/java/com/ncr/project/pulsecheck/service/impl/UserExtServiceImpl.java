@@ -4,8 +4,11 @@ import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.UserExtRepository;
 import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
+import com.ncr.project.pulsecheck.service.mapper.OrganizationAndEventsVMMapper;
+import com.ncr.project.pulsecheck.service.mapper.OrganizationMapper;
 import com.ncr.project.pulsecheck.service.mapper.UserEventsVMMapper;
 import com.ncr.project.pulsecheck.service.mapper.UserExtMapper;
+import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
 import com.ncr.project.pulsecheck.web.rest.vm.UserEventsVM;
 
 import org.slf4j.Logger;
@@ -16,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -35,11 +39,21 @@ public class UserExtServiceImpl implements UserExtService {
     private final UserExtMapper userExtMapper;
     
     private final UserEventsVMMapper userEventsVMMapper;
+    
+    private final OrganizationMapper organizationMapper;
+    private final OrganizationAndEventsVMMapper organizationAndEventsVMMapper;
+    
 
-    public UserExtServiceImpl(UserExtRepository userExtRepository, UserExtMapper userExtMapper, UserEventsVMMapper userEventsVMMapper) {
+    public UserExtServiceImpl(UserExtRepository userExtRepository
+    , UserExtMapper userExtMapper
+    , UserEventsVMMapper userEventsVMMapper
+    , OrganizationMapper organizationMapper
+    , OrganizationAndEventsVMMapper organizationAndEventsVMMapper) {
         this.userExtRepository = userExtRepository;
         this.userExtMapper = userExtMapper;
         this.userEventsVMMapper = userEventsVMMapper;
+        this.organizationMapper = organizationMapper;
+        this.organizationAndEventsVMMapper = organizationAndEventsVMMapper;
     }
 
     /**
@@ -157,8 +171,27 @@ public class UserExtServiceImpl implements UserExtService {
     @Override
     @Transactional(readOnly = true)
     public Optional<UserEventsVM> findUserEventsVMByEmail(String email) {
-        log.debug("Request to get UserExt : {}", email);
+        log.debug("Request to findUserEventsVMByEmail : {}", email);
         return userExtRepository.findByEmail(email)
-            .map(userEventsVMMapper::userToUserEventsVM);
+                .map(userEventsVMMapper::userToUserEventsVM);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<List<OrganizationAndEventsVM>> findUserOrganizationsVMByEmail(String email) {
+        log.debug("Request to findUserOrganizationsVMByEmail : {}", email);
+        List<OrganizationAndEventsVM> ret = new ArrayList<>();
+        userExtRepository.findByEmail(email)
+            .map(u -> u.getOrgAdmin())
+            .map(oa -> oa.getOrganizations())
+            .ifPresent(o -> {
+                o.stream()
+                .map(organizationAndEventsVMMapper::toDto)
+                .forEach(c->ret.add(c));
+            });
+        
+        return Optional.of(ret);
+            
+        
 	}
 }

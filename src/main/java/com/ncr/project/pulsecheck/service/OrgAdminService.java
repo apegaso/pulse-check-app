@@ -1,5 +1,6 @@
 package com.ncr.project.pulsecheck.service;
 
+import com.ncr.project.pulsecheck.domain.Organization;
 import com.ncr.project.pulsecheck.service.dto.OrgAdminDTO;
 
 import org.springframework.data.domain.Page;
@@ -49,4 +50,18 @@ public interface OrgAdminService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+    /**
+     * Get the OrgAdmin by the UserExt email
+     *
+     * @param email the email of the UserExt entity
+     */
+	Optional<OrgAdminDTO> findOneByUserExtEmail(String email);
+
+    /**
+     * Delete the mappings with Organizations
+     *
+     * @param id the id of the organization
+     */
+	void removeOrganization(Organization org);
 }

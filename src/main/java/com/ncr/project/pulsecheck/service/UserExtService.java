@@ -1,6 +1,7 @@
 package com.ncr.project.pulsecheck.service;
 
 import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
+import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
 import com.ncr.project.pulsecheck.web.rest.vm.UserEventsVM;
 
 import org.springframework.data.domain.Page;
@@ -76,5 +77,13 @@ public interface UserExtService {
      * @param email the email of the entity
      * @return the entity
      */
-	Optional<UserEventsVM> findUserEventsVMByEmail(String email);
+    Optional<UserEventsVM> findUserEventsVMByEmail(String email);
+    
+    /**
+     * Get Organizations asssociated to User by user email.
+     *
+     * @param email the email of the user
+     * @return the List of associated organizations
+     */
+    Optional<List<OrganizationAndEventsVM>> findUserOrganizationsVMByEmail(String email);
 }

@@ -1,10 +1,18 @@
 package com.ncr.project.pulsecheck.service.impl;
 
+import com.ncr.project.pulsecheck.service.OrgAdminService;
 import com.ncr.project.pulsecheck.service.OrganizationService;
+import com.ncr.project.pulsecheck.service.UserExtService;
+import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.domain.Organization;
+import com.ncr.project.pulsecheck.domain.User;
 import com.ncr.project.pulsecheck.repository.OrganizationRepository;
+import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
 import com.ncr.project.pulsecheck.service.dto.OrganizationDTO;
+import com.ncr.project.pulsecheck.service.mapper.OrganizationAndEventsVMMapper;
 import com.ncr.project.pulsecheck.service.mapper.OrganizationMapper;
+import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import java.util.List;
 import java.util.Optional;
 /**
  * Service Implementation for managing Organization.
@@ -27,10 +35,27 @@ public class OrganizationServiceImpl implements OrganizationService {
     private final OrganizationRepository organizationRepository;
 
     private final OrganizationMapper organizationMapper;
+    
+    private final OrganizationAndEventsVMMapper organizationAndEventsVMMapper;
 
-    public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper) {
+    private final UserService userService;
+    
+    private final UserExtService userExtService;
+    
+    private final OrgAdminService orgAdminService;
+
+    public OrganizationServiceImpl(OrganizationRepository organizationRepository
+    , OrganizationMapper organizationMapper,
+    OrganizationAndEventsVMMapper organizationAndEventsVMMapper, 
+    UserService userService, 
+    UserExtService userExtService, 
+    OrgAdminService orgAdminService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
+        this.organizationAndEventsVMMapper = organizationAndEventsVMMapper;
+        this.userService = userService;
+        this.userExtService = userExtService;
+        this.orgAdminService = orgAdminService;
     }
 
     /**
@@ -44,7 +69,15 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to save Organization : {}", organizationDTO);
         Organization organization = organizationMapper.toEntity(organizationDTO);
         organization = organizationRepository.save(organization);
-        return organizationMapper.toDto(organization);
+        OrganizationDTO dto = organizationMapper.toDto(organization);
+        List<User> admins = userService.getUsersByAuthorities(AuthoritiesConstants.ADMIN.toString());
+        admins.forEach(u -> {
+            orgAdminService.findOneByUserExtEmail(u.getEmail()).ifPresent(a -> {
+                a.getOrganizations().add(dto);
+                orgAdminService.save(a);
+            });
+        });
+        return dto;
     }
 
     /**
@@ -60,7 +93,19 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationRepository.findAll(pageable)
             .map(organizationMapper::toDto);
     }
-
+    /**
+     * Get all the organizations and events.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<OrganizationAndEventsVM> findAllWithEvents(Pageable pageable) {
+        log.debug("Request to get all Organizationswith events");
+        return organizationRepository.findAll(pageable)
+            .map(organizationAndEventsVMMapper::toDto);
+    }
 
     /**
      * Get one organization by id.
@@ -84,6 +129,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public void delete(Long id) {
         log.debug("Request to delete Organization : {}", id);
+        organizationRepository.findById(id).ifPresent(org -> orgAdminService.removeOrganization(org));
         organizationRepository.deleteById(id);
     }
 }

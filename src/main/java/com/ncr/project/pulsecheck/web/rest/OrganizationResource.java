@@ -1,10 +1,15 @@
 package com.ncr.project.pulsecheck.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.ncr.project.pulsecheck.domain.User;
+import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
+import com.ncr.project.pulsecheck.service.OrgAdminService;
 import com.ncr.project.pulsecheck.service.OrganizationService;
+import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
 import com.ncr.project.pulsecheck.web.rest.util.PaginationUtil;
+import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
 import com.ncr.project.pulsecheck.service.dto.OrganizationDTO;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -35,9 +40,14 @@ public class OrganizationResource {
     private static final String ENTITY_NAME = "organization";
 
     private final OrganizationService organizationService;
+    private final UserService userService;
+    private final OrgAdminService orgAdminService;
+    
 
-    public OrganizationResource(OrganizationService organizationService) {
+    public OrganizationResource(OrganizationService organizationService, UserService userService, OrgAdminService orgAdminService) {
         this.organizationService = organizationService;
+        this.userService = userService;
+        this.orgAdminService = orgAdminService;
     }
 
     /**
@@ -55,6 +65,7 @@ public class OrganizationResource {
             throw new BadRequestAlertException("A new organization cannot already have an ID", ENTITY_NAME, "idexists");
         }
         OrganizationDTO result = organizationService.save(organizationDTO);
+        
         return ResponseEntity.created(new URI("/api/organizations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -77,6 +88,7 @@ public class OrganizationResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         OrganizationDTO result = organizationService.save(organizationDTO);
+        
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, organizationDTO.getId().toString()))
             .body(result);
@@ -97,6 +109,14 @@ public class OrganizationResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    @GetMapping("/organizations/events")
+    @Timed
+    public ResponseEntity<List<OrganizationAndEventsVM>> getAllOrganizationsAndEvents(Pageable pageable) {
+        log.debug("REST request to get a page of Organizations");
+        Page<OrganizationAndEventsVM> page = organizationService.findAllWithEvents(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations/events");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
     /**
      * GET  /organizations/:id : get the "id" organization.
      *

@@ -8,7 +8,7 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity OrgAdmin and its DTO OrgAdminDTO.
  */
-@Mapper(componentModel = "spring", uses = {UserExtMapper.class, OrganizationMapper.class})
+@Mapper(componentModel = "spring", uses = {UserExtMapper.class})
 public interface OrgAdminMapper extends EntityMapper<OrgAdminDTO, OrgAdmin> {
 
     @Mapping(source = "userExt.id", target = "userExtId")

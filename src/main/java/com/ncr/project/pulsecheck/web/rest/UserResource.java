@@ -8,6 +8,7 @@ import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
 import com.ncr.project.pulsecheck.service.MailService;
 import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.service.dto.UserDTO;
+import com.ncr.project.pulsecheck.service.mapper.UserMapper;
 import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.errors.EmailAlreadyUsedException;
 import com.ncr.project.pulsecheck.web.rest.errors.LoginAlreadyUsedException;
@@ -61,16 +62,18 @@ public class UserResource {
     private final Logger log = LoggerFactory.getLogger(UserResource.class);
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     private final UserRepository userRepository;
 
     private final MailService mailService;
 
-    public UserResource(UserService userService, UserRepository userRepository, MailService mailService) {
+    public UserResource(UserService userService, UserRepository userRepository, MailService mailService, UserMapper userMapper) {
 
         this.userService = userService;
         this.userRepository = userRepository;
         this.mailService = mailService;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -156,6 +159,16 @@ public class UserResource {
     @Secured(AuthoritiesConstants.ADMIN)
     public List<String> getAuthorities() {
         return userService.getAuthorities();
+    }
+
+     /**
+     * @return a list of the all user for given role
+     */
+    @GetMapping("/users/authorities/{authority}")
+    @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
+    public Optional<List<UserDTO>> getUserByAuthority(@PathVariable String authority) {
+        return Optional.ofNullable(userService.getUsersByAuthorities(authority)).map(userMapper::usersToUserDTOs);
     }
 
     /**

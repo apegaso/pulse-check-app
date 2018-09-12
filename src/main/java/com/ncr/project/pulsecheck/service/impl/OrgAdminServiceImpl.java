@@ -2,6 +2,7 @@ package com.ncr.project.pulsecheck.service.impl;
 
 import com.ncr.project.pulsecheck.service.OrgAdminService;
 import com.ncr.project.pulsecheck.domain.OrgAdmin;
+import com.ncr.project.pulsecheck.domain.Organization;
 import com.ncr.project.pulsecheck.repository.OrgAdminRepository;
 import com.ncr.project.pulsecheck.service.dto.OrgAdminDTO;
 import com.ncr.project.pulsecheck.service.mapper.OrgAdminMapper;
@@ -94,5 +95,19 @@ public class OrgAdminServiceImpl implements OrgAdminService {
     public void delete(Long id) {
         log.debug("Request to delete OrgAdmin : {}", id);
         orgAdminRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<OrgAdminDTO> findOneByUserExtEmail(String email) {
+        log.debug("Request to get OrgAdmin by UserExt email : {}", email);
+        return orgAdminRepository.findOneByUserExtEmail(email).map(orgAdminMapper::toDto);
+    }
+
+    @Override
+    public void removeOrganization(Organization org) {
+        org.getAdmins().forEach(admin -> {
+            admin.removeOrganizations(org);
+        });
     }
 }

@@ -1,7 +1,7 @@
 package com.ncr.project.pulsecheck.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-
+import com.ncr.project.pulsecheck.domain.Authority;
 import com.ncr.project.pulsecheck.domain.User;
 import com.ncr.project.pulsecheck.repository.UserRepository;
 import com.ncr.project.pulsecheck.security.SecurityUtils;
@@ -12,6 +12,7 @@ import com.ncr.project.pulsecheck.service.dto.UserDTO;
 import com.ncr.project.pulsecheck.web.rest.errors.*;
 import com.ncr.project.pulsecheck.web.rest.vm.KeyAndPasswordVM;
 import com.ncr.project.pulsecheck.web.rest.vm.ManagedUserVM;
+import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
 import com.ncr.project.pulsecheck.web.rest.vm.UserEventsVM;
 
 import org.apache.commons.lang3.StringUtils;
@@ -126,6 +127,25 @@ public class AccountResource {
         //     .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
         Optional<User> loggedUser = userService.getUserWithAuthorities();
         Optional<UserEventsVM> ret = loggedUser.map(u -> u.getEmail()).flatMap(userExtService::findUserEventsVMByEmail);
+
+        return ret.get();
+    }
+
+
+       /**
+     * GET  /account/organizations : get the organizations manageable from current logged user.
+     *
+     * @return organizations for current logged user
+     * @throws RuntimeException 500 (Internal Server Error) if the user couldn't be returned
+     */
+    @GetMapping("/account/organizations")
+    @Timed
+    public List<OrganizationAndEventsVM> getAccountOrganizations() {
+        // return userService.getUserWithAuthorities()
+        //     .map(userService::newUserDTO)
+        //     .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
+        Optional<User> loggedUser = userService.getUserWithAuthorities();
+        Optional<List<OrganizationAndEventsVM>> ret = loggedUser.map(u -> u.getEmail()).flatMap(userExtService::findUserOrganizationsVMByEmail);
 
         return ret.get();
     }

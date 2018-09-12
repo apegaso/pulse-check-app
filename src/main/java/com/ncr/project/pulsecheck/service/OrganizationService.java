@@ -1,6 +1,7 @@
 package com.ncr.project.pulsecheck.service;
 
 import com.ncr.project.pulsecheck.service.dto.OrganizationDTO;
+import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +28,13 @@ public interface OrganizationService {
      * @return the list of entities
      */
     Page<OrganizationDTO> findAll(Pageable pageable);
-
+    /**
+     * Get all the organizations and events.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    public Page<OrganizationAndEventsVM> findAllWithEvents(Pageable pageable);
 
     /**
      * Get the "id" organization.
