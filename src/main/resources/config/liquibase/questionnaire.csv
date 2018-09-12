@@ -1,3 +1,4 @@
 id;date_start;date_end;event_id;participant_id
-1;2018-09-11T10:02:00Z;;1;1
-2;;;1;2
+1;2018-09-11T10:02:00Z;NULL;1;1
+2;2018-09-11T10:04:00Z;2018-09-11T11:02:00Z;1;2
+3;NULL;NULL;1;3
