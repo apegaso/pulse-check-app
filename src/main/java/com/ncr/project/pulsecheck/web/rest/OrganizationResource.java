@@ -5,8 +5,10 @@ import com.ncr.project.pulsecheck.service.OrganizationService;
 import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
 import com.ncr.project.pulsecheck.web.rest.util.PaginationUtil;
+import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndAdminVM;
 import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
 import com.ncr.project.pulsecheck.service.dto.OrganizationDTO;
+
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +38,7 @@ public class OrganizationResource {
     private static final String ENTITY_NAME = "organization";
 
     private final OrganizationService organizationService;
+
     
 
     public OrganizationResource(OrganizationService organizationService) {
@@ -51,13 +54,14 @@ public class OrganizationResource {
      */
     @PostMapping("/organizations")
     @Timed
-    public ResponseEntity<OrganizationDTO> createOrganization(@Valid @RequestBody OrganizationDTO organizationDTO) throws URISyntaxException {
+    public ResponseEntity<OrganizationAndAdminVM> createOrganization(@Valid @RequestBody OrganizationAndAdminVM organizationDTO) throws URISyntaxException {
         log.debug("REST request to save Organization : {}", organizationDTO);
         if (organizationDTO.getId() != null) {
             throw new BadRequestAlertException("A new organization cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        OrganizationDTO result = organizationService.save(organizationDTO);
-        
+        OrganizationDTO org = organizationService.save(organizationDTO);
+        OrganizationAndAdminVM result = organizationService.setAdmins(org,organizationDTO.getAdmins());
+        log.debug("REST request to save Organization : {}", organizationDTO);
         return ResponseEntity.created(new URI("/api/organizations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -74,12 +78,13 @@ public class OrganizationResource {
      */
     @PutMapping("/organizations")
     @Timed
-    public ResponseEntity<OrganizationDTO> updateOrganization(@Valid @RequestBody OrganizationDTO organizationDTO) throws URISyntaxException {
+    public ResponseEntity<OrganizationAndAdminVM> updateOrganization(@Valid @RequestBody OrganizationAndAdminVM organizationDTO) throws URISyntaxException {
         log.debug("REST request to update Organization : {}", organizationDTO);
         if (organizationDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        OrganizationDTO result = organizationService.save(organizationDTO);
+        OrganizationDTO org = organizationService.save(organizationDTO);
+        OrganizationAndAdminVM result = organizationService.setAdmins(org,organizationDTO.getAdmins());
         
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, organizationDTO.getId().toString()))
@@ -109,6 +114,22 @@ public class OrganizationResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations/events");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
+
+    @GetMapping("/organizations/events/{id}")
+    @Timed
+    public ResponseEntity<OrganizationAndEventsVM> getOrganizationAndEvents(@PathVariable Long id) {
+        log.debug("REST request to get aan organization ad related events");
+        Optional<OrganizationAndEventsVM> organizationDTO = organizationService.findOneWithEvents(id);
+        return ResponseUtil.wrapOrNotFound(organizationDTO);
+    }
+    
+    @GetMapping("/organizations/admins/{id}")
+    @Timed
+    public ResponseEntity<OrganizationAndAdminVM> getOrganizationAdmin(@PathVariable Long id) {
+        log.debug("REST request to get Organization : {}", id);
+        Optional<OrganizationAndAdminVM> organizationDTO = organizationService.findOneWithAdmins(id);
+        return ResponseUtil.wrapOrNotFound(organizationDTO);
+    }
     /**
      * GET  /organizations/:id : get the "id" organization.
      *
@@ -123,6 +144,8 @@ public class OrganizationResource {
         return ResponseUtil.wrapOrNotFound(organizationDTO);
     }
 
+
+    
     /**
      * DELETE  /organizations/:id : delete the "id" organization.
      *

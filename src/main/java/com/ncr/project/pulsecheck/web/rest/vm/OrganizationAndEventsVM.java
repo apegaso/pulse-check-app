@@ -11,7 +11,7 @@ import com.ncr.project.pulsecheck.service.dto.OrganizationDTO;
 public class OrganizationAndEventsVM extends OrganizationDTO {
     private static final long serialVersionUID = 1L;
     private List<EventDTO> events;
-
+    public OrganizationAndEventsVM(){}
     public OrganizationAndEventsVM(OrganizationDTO dto) {
         this.setOrganizationName(dto.getOrganizationName());
         this.setId(dto.getId());

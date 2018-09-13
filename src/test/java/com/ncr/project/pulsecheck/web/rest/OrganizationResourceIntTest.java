@@ -44,7 +44,7 @@ public class OrganizationResourceIntTest {
 
     private static final String DEFAULT_ORGANIZATION_NAME = "AAAAAAAAAA";
     private static final String UPDATED_ORGANIZATION_NAME = "BBBBBBBBBB";
-
+    
     @Autowired
     private OrganizationRepository organizationRepository;
 

@@ -2,15 +2,25 @@ package com.ncr.project.pulsecheck.service.impl;
 
 import com.ncr.project.pulsecheck.service.OrgAdminService;
 import com.ncr.project.pulsecheck.service.OrganizationService;
+import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.service.UserService;
+import com.ncr.project.pulsecheck.domain.OrgAdmin;
 import com.ncr.project.pulsecheck.domain.Organization;
 import com.ncr.project.pulsecheck.domain.User;
+import com.ncr.project.pulsecheck.domain.UserExt;
+import com.ncr.project.pulsecheck.repository.OrgAdminRepository;
 import com.ncr.project.pulsecheck.repository.OrganizationRepository;
+import com.ncr.project.pulsecheck.repository.UserExtRepository;
 import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
+import com.ncr.project.pulsecheck.service.dto.OrgAdminDTO;
 import com.ncr.project.pulsecheck.service.dto.OrganizationDTO;
+import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
+import com.ncr.project.pulsecheck.service.mapper.OrganizationAndAdminsVMMapper;
 import com.ncr.project.pulsecheck.service.mapper.OrganizationAndEventsVMMapper;
 import com.ncr.project.pulsecheck.service.mapper.OrganizationMapper;
+import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndAdminVM;
 import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
+import com.ncr.project.pulsecheck.web.rest.vm.UserEmailVM;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +30,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+
 /**
  * Service Implementation for managing Organization.
  */
@@ -36,21 +49,33 @@ public class OrganizationServiceImpl implements OrganizationService {
     private final OrganizationMapper organizationMapper;
     
     private final OrganizationAndEventsVMMapper organizationAndEventsVMMapper;
+    private final OrganizationAndAdminsVMMapper organizationAndAdminsVMMapper;
 
     private final UserService userService;
+    private final UserExtService userExtService;
+    private final UserExtRepository userExtRepository;
     
     private final OrgAdminService orgAdminService;
+    private final OrgAdminRepository orgAdminRepository;
 
     public OrganizationServiceImpl(OrganizationRepository organizationRepository
     , OrganizationMapper organizationMapper,
     OrganizationAndEventsVMMapper organizationAndEventsVMMapper, 
     UserService userService, 
+    UserExtService userExtService, 
+    UserExtRepository userExtRepository,
+    OrgAdminRepository orgAdminRepository,
+    OrganizationAndAdminsVMMapper organizationAndAdminsVMMapper,
     OrgAdminService orgAdminService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.organizationAndEventsVMMapper = organizationAndEventsVMMapper;
         this.userService = userService;
+        this.userExtService = userExtService;
         this.orgAdminService = orgAdminService;
+        this.userExtRepository = userExtRepository;
+        this.organizationAndAdminsVMMapper = organizationAndAdminsVMMapper;
+        this.orgAdminRepository = orgAdminRepository;
     }
 
     /**
@@ -126,5 +151,73 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to delete Organization : {}", id);
         organizationRepository.findById(id).ifPresent(org -> orgAdminService.removeOrganization(org));
         organizationRepository.deleteById(id);
+    }
+
+    @Override
+	public OrganizationAndAdminVM setAdmins(OrganizationDTO organizationDTO, List<UserEmailVM> admins){
+        //TODO:REFACTOR new user retruning empty email 
+        if(admins != null && !admins.isEmpty()){
+            
+            admins.forEach(e -> {
+                Organization organization = organizationRepository.findById(organizationDTO.getId()).get();
+                Optional<UserExt> userExtOptional;
+                // UserExt existingUserExt = userExtService.createIfNotExists(e.getUserExtId(), e.getEmail());
+                // OrgAdmin orgAdmin = orgAdminService.createIfNotExists(existingUserExt);
+                if(e.getUserExtId() == null) {
+                    userExtOptional = userExtRepository.findByEmail(e.getEmail());
+                    if(!userExtOptional.isPresent()){
+                        UserExtDTO userExtDTO = new UserExtDTO();
+                        userExtDTO.setEmail(e.getEmail());
+                        userExtDTO = userExtService.save(userExtDTO);
+                        userExtOptional = userExtRepository.findById(userExtDTO.getId());
+                    }
+                    UserExt userExt = userExtOptional.get();
+                    OrgAdmin orgAdmin = userExt.getOrgAdmin();
+                    if(orgAdmin == null) {
+                        OrgAdminDTO orgAdminDto = new OrgAdminDTO();
+                        orgAdminDto.setUserExtId(userExt.getId());
+                        orgAdminDto = orgAdminService.save(orgAdminDto);
+                        System.out.println(orgAdminDto);
+                        Optional<OrgAdmin> findById = orgAdminRepository.findById(orgAdminDto.getId());
+
+                        userExtOptional = userExtRepository.findByEmail(e.getEmail());
+                        if(userExtOptional.get().getOrgAdmin() == null){
+                            userExtOptional.get().setOrgAdmin(findById.get());
+                        }
+                        System.out.println(userExtOptional.get());
+                    }
+					
+                }else{
+                    userExtOptional = userExtRepository.findById(e.getUserExtId());
+                }
+                System.out.println(userExtOptional.get().getOrgAdmin());
+                userExtOptional.get().getOrgAdmin().addOrganizations(organization);
+                
+                
+            });
+        }
+        List<UserEmailVM> adminsRet = new ArrayList<>();
+        Organization organization = organizationRepository.findById(organizationDTO.getId()).get();
+        organization.getAdmins().forEach(a -> {
+            UserEmailVM tmp = new UserEmailVM(a.getUserExt().getId(),a.getUserExt().getEmail());
+            adminsRet.add(tmp);
+        });
+        OrganizationAndAdminVM ret = new OrganizationAndAdminVM(organizationDTO);
+        
+		ret.setAdmins(adminsRet);
+        
+		return ret;
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+	public Optional<OrganizationAndAdminVM> findOneWithAdmins(Long id){
+        return organizationRepository.findById(id).map(organizationAndAdminsVMMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<OrganizationAndEventsVM> findOneWithEvents(Long id) {
+        return organizationRepository.findById(id).map(organizationAndEventsVMMapper::toDto);
     }
 }

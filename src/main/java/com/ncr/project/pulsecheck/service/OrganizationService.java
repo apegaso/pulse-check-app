@@ -1,11 +1,14 @@
 package com.ncr.project.pulsecheck.service;
 
 import com.ncr.project.pulsecheck.service.dto.OrganizationDTO;
+import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndAdminVM;
 import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
+import com.ncr.project.pulsecheck.web.rest.vm.UserEmailVM;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -50,4 +53,12 @@ public interface OrganizationService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+	OrganizationAndAdminVM setAdmins(OrganizationDTO org, List<UserEmailVM> admins);
+
+	Optional<OrganizationAndAdminVM> findOneWithAdmins(Long id);
+
+	Optional<OrganizationAndEventsVM> findOneWithEvents(Long id);
+
+	
 }
