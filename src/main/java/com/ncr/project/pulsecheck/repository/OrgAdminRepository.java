@@ -26,7 +26,7 @@ public interface OrgAdminRepository extends JpaRepository<OrgAdmin, Long> {
     @Query(value = "select distinct org_admin from OrgAdmin org_admin left join fetch org_admin.organizations")
     List<OrgAdmin> findAllWithEagerRelationships();
 
-    @Query("select org_admin from OrgAdmin org_admin left join fetch org_admin.organizations where org_admin.id =:id")
+    @Query("select org_admin from OrgAdmin org_admin left join fetch org_admin.organizations join fetch org_admin.userExt where org_admin.id =:id")
     Optional<OrgAdmin> findOneWithEagerRelationships(@Param("id") Long id);
     
     @Query("select org_admin from OrgAdmin org_admin join fetch org_admin.userExt user_ext where user_ext.email =:email")

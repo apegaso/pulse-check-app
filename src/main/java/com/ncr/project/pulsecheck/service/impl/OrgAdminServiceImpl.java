@@ -3,6 +3,7 @@ package com.ncr.project.pulsecheck.service.impl;
 import com.ncr.project.pulsecheck.service.OrgAdminService;
 import com.ncr.project.pulsecheck.domain.OrgAdmin;
 import com.ncr.project.pulsecheck.domain.Organization;
+import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.OrgAdminRepository;
 import com.ncr.project.pulsecheck.service.dto.OrgAdminDTO;
 import com.ncr.project.pulsecheck.service.mapper.OrgAdminMapper;
@@ -14,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import java.util.HashSet;
 import java.util.Optional;
 /**
  * Service Implementation for managing OrgAdmin.
@@ -110,4 +111,16 @@ public class OrgAdminServiceImpl implements OrgAdminService {
             admin.removeOrganizations(org);
         });
     }
+
+    @Override
+    public OrgAdmin createIfNotExists(UserExt existingUserExt) {
+        OrgAdmin orgAdmin = existingUserExt.getOrgAdmin();
+        if(orgAdmin != null) return orgAdmin;
+
+        orgAdmin = new OrgAdmin();
+        orgAdmin.setUserExt(existingUserExt);
+        orgAdmin = orgAdminRepository.save(orgAdmin);
+        orgAdmin = orgAdminRepository.findOneWithEagerRelationships(orgAdmin.getId()).get();
+        return orgAdmin;
+	}
 }

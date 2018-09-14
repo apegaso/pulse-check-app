@@ -1,6 +1,8 @@
 package com.ncr.project.pulsecheck.service;
 
+import com.ncr.project.pulsecheck.domain.OrgAdmin;
 import com.ncr.project.pulsecheck.domain.Organization;
+import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.service.dto.OrgAdminDTO;
 
 import org.springframework.data.domain.Page;
@@ -64,4 +66,6 @@ public interface OrgAdminService {
      * @param id the id of the organization
      */
 	void removeOrganization(Organization org);
+
+	OrgAdmin createIfNotExists(UserExt existingUserExt);
 }

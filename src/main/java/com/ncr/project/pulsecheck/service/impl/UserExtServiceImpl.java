@@ -190,4 +190,23 @@ public class UserExtServiceImpl implements UserExtService {
             
         
 	}
+
+    @Override
+    public UserExt createIfNotExists(Long userExtId, String email) {
+        if(userExtId != null && userExtId > 0){
+            Optional<UserExt> findById = userExtRepository.findById(userExtId);
+            if(findById.isPresent()) return findById.get();
+        }
+        if(email == null) return null;
+        Optional<UserExt> findByEmail = userExtRepository.findByEmail(email);
+        if(findByEmail.isPresent()) return findByEmail.get();
+
+        UserExtDTO userExtDTO = new UserExtDTO();
+        userExtDTO.setEmail(email);
+        UserExt entity = userExtMapper.toEntity(userExtDTO);
+        System.out.println("aaaa ********************* before save "+entity);     
+        UserExt save = userExtRepository.save(entity);
+        System.out.println("aaaa ********************* after save "+save);     
+        return save;
+    }
 }

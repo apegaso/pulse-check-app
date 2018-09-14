@@ -108,6 +108,8 @@ public class OrgAdmin implements Serializable {
     public String toString() {
         return "OrgAdmin{" +
             "id=" + getId() +
+            "userExt=" + getUserExt() +
+            "organizations=" + getOrganizations() +
             "}";
     }
 }

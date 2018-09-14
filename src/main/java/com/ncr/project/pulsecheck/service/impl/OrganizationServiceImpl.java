@@ -155,45 +155,12 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
 	public OrganizationAndAdminVM setAdmins(OrganizationDTO organizationDTO, List<UserEmailVM> admins){
-        //TODO:REFACTOR new user retruning empty email 
         if(admins != null && !admins.isEmpty()){
-            
+            Organization organization = organizationRepository.findById(organizationDTO.getId()).get();
             admins.forEach(e -> {
-                Organization organization = organizationRepository.findById(organizationDTO.getId()).get();
-                Optional<UserExt> userExtOptional;
-                // UserExt existingUserExt = userExtService.createIfNotExists(e.getUserExtId(), e.getEmail());
-                // OrgAdmin orgAdmin = orgAdminService.createIfNotExists(existingUserExt);
-                if(e.getUserExtId() == null) {
-                    userExtOptional = userExtRepository.findByEmail(e.getEmail());
-                    if(!userExtOptional.isPresent()){
-                        UserExtDTO userExtDTO = new UserExtDTO();
-                        userExtDTO.setEmail(e.getEmail());
-                        userExtDTO = userExtService.save(userExtDTO);
-                        userExtOptional = userExtRepository.findById(userExtDTO.getId());
-                    }
-                    UserExt userExt = userExtOptional.get();
-                    OrgAdmin orgAdmin = userExt.getOrgAdmin();
-                    if(orgAdmin == null) {
-                        OrgAdminDTO orgAdminDto = new OrgAdminDTO();
-                        orgAdminDto.setUserExtId(userExt.getId());
-                        orgAdminDto = orgAdminService.save(orgAdminDto);
-                        System.out.println(orgAdminDto);
-                        Optional<OrgAdmin> findById = orgAdminRepository.findById(orgAdminDto.getId());
-
-                        userExtOptional = userExtRepository.findByEmail(e.getEmail());
-                        if(userExtOptional.get().getOrgAdmin() == null){
-                            userExtOptional.get().setOrgAdmin(findById.get());
-                        }
-                        System.out.println(userExtOptional.get());
-                    }
-					
-                }else{
-                    userExtOptional = userExtRepository.findById(e.getUserExtId());
-                }
-                System.out.println(userExtOptional.get().getOrgAdmin());
-                userExtOptional.get().getOrgAdmin().addOrganizations(organization);
-                
-                
+                UserExt existingUserExt = userExtService.createIfNotExists(e.getUserExtId(), e.getEmail());
+                OrgAdmin orgAdmin = orgAdminService.createIfNotExists(existingUserExt);
+                orgAdmin.addOrganizations(organization);   
             });
         }
         List<UserEmailVM> adminsRet = new ArrayList<>();
@@ -205,7 +172,6 @@ public class OrganizationServiceImpl implements OrganizationService {
         OrganizationAndAdminVM ret = new OrganizationAndAdminVM(organizationDTO);
         
 		ret.setAdmins(adminsRet);
-        
 		return ret;
     }
     

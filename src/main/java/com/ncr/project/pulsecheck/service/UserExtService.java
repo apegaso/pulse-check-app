@@ -1,5 +1,6 @@
 package com.ncr.project.pulsecheck.service;
 
+import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
 import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
 import com.ncr.project.pulsecheck.web.rest.vm.UserEventsVM;
@@ -86,4 +87,6 @@ public interface UserExtService {
      * @return the List of associated organizations
      */
     Optional<List<OrganizationAndEventsVM>> findUserOrganizationsVMByEmail(String email);
+
+	UserExt createIfNotExists(Long userExtId, String email);
 }
