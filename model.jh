@@ -32,9 +32,16 @@ entity Participant{
 
 }
 
+entity QuestionGroup{
+	questionNumber Integer required
+}
 entity Question {
 	question String required minlength(1) maxlength(2048)
 	order Integer required
+    subQuestion String minlength(1) maxlength(2048)
+    importanceScoreActive Boolean
+    performanceScoreActive Boolean
+    showQuestion Boolean
 }
 
 entity Category {
@@ -68,7 +75,8 @@ relationship ManyToOne{
     QuestionnaireAnswer{questionnaire} to Questionnaire,
     Questionnaire{event} to Event,
     Questionnaire{participant} to Participant,
-    QuestionnaireAnswer{question} to Question
+    QuestionnaireAnswer{question} to Question,
+    Question{group} to QuestionGroup
 }	
 
 relationship OneToOne{
