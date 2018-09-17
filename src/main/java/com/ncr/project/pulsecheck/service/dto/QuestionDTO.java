@@ -22,6 +22,17 @@ public class QuestionDTO implements Serializable {
     @NotNull
     private Integer order;
 
+    @Size(min = 1, max = 2048)
+    private String subQuestion;
+
+    private Boolean importanceScoreActive;
+
+    private Boolean performanceScoreActive;
+
+    private Boolean showQuestion;
+
+    private Long groupId;
+
     private Set<CategoryDTO> categories = new HashSet<>();
 
     public Long getId() {
@@ -46,6 +57,46 @@ public class QuestionDTO implements Serializable {
 
     public void setOrder(Integer order) {
         this.order = order;
+    }
+
+    public String getSubQuestion() {
+        return subQuestion;
+    }
+
+    public void setSubQuestion(String subQuestion) {
+        this.subQuestion = subQuestion;
+    }
+
+    public Boolean isImportanceScoreActive() {
+        return importanceScoreActive;
+    }
+
+    public void setImportanceScoreActive(Boolean importanceScoreActive) {
+        this.importanceScoreActive = importanceScoreActive;
+    }
+
+    public Boolean isPerformanceScoreActive() {
+        return performanceScoreActive;
+    }
+
+    public void setPerformanceScoreActive(Boolean performanceScoreActive) {
+        this.performanceScoreActive = performanceScoreActive;
+    }
+
+    public Boolean isShowQuestion() {
+        return showQuestion;
+    }
+
+    public void setShowQuestion(Boolean showQuestion) {
+        this.showQuestion = showQuestion;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long questionGroupId) {
+        this.groupId = questionGroupId;
     }
 
     public Set<CategoryDTO> getCategories() {
@@ -83,6 +134,11 @@ public class QuestionDTO implements Serializable {
             "id=" + getId() +
             ", question='" + getQuestion() + "'" +
             ", order=" + getOrder() +
+            ", subQuestion='" + getSubQuestion() + "'" +
+            ", importanceScoreActive='" + isImportanceScoreActive() + "'" +
+            ", performanceScoreActive='" + isPerformanceScoreActive() + "'" +
+            ", showQuestion='" + isShowQuestion() + "'" +
+            ", group=" + getGroupId() +
             "}";
     }
 }

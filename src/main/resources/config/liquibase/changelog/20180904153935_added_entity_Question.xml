@@ -29,6 +29,26 @@
                 <constraints nullable="false" />
             </column>
 
+            <column name="sub_question" type="varchar(2048)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="importance_score_active" type="bit">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="performance_score_active" type="bit">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="show_question" type="bit">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="group_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
         

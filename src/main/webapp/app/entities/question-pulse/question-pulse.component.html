@@ -17,6 +17,11 @@
             <th jhiSortBy="id"><span>ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="question"><span>Question</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="order"><span>Order</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="subQuestion"><span>Sub Question</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="importanceScoreActive"><span>Importance Score Active</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="performanceScoreActive"><span>Performance Score Active</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="showQuestion"><span>Show Question</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="groupId"><span>Group</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -25,6 +30,15 @@
                 <td><a [routerLink]="['/question-pulse', question.id, 'view' ]">{{question.id}}</a></td>
                 <td>{{question.question}}</td>
                 <td>{{question.order}}</td>
+                <td>{{question.subQuestion}}</td>
+                <td>{{question.importanceScoreActive}}</td>
+                <td>{{question.performanceScoreActive}}</td>
+                <td>{{question.showQuestion}}</td>
+                <td>
+                    <div *ngIf="question.groupId">
+                        <a [routerLink]="['../question-group-pulse', question.groupId , 'view' ]" >{{question.groupId}}</a>
+                    </div>
+                </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"

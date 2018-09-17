@@ -15,7 +15,7 @@ import org.mapstruct.factory.Mappers;
 /**
  * Mapper for the entity Question and its DTO QuestionDTO.
  */
-@Mapper(componentModel = "spring", uses = {CategoryMapper.class})
+@Mapper(componentModel = "spring", uses = {QuestionGroupMapper.class, CategoryMapper.class})
 public interface QuestionMapper extends EntityMapper<QuestionDTO, Question> {
     CategoryMapper categoryMapper = Mappers.getMapper(CategoryMapper.class);
     @Override
@@ -24,6 +24,7 @@ public interface QuestionMapper extends EntityMapper<QuestionDTO, Question> {
         ret.setId(entity.getId());
         ret.setOrder(entity.getOrder());
         ret.setQuestion(entity.getQuestion());
+        ret.setGroupId(entity.getGroup().getId());
         final Set<Category> allCategories = new HashSet<>();
         entity.getCategories().forEach(c->{
             allCategories.add(c); 
@@ -33,6 +34,11 @@ public interface QuestionMapper extends EntityMapper<QuestionDTO, Question> {
 
         return ret;
     }
+    // @Mapping(source = "group.id", target = "groupId")
+    // QuestionDTO toDto(Question question);
+
+    @Mapping(source = "groupId", target = "group")
+    Question toEntity(QuestionDTO questionDTO);
 
     default Question fromId(Long id) {
         if (id == null) {

@@ -1,5 +1,6 @@
 package com.ncr.project.pulsecheck.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -34,6 +35,23 @@ public class Question implements Serializable {
     @NotNull
     @Column(name = "jhi_order", nullable = false)
     private Integer order;
+
+    @Size(min = 1, max = 2048)
+    @Column(name = "sub_question", length = 2048)
+    private String subQuestion;
+
+    @Column(name = "importance_score_active")
+    private Boolean importanceScoreActive;
+
+    @Column(name = "performance_score_active")
+    private Boolean performanceScoreActive;
+
+    @Column(name = "show_question")
+    private Boolean showQuestion;
+
+    @ManyToOne
+    @JsonIgnoreProperties("")
+    private QuestionGroup group;
 
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -75,6 +93,71 @@ public class Question implements Serializable {
 
     public void setOrder(Integer order) {
         this.order = order;
+    }
+
+    public String getSubQuestion() {
+        return subQuestion;
+    }
+
+    public Question subQuestion(String subQuestion) {
+        this.subQuestion = subQuestion;
+        return this;
+    }
+
+    public void setSubQuestion(String subQuestion) {
+        this.subQuestion = subQuestion;
+    }
+
+    public Boolean isImportanceScoreActive() {
+        return importanceScoreActive;
+    }
+
+    public Question importanceScoreActive(Boolean importanceScoreActive) {
+        this.importanceScoreActive = importanceScoreActive;
+        return this;
+    }
+
+    public void setImportanceScoreActive(Boolean importanceScoreActive) {
+        this.importanceScoreActive = importanceScoreActive;
+    }
+
+    public Boolean isPerformanceScoreActive() {
+        return performanceScoreActive;
+    }
+
+    public Question performanceScoreActive(Boolean performanceScoreActive) {
+        this.performanceScoreActive = performanceScoreActive;
+        return this;
+    }
+
+    public void setPerformanceScoreActive(Boolean performanceScoreActive) {
+        this.performanceScoreActive = performanceScoreActive;
+    }
+
+    public Boolean isShowQuestion() {
+        return showQuestion;
+    }
+
+    public Question showQuestion(Boolean showQuestion) {
+        this.showQuestion = showQuestion;
+        return this;
+    }
+
+    public void setShowQuestion(Boolean showQuestion) {
+        this.showQuestion = showQuestion;
+    }
+
+    public QuestionGroup getGroup() {
+        return group;
+    }
+
+    public Question group(QuestionGroup questionGroup) {
+        this.group = questionGroup;
+        return this;
+    }
+
+    public void setGroup(QuestionGroup questionGroup) {
+        this.group = questionGroup;
     }
 
     public Set<Category> getCategories() {
@@ -129,6 +212,10 @@ public class Question implements Serializable {
             "id=" + getId() +
             ", question='" + getQuestion() + "'" +
             ", order=" + getOrder() +
+            ", subQuestion='" + getSubQuestion() + "'" +
+            ", importanceScoreActive='" + isImportanceScoreActive() + "'" +
+            ", performanceScoreActive='" + isPerformanceScoreActive() + "'" +
+            ", showQuestion='" + isShowQuestion() + "'" +
             "}";
     }
 }

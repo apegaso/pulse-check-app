@@ -13,6 +13,28 @@
                 <dd>
                     <span>{{question.order}}</span>
                 </dd>
+                <dt><span>Sub Question</span></dt>
+                <dd>
+                    <span>{{question.subQuestion}}</span>
+                </dd>
+                <dt><span>Importance Score Active</span></dt>
+                <dd>
+                    <span>{{question.importanceScoreActive}}</span>
+                </dd>
+                <dt><span>Performance Score Active</span></dt>
+                <dd>
+                    <span>{{question.performanceScoreActive}}</span>
+                </dd>
+                <dt><span>Show Question</span></dt>
+                <dd>
+                    <span>{{question.showQuestion}}</span>
+                </dd>
+                <dt><span>Group</span></dt>
+                <dd>
+                    <div *ngIf="question.groupId">
+                        <a [routerLink]="['/question-group-pulse', question.groupId, 'view']">{{question.groupId}}</a>
+                    </div>
+                </dd>
                 <dt><span>Category</span></dt>
                 <dd>
                     <span *ngFor="let category of question.categories; let last = last">

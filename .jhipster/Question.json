@@ -18,9 +18,37 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "subQuestion",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "minlength",
+                "maxlength"
+            ],
+            "fieldValidateRulesMinlength": 1,
+            "fieldValidateRulesMaxlength": 2048
+        },
+        {
+            "fieldName": "importanceScoreActive",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "performanceScoreActive",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "showQuestion",
+            "fieldType": "Boolean"
         }
     ],
     "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "group",
+            "otherEntityName": "questionGroup",
+            "otherEntityField": "id"
+        },
         {
             "relationshipType": "many-to-many",
             "otherEntityRelationshipName": "questions",

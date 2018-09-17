@@ -12,6 +12,7 @@ import { PulseCheckAppQuestionnairePulseModule } from './questionnaire-pulse/que
 import { PulseCheckAppQuestionnaireAnswerPulseModule } from './questionnaire-answer-pulse/questionnaire-answer-pulse.module';
 import { PulseCheckAppUserExtPulseModule } from './user-ext-pulse/user-ext-pulse.module';
 import { PulseCheckAppEmailModule } from './email/email.module';
+import { PulseCheckAppQuestionGroupPulseModule } from './question-group-pulse/question-group-pulse.module';
 /* jhipster-needle-add-entity-module-import - JHipster will add entity modules imports here */
 
 @NgModule({
@@ -29,6 +30,7 @@ import { PulseCheckAppEmailModule } from './email/email.module';
         PulseCheckAppQuestionnaireAnswerPulseModule,
         PulseCheckAppUserExtPulseModule,
         PulseCheckAppEmailModule,
+        PulseCheckAppQuestionGroupPulseModule,
         /* jhipster-needle-add-entity-module - JHipster will add entity modules here */
     ],
     declarations: [],

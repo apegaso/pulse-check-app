@@ -76,8 +76,9 @@ relationship ManyToOne{
     Questionnaire{event} to Event,
     Questionnaire{participant} to Participant,
     QuestionnaireAnswer{question} to Question,
-    Question{group} to QuestionGroup
+    Question{group} to QuestionGroup{questions}
 }	
+
 
 relationship OneToOne{
 	UserExt to User,

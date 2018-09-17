@@ -8,6 +8,12 @@
     -->
     <changeSet id="20180904153935-2" author="jhipster">
         
+        <addForeignKeyConstraint baseColumnNames="group_id"
+                                 baseTableName="question"
+                                 constraintName="fk_question_group_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="question_group"/>
+
         <addForeignKeyConstraint baseColumnNames="questions_id"
                                  baseTableName="question_category"
                                  constraintName="fk_question_category_questions_id"

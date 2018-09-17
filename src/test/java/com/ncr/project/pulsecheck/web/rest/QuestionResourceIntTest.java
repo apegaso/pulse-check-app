@@ -53,6 +53,18 @@ public class QuestionResourceIntTest {
     private static final Integer DEFAULT_ORDER = 1;
     private static final Integer UPDATED_ORDER = 2;
 
+    private static final String DEFAULT_SUB_QUESTION = "AAAAAAAAAA";
+    private static final String UPDATED_SUB_QUESTION = "BBBBBBBBBB";
+
+    private static final Boolean DEFAULT_IMPORTANCE_SCORE_ACTIVE = false;
+    private static final Boolean UPDATED_IMPORTANCE_SCORE_ACTIVE = true;
+
+    private static final Boolean DEFAULT_PERFORMANCE_SCORE_ACTIVE = false;
+    private static final Boolean UPDATED_PERFORMANCE_SCORE_ACTIVE = true;
+
+    private static final Boolean DEFAULT_SHOW_QUESTION = false;
+    private static final Boolean UPDATED_SHOW_QUESTION = true;
+
     @Autowired
     private QuestionRepository questionRepository;
     @Mock
@@ -103,7 +115,11 @@ public class QuestionResourceIntTest {
     public static Question createEntity(EntityManager em) {
         Question question = new Question()
             .question(DEFAULT_QUESTION)
-            .order(DEFAULT_ORDER);
+            .order(DEFAULT_ORDER)
+            .subQuestion(DEFAULT_SUB_QUESTION)
+            .importanceScoreActive(DEFAULT_IMPORTANCE_SCORE_ACTIVE)
+            .performanceScoreActive(DEFAULT_PERFORMANCE_SCORE_ACTIVE)
+            .showQuestion(DEFAULT_SHOW_QUESTION);
         return question;
     }
 
@@ -130,6 +146,10 @@ public class QuestionResourceIntTest {
         Question testQuestion = questionList.get(questionList.size() - 1);
         assertThat(testQuestion.getQuestion()).isEqualTo(DEFAULT_QUESTION);
         assertThat(testQuestion.getOrder()).isEqualTo(DEFAULT_ORDER);
+        assertThat(testQuestion.getSubQuestion()).isEqualTo(DEFAULT_SUB_QUESTION);
+        assertThat(testQuestion.isImportanceScoreActive()).isEqualTo(DEFAULT_IMPORTANCE_SCORE_ACTIVE);
+        assertThat(testQuestion.isPerformanceScoreActive()).isEqualTo(DEFAULT_PERFORMANCE_SCORE_ACTIVE);
+        assertThat(testQuestion.isShowQuestion()).isEqualTo(DEFAULT_SHOW_QUESTION);
     }
 
     @Test
@@ -202,7 +222,11 @@ public class QuestionResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(question.getId().intValue())))
             .andExpect(jsonPath("$.[*].question").value(hasItem(DEFAULT_QUESTION.toString())))
-            .andExpect(jsonPath("$.[*].order").value(hasItem(DEFAULT_ORDER)));
+            .andExpect(jsonPath("$.[*].order").value(hasItem(DEFAULT_ORDER)))
+            .andExpect(jsonPath("$.[*].subQuestion").value(hasItem(DEFAULT_SUB_QUESTION.toString())))
+            .andExpect(jsonPath("$.[*].importanceScoreActive").value(hasItem(DEFAULT_IMPORTANCE_SCORE_ACTIVE.booleanValue())))
+            .andExpect(jsonPath("$.[*].performanceScoreActive").value(hasItem(DEFAULT_PERFORMANCE_SCORE_ACTIVE.booleanValue())))
+            .andExpect(jsonPath("$.[*].showQuestion").value(hasItem(DEFAULT_SHOW_QUESTION.booleanValue())));
     }
     
     public void getAllQuestionsWithEagerRelationshipsIsEnabled() throws Exception {
@@ -248,7 +272,11 @@ public class QuestionResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(question.getId().intValue()))
             .andExpect(jsonPath("$.question").value(DEFAULT_QUESTION.toString()))
-            .andExpect(jsonPath("$.order").value(DEFAULT_ORDER));
+            .andExpect(jsonPath("$.order").value(DEFAULT_ORDER))
+            .andExpect(jsonPath("$.subQuestion").value(DEFAULT_SUB_QUESTION.toString()))
+            .andExpect(jsonPath("$.importanceScoreActive").value(DEFAULT_IMPORTANCE_SCORE_ACTIVE.booleanValue()))
+            .andExpect(jsonPath("$.performanceScoreActive").value(DEFAULT_PERFORMANCE_SCORE_ACTIVE.booleanValue()))
+            .andExpect(jsonPath("$.showQuestion").value(DEFAULT_SHOW_QUESTION.booleanValue()));
     }
     @Test
     @Transactional
@@ -272,7 +300,11 @@ public class QuestionResourceIntTest {
         em.detach(updatedQuestion);
         updatedQuestion
             .question(UPDATED_QUESTION)
-            .order(UPDATED_ORDER);
+            .order(UPDATED_ORDER)
+            .subQuestion(UPDATED_SUB_QUESTION)
+            .importanceScoreActive(UPDATED_IMPORTANCE_SCORE_ACTIVE)
+            .performanceScoreActive(UPDATED_PERFORMANCE_SCORE_ACTIVE)
+            .showQuestion(UPDATED_SHOW_QUESTION);
         QuestionDTO questionDTO = questionMapper.toDto(updatedQuestion);
 
         restQuestionMockMvc.perform(put("/api/questions")
@@ -286,6 +318,10 @@ public class QuestionResourceIntTest {
         Question testQuestion = questionList.get(questionList.size() - 1);
         assertThat(testQuestion.getQuestion()).isEqualTo(UPDATED_QUESTION);
         assertThat(testQuestion.getOrder()).isEqualTo(UPDATED_ORDER);
+        assertThat(testQuestion.getSubQuestion()).isEqualTo(UPDATED_SUB_QUESTION);
+        assertThat(testQuestion.isImportanceScoreActive()).isEqualTo(UPDATED_IMPORTANCE_SCORE_ACTIVE);
+        assertThat(testQuestion.isPerformanceScoreActive()).isEqualTo(UPDATED_PERFORMANCE_SCORE_ACTIVE);
+        assertThat(testQuestion.isShowQuestion()).isEqualTo(UPDATED_SHOW_QUESTION);
     }
 
     @Test
