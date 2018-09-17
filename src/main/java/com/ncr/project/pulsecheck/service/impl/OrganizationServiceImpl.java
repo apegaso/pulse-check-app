@@ -8,13 +8,9 @@ import com.ncr.project.pulsecheck.domain.OrgAdmin;
 import com.ncr.project.pulsecheck.domain.Organization;
 import com.ncr.project.pulsecheck.domain.User;
 import com.ncr.project.pulsecheck.domain.UserExt;
-import com.ncr.project.pulsecheck.repository.OrgAdminRepository;
 import com.ncr.project.pulsecheck.repository.OrganizationRepository;
-import com.ncr.project.pulsecheck.repository.UserExtRepository;
 import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
-import com.ncr.project.pulsecheck.service.dto.OrgAdminDTO;
 import com.ncr.project.pulsecheck.service.dto.OrganizationDTO;
-import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
 import com.ncr.project.pulsecheck.service.mapper.OrganizationAndAdminsVMMapper;
 import com.ncr.project.pulsecheck.service.mapper.OrganizationAndEventsVMMapper;
 import com.ncr.project.pulsecheck.service.mapper.OrganizationMapper;
@@ -31,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,18 +48,14 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final UserService userService;
     private final UserExtService userExtService;
-    private final UserExtRepository userExtRepository;
     
     private final OrgAdminService orgAdminService;
-    private final OrgAdminRepository orgAdminRepository;
-
+    
     public OrganizationServiceImpl(OrganizationRepository organizationRepository
     , OrganizationMapper organizationMapper,
     OrganizationAndEventsVMMapper organizationAndEventsVMMapper, 
     UserService userService, 
     UserExtService userExtService, 
-    UserExtRepository userExtRepository,
-    OrgAdminRepository orgAdminRepository,
     OrganizationAndAdminsVMMapper organizationAndAdminsVMMapper,
     OrgAdminService orgAdminService) {
         this.organizationRepository = organizationRepository;
@@ -73,9 +64,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.userService = userService;
         this.userExtService = userExtService;
         this.orgAdminService = orgAdminService;
-        this.userExtRepository = userExtRepository;
         this.organizationAndAdminsVMMapper = organizationAndAdminsVMMapper;
-        this.orgAdminRepository = orgAdminRepository;
     }
 
     /**
