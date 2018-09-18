@@ -7,6 +7,8 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -28,6 +30,10 @@ public class QuestionGroup implements Serializable {
     @Column(name = "question_number", nullable = false)
     private Integer questionNumber;
 
+    @OneToMany(mappedBy = "group")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Question> questions = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -48,6 +54,31 @@ public class QuestionGroup implements Serializable {
 
     public void setQuestionNumber(Integer questionNumber) {
         this.questionNumber = questionNumber;
+    }
+
+    public Set<Question> getQuestions() {
+        return questions;
+    }
+
+    public QuestionGroup questions(Set<Question> questions) {
+        this.questions = questions;
+        return this;
+    }
+
+    public QuestionGroup addQuestions(Question question) {
+        this.questions.add(question);
+        question.setGroup(this);
+        return this;
+    }
+
+    public QuestionGroup removeQuestions(Question question) {
+        this.questions.remove(question);
+        question.setGroup(null);
+        return this;
+    }
+
+    public void setQuestions(Set<Question> questions) {
+        this.questions = questions;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

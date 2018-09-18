@@ -9,7 +9,14 @@
             ]
         }
     ],
-    "relationships": [],
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "questions",
+            "otherEntityName": "question",
+            "otherEntityRelationshipName": "group"
+        }
+    ],
     "changelogDate": "20180917103004",
     "entityTableName": "question_group",
     "dto": "mapstruct",

@@ -63,6 +63,7 @@ public class CacheConfiguration {
             cm.createCache(com.ncr.project.pulsecheck.domain.UserExt.class.getName(), jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.Email.class.getName(), jcacheConfiguration);
             cm.createCache(com.ncr.project.pulsecheck.domain.QuestionGroup.class.getName(), jcacheConfiguration);
+            cm.createCache(com.ncr.project.pulsecheck.domain.QuestionGroup.class.getName() + ".questions", jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

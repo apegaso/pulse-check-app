@@ -24,7 +24,12 @@ public interface QuestionMapper extends EntityMapper<QuestionDTO, Question> {
         ret.setId(entity.getId());
         ret.setOrder(entity.getOrder());
         ret.setQuestion(entity.getQuestion());
-        ret.setGroupId(entity.getGroup().getId());
+        ret.setImportanceScoreActive(entity.isImportanceScoreActive());
+        ret.setPerformanceScoreActive(entity.isPerformanceScoreActive());
+        ret.setShowQuestion(entity.isShowQuestion());
+        ret.setSubQuestion(entity.getSubQuestion());
+        if(entity.getGroup() != null)
+            ret.setGroupId(entity.getGroup().getId());
         final Set<Category> allCategories = new HashSet<>();
         entity.getCategories().forEach(c->{
             allCategories.add(c); 
