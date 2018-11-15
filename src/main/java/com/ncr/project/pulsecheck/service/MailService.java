@@ -1,10 +1,12 @@
 package com.ncr.project.pulsecheck.service;
 
+import com.ncr.project.pulsecheck.domain.Email;
 import com.ncr.project.pulsecheck.domain.User;
 
 import io.github.jhipster.config.JHipsterProperties;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Locale;
 import javax.mail.internet.MimeMessage;
 
@@ -34,19 +36,21 @@ public class MailService {
 
     private final JHipsterProperties jHipsterProperties;
 
-    private final JavaMailSender javaMailSender;
+//    private final JavaMailSender javaMailSender;
+    private final EmailService mailService;
 
     private final MessageSource messageSource;
 
     private final SpringTemplateEngine templateEngine;
 
     public MailService(JHipsterProperties jHipsterProperties, JavaMailSender javaMailSender,
-            MessageSource messageSource, SpringTemplateEngine templateEngine) {
+            MessageSource messageSource, SpringTemplateEngine templateEngine, EmailService mailService) {
 
         this.jHipsterProperties = jHipsterProperties;
-        this.javaMailSender = javaMailSender;
+//        this.javaMailSender = javaMailSender;
         this.messageSource = messageSource;
         this.templateEngine = templateEngine;
+		this.mailService = mailService;
     }
 
     @Async
@@ -55,14 +59,25 @@ public class MailService {
             isMultipart, isHtml, to, subject, content);
 
         // Prepare message using a Spring helper
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+//        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
-            MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
-            message.setTo(to);
-            message.setFrom(jHipsterProperties.getMail().getFrom());
-            message.setSubject(subject);
-            message.setText(content, isHtml);
-            javaMailSender.send(mimeMessage);
+//            MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
+//            message.setTo(to);
+//            message.setFrom(jHipsterProperties.getMail().getFrom());
+//            message.setSubject(subject);
+//            message.setText(content, isHtml);
+//            javaMailSender.send(mimeMessage);
+            Email email = new Email();
+            email.setAddresses(to);
+            email.setFrom(jHipsterProperties.getMail().getFrom());
+            email.setSubject(subject);
+            email.setBody(content);
+            email.setIsHtml(isHtml);
+            email.setIsMultipart(isMultipart);
+            email.setIsSent(false);
+            email.setDateInsert(Instant.now());
+            
+			mailService.save(email );
             log.debug("Sent email to User '{}'", to);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {

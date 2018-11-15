@@ -38,6 +38,9 @@ public class Email implements Serializable {
 
     @Column(name = "is_html")
     private Boolean isHtml;
+    
+    @Column(name = "is_multipart")
+    private Boolean isMultipart;
 
     @Column(name = "is_sent")
     private Boolean isSent;
@@ -119,7 +122,20 @@ public class Email implements Serializable {
     }
 
     public void setIsHtml(Boolean isHtml) {
-        this.isHtml = isHtml;
+        this.isHtml= isHtml;
+    }
+    
+    public Boolean isIsMultipart() {
+        return isMultipart;
+    }
+
+    public Email isMultipart(Boolean isMultipart) {
+        this.isMultipart = isMultipart;
+        return this;
+    }
+    
+    public void setIsMultipart(Boolean isMultipart) {
+        this.isMultipart = isMultipart;
     }
 
     public Boolean isIsSent() {
@@ -191,6 +207,7 @@ public class Email implements Serializable {
             ", subject='" + getSubject() + "'" +
             ", body='" + getBody() + "'" +
             ", isHtml='" + isIsHtml() + "'" +
+            ", isMultipart='" + isIsMultipart() + "'" +
             ", isSent='" + isIsSent() + "'" +
             ", dateInsert='" + getDateInsert() + "'" +
             ", dateSent='" + getDateSent() + "'" +

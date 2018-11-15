@@ -165,6 +165,21 @@ public class UserService {
             userExtService.save(userExtDTO);
         }
     }
+	
+	private void updateExtDTOJobRole(String jobRole, User user) {
+		Optional<UserExtDTO> userExtDTOopt = userExtService.findOneByEmail(user.getEmail());
+        if(userExtDTOopt.isPresent()){
+            UserExtDTO userExtDTO = userExtDTOopt.get();
+            userExtDTO.setJobRole(jobRole);
+            userExtService.save(userExtDTO);
+        }else{
+            UserExtDTO userExtDTO = new UserExtDTO();
+            userExtDTO.setEmail(user.getEmail());
+            userExtDTO.setUserId(user.getId());
+            userExtDTO.setJobRole(jobRole);
+            userExtService.save(userExtDTO);
+        }
+    }
 
     public User createUser(UserDTO userDTO) {
         User user = new User();
@@ -212,14 +227,16 @@ public class UserService {
      * @param email     email id of user
      * @param langKey   language key
      * @param imageUrl  image URL of user
+     * @param jobRole 
      */
-    public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
+    public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl, String jobRole) {
         SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneByLogin).ifPresent(user -> {
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setEmail(email);
+	            user.setFirstName(firstName);
+	            user.setLastName(lastName);
+	            user.setEmail(email);
                 user.setLangKey(langKey);
                 user.setImageUrl(imageUrl);
+                updateExtDTOJobRole(jobRole,user);
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
             });

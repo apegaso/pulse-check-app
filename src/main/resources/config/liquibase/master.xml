@@ -30,4 +30,5 @@
     <include file="config/liquibase/changelog/20180904153940_added_entity_constraints_UserExt.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <include file="config/liquibase/changelog/20180904084006_load_data.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20181115_modify_entity_Email.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
