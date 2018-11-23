@@ -1,6 +1,7 @@
 package com.ncr.project.pulsecheck.service;
 
 import com.ncr.project.pulsecheck.service.dto.ClientLeadDTO;
+import com.ncr.project.pulsecheck.service.dto.ClientLead_Simple_DTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,4 +50,12 @@ public interface ClientLeadService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+    /**
+     * Save a clientLead with an existing event.
+     *
+     * @param clientLeadDTO the entity to save
+     * @return the persisted entity
+     */
+	ClientLeadDTO save(ClientLead_Simple_DTO clientLeadDTO);
 }

@@ -4,6 +4,7 @@ import com.ncr.project.pulsecheck.service.ClientLeadService;
 import com.ncr.project.pulsecheck.domain.ClientLead;
 import com.ncr.project.pulsecheck.repository.ClientLeadRepository;
 import com.ncr.project.pulsecheck.service.dto.ClientLeadDTO;
+import com.ncr.project.pulsecheck.service.dto.ClientLead_Simple_DTO;
 import com.ncr.project.pulsecheck.service.mapper.ClientLeadMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,4 +96,12 @@ public class ClientLeadServiceImpl implements ClientLeadService {
         log.debug("Request to delete ClientLead : {}", id);
         clientLeadRepository.deleteById(id);
     }
+
+	@Override
+	public ClientLeadDTO save(ClientLead_Simple_DTO clientLeadDTO) {
+		log.debug("Request to save ClientLead_Simple : {}", clientLeadDTO);
+        ClientLead clientLead = clientLeadMapper.toEntity(clientLeadDTO);
+        clientLead = clientLeadRepository.save(clientLead);
+        return clientLeadMapper.toDto(clientLead);
+	}
 }

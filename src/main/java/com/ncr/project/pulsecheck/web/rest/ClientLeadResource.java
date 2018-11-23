@@ -1,11 +1,14 @@
 package com.ncr.project.pulsecheck.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
 import com.ncr.project.pulsecheck.service.ClientLeadService;
 import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
 import com.ncr.project.pulsecheck.web.rest.util.PaginationUtil;
 import com.ncr.project.pulsecheck.service.dto.ClientLeadDTO;
+import com.ncr.project.pulsecheck.service.dto.ClientLead_Simple_DTO;
+
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -48,7 +52,8 @@ public class ClientLeadResource {
      */
     @PostMapping("/client-leads")
     @Timed
-    public ResponseEntity<ClientLeadDTO> createClientLead(@RequestBody ClientLeadDTO clientLeadDTO) throws URISyntaxException {
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.NCR_ADMIN})
+    public ResponseEntity<ClientLeadDTO> createClientLead(@RequestBody ClientLead_Simple_DTO clientLeadDTO) throws URISyntaxException {
         log.debug("REST request to save ClientLead : {}", clientLeadDTO);
         if (clientLeadDTO.getId() != null) {
             throw new BadRequestAlertException("A new clientLead cannot already have an ID", ENTITY_NAME, "idexists");
@@ -70,6 +75,7 @@ public class ClientLeadResource {
      */
     @PutMapping("/client-leads")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.NCR_ADMIN})
     public ResponseEntity<ClientLeadDTO> updateClientLead(@RequestBody ClientLeadDTO clientLeadDTO) throws URISyntaxException {
         log.debug("REST request to update ClientLead : {}", clientLeadDTO);
         if (clientLeadDTO.getId() == null) {
@@ -90,6 +96,7 @@ public class ClientLeadResource {
      */
     @GetMapping("/client-leads")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<List<ClientLeadDTO>> getAllClientLeads(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get a page of ClientLeads");
         Page<ClientLeadDTO> page;
@@ -124,6 +131,7 @@ public class ClientLeadResource {
      */
     @DeleteMapping("/client-leads/{id}")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.NCR_ADMIN})
     public ResponseEntity<Void> deleteClientLead(@PathVariable Long id) {
         log.debug("REST request to delete ClientLead : {}", id);
         clientLeadService.delete(id);

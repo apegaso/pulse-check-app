@@ -89,6 +89,7 @@ public class OrganizationResource {
      */
     @PutMapping("/organizations")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.NCR_ADMIN})
     public ResponseEntity<OrganizationAndAdminVM> updateOrganization(@Valid @RequestBody OrganizationAndAdminVM organizationDTO) throws URISyntaxException {
         log.debug("REST request to update Organization : {}", organizationDTO);
         if (organizationDTO.getId() == null) {
@@ -129,7 +130,7 @@ public class OrganizationResource {
     @GetMapping("/organizations/events/{id}")
     @Timed
     public ResponseEntity<OrganizationAndEventsVM> getOrganizationAndEvents(@PathVariable Long id) {
-        log.debug("REST request to get aan organization ad related events");
+        log.debug("REST request to get aa organization ad related events");
         Optional<OrganizationAndEventsVM> organizationDTO = organizationService.findOneWithEvents(id);
         return ResponseUtil.wrapOrNotFound(organizationDTO);
     }
