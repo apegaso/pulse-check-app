@@ -76,7 +76,7 @@ public class ClientLeadResource {
     @PutMapping("/client-leads")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.NCR_ADMIN})
-    public ResponseEntity<ClientLeadDTO> updateClientLead(@RequestBody ClientLeadDTO clientLeadDTO) throws URISyntaxException {
+    public ResponseEntity<ClientLeadDTO> updateClientLead(@RequestBody ClientLead_Simple_DTO clientLeadDTO) throws URISyntaxException {
         log.debug("REST request to update ClientLead : {}", clientLeadDTO);
         if (clientLeadDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");

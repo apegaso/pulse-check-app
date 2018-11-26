@@ -1,21 +1,23 @@
 package com.ncr.project.pulsecheck.service.impl;
 
-import com.ncr.project.pulsecheck.service.ClientLeadService;
-import com.ncr.project.pulsecheck.domain.ClientLead;
-import com.ncr.project.pulsecheck.repository.ClientLeadRepository;
-import com.ncr.project.pulsecheck.service.dto.ClientLeadDTO;
-import com.ncr.project.pulsecheck.service.dto.ClientLead_Simple_DTO;
-import com.ncr.project.pulsecheck.service.mapper.ClientLeadMapper;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.util.Optional;
+import com.ncr.project.pulsecheck.domain.ClientLead;
+import com.ncr.project.pulsecheck.domain.UserExt;
+import com.ncr.project.pulsecheck.repository.ClientLeadRepository;
+import com.ncr.project.pulsecheck.repository.UserExtRepository;
+import com.ncr.project.pulsecheck.service.ClientLeadService;
+import com.ncr.project.pulsecheck.service.dto.ClientLeadDTO;
+import com.ncr.project.pulsecheck.service.dto.ClientLead_Simple_DTO;
+import com.ncr.project.pulsecheck.service.mapper.ClientLeadMapper;
+import com.ncr.project.pulsecheck.service.mapper.ClientLead_Simple_VMMapper;
 /**
  * Service Implementation for managing ClientLead.
  */
@@ -26,12 +28,16 @@ public class ClientLeadServiceImpl implements ClientLeadService {
     private final Logger log = LoggerFactory.getLogger(ClientLeadServiceImpl.class);
 
     private final ClientLeadRepository clientLeadRepository;
+    private final UserExtRepository userExtRepository;
 
     private final ClientLeadMapper clientLeadMapper;
+    private final ClientLead_Simple_VMMapper clientLead_Simple_VMMapper;
 
-    public ClientLeadServiceImpl(ClientLeadRepository clientLeadRepository, ClientLeadMapper clientLeadMapper) {
+    public ClientLeadServiceImpl(ClientLeadRepository clientLeadRepository, ClientLeadMapper clientLeadMapper, ClientLead_Simple_VMMapper clientLead_Simple_VMMapper, UserExtRepository userExtRepository) {
         this.clientLeadRepository = clientLeadRepository;
         this.clientLeadMapper = clientLeadMapper;
+		this.clientLead_Simple_VMMapper = clientLead_Simple_VMMapper;
+		this.userExtRepository = userExtRepository;
     }
 
     /**
@@ -100,8 +106,19 @@ public class ClientLeadServiceImpl implements ClientLeadService {
 	@Override
 	public ClientLeadDTO save(ClientLead_Simple_DTO clientLeadDTO) {
 		log.debug("Request to save ClientLead_Simple : {}", clientLeadDTO);
-        ClientLead clientLead = clientLeadMapper.toEntity(clientLeadDTO);
+        ClientLead clientLead = clientLead_Simple_VMMapper.toEntity(clientLeadDTO);
         clientLead = clientLeadRepository.save(clientLead);
         return clientLeadMapper.toDto(clientLead);
+	}
+
+	@Override
+	public Optional<ClientLeadDTO> findOneByExtId(Long id) {
+		log.debug("Request to get ClientLead by ExtId: {}", id);
+		Optional<UserExt> findById = userExtRepository.findById(id);
+		if(findById.isPresent()) {
+			Optional<ClientLead> oret = Optional.of(findById.get().getClientLead());
+			return oret.map(clientLeadMapper::toDto);
+		}
+		return null;
 	}
 }

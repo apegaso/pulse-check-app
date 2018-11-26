@@ -58,4 +58,12 @@ public interface ClientLeadService {
      * @return the persisted entity
      */
 	ClientLeadDTO save(ClientLead_Simple_DTO clientLeadDTO);
+
+	/**
+     * Get the clientLead. by extId
+     *
+     * @param id the extid of the entity
+     * @return the entity
+     */
+	Optional<ClientLeadDTO> findOneByExtId(Long id);
 }
