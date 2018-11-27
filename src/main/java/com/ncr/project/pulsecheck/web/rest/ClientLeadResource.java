@@ -122,7 +122,22 @@ public class ClientLeadResource {
         Optional<ClientLeadDTO> clientLeadDTO = clientLeadService.findOne(id);
         return ResponseUtil.wrapOrNotFound(clientLeadDTO);
     }
+    
+    /**
+    * GET  /client-leads/ext/:id : get the clientLead by "ExtId" .
+    *
+    * @param id the 	ExtId of the clientLeadDTO to retrieve
+    * @return the ResponseEntity with status 200 (OK) and with body the clientLeadDTO, or with status 404 (Not Found)
+    */
+	   @GetMapping("/client-leads/ext/{id}")
+	   @Timed
+	   public ResponseEntity<ClientLeadDTO> getClientLeadByExtId(@PathVariable Long id) {
+	       log.debug("REST request to get ClientLead by extId: {}", id);
+	       Optional<ClientLeadDTO> clientLeadDTO = clientLeadService.findOneByExtId(id);
+	       return ResponseUtil.wrapOrNotFound(clientLeadDTO);
+	   }
 
+    
     /**
      * DELETE  /client-leads/:id : delete the "id" clientLead.
      *

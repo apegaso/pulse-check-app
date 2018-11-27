@@ -1,20 +1,11 @@
 package com.ncr.project.pulsecheck.web.rest;
 
-import com.ncr.project.pulsecheck.config.Constants;
-import com.codahale.metrics.annotation.Timed;
-import com.ncr.project.pulsecheck.domain.User;
-import com.ncr.project.pulsecheck.repository.UserRepository;
-import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
-import com.ncr.project.pulsecheck.service.MailService;
-import com.ncr.project.pulsecheck.service.UserService;
-import com.ncr.project.pulsecheck.service.dto.UserDTO;
-import com.ncr.project.pulsecheck.service.mapper.UserMapper;
-import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
-import com.ncr.project.pulsecheck.web.rest.errors.EmailAlreadyUsedException;
-import com.ncr.project.pulsecheck.web.rest.errors.LoginAlreadyUsedException;
-import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
-import com.ncr.project.pulsecheck.web.rest.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +15,34 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
+import com.codahale.metrics.annotation.Timed;
+import com.ncr.project.pulsecheck.config.Constants;
+import com.ncr.project.pulsecheck.domain.User;
+import com.ncr.project.pulsecheck.repository.UserRepository;
+import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
+import com.ncr.project.pulsecheck.service.MailService;
+import com.ncr.project.pulsecheck.service.UserExtService;
+import com.ncr.project.pulsecheck.service.UserService;
+import com.ncr.project.pulsecheck.service.dto.UserDTO;
+import com.ncr.project.pulsecheck.service.mapper.UserMapper;
+import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
+import com.ncr.project.pulsecheck.web.rest.errors.EmailAlreadyUsedException;
+import com.ncr.project.pulsecheck.web.rest.errors.LoginAlreadyUsedException;
+import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
+import com.ncr.project.pulsecheck.web.rest.util.PaginationUtil;
+import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
+import com.ncr.project.pulsecheck.web.rest.vm.UserEventsVM;
+
+import io.github.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing users.
@@ -62,18 +75,20 @@ public class UserResource {
     private final Logger log = LoggerFactory.getLogger(UserResource.class);
 
     private final UserService userService;
+    private final UserExtService userExtService;
     private final UserMapper userMapper;
 
     private final UserRepository userRepository;
 
     private final MailService mailService;
 
-    public UserResource(UserService userService, UserRepository userRepository, MailService mailService, UserMapper userMapper) {
+    public UserResource(UserService userService, UserRepository userRepository, MailService mailService, UserMapper userMapper, UserExtService userExtService) {
 
         this.userService = userService;
         this.userRepository = userRepository;
         this.mailService = mailService;
         this.userMapper = userMapper;
+		this.userExtService = userExtService;
     }
 
     /**
@@ -185,6 +200,40 @@ public class UserResource {
             userService.getUserWithAuthoritiesByLogin(login)
                 .map(userService::newUserDTO));
     }
+    
+    
+
+    /**
+     * GET  /users/:login/events : get the events associated to the user identified by login. Events are grouped into participant and lead group.
+     *
+     * @return events for the user identified by login
+     * @throws RuntimeException 500 (Internal Server Error) if the user couldn't be returned
+     */
+    @GetMapping("/users/{login:" + Constants.LOGIN_REGEX + "}/events")
+    @Timed
+    public UserEventsVM getAccountEvents(@PathVariable String login) {
+        Optional<User> loggedUser = userService.getUserWithAuthoritiesByLogin(login);
+        Optional<UserEventsVM> ret = loggedUser.map(u -> u.getEmail()).flatMap(userExtService::findUserEventsVMByEmail);
+
+        return ret.get();
+    }
+
+
+       /**
+     * GET  /users/:login/organizations : get the organizations manageable from the user identified by login.
+     *
+     * @return organizations for the user identified by login
+     * @throws RuntimeException 500 (Internal Server Error) if the user couldn't be returned
+     */
+    @GetMapping("/users/{login:" + Constants.LOGIN_REGEX + "}/organizations")
+    @Timed
+    public List<OrganizationAndEventsVM> getAccountOrganizations(@PathVariable String login) {
+        Optional<User> loggedUser = userService.getUserWithAuthorities();
+        Optional<List<OrganizationAndEventsVM>> ret = loggedUser.map(u -> u.getEmail()).flatMap(userExtService::findUserOrganizationsVMByEmail);
+
+        return ret.get();
+    }
+
 
     /**
      * DELETE /users/:login : delete the "login" User.
