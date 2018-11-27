@@ -127,6 +127,12 @@ public class OrganizationResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    /**
+     * GET  /organizations/events/:id : get the events of "id" organization.
+     *
+     * @param id the id of the organization to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the organization events, or with status 404 (Not Found)
+     */
     @GetMapping("/organizations/events/{id}")
     @Timed
     public ResponseEntity<OrganizationAndEventsVM> getOrganizationAndEvents(@PathVariable Long id) {
@@ -135,6 +141,13 @@ public class OrganizationResource {
         return ResponseUtil.wrapOrNotFound(organizationDTO);
     }
     
+
+    /**
+     * GET  /organizations/admins/:id : get the admins of "id" organization.
+     *
+     * @param id the id of the organization to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the organization admins, or with status 404 (Not Found)
+     */
     @GetMapping("/organizations/admins/{id}")
     @Timed
     public ResponseEntity<OrganizationAndAdminVM> getOrganizationAdmin(@PathVariable Long id) {

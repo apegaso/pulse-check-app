@@ -286,6 +286,10 @@ public class UserService {
     public void deleteUser(String login) {
         //TODO: delete ext user
         userRepository.findOneByLogin(login).ifPresent(user -> {
+            userExtService.findOneByEmail(user.getEmail()).ifPresent(uext -> {
+                
+                userExtService.delete(uext.getId());
+            });
             userRepository.delete(user);
             this.clearUserCaches(user);
             log.debug("Deleted User: {}", user);
@@ -320,7 +324,7 @@ public class UserService {
             ret.setJobRole(userExtDTO.getJobRole());
             ret.setOrganizationId(userExtDTO.getOrganizationId());
             ret.setOrganizationName(userExtDTO.getOrganizationName());
-
+            ret.setUserExtId(userExtDTO.getId());
         }
         return ret;
     }

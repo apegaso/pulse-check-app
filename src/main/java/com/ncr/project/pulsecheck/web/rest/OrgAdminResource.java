@@ -2,6 +2,8 @@ package com.ncr.project.pulsecheck.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.ncr.project.pulsecheck.service.OrgAdminService;
+import com.ncr.project.pulsecheck.service.OrganizationService;
+import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
 import com.ncr.project.pulsecheck.web.rest.util.PaginationUtil;
@@ -35,8 +37,15 @@ public class OrgAdminResource {
 
     private final OrgAdminService orgAdminService;
 
-    public OrgAdminResource(OrgAdminService orgAdminService) {
+    private final UserExtService userExtService;
+    
+    private final OrganizationService organizationService;
+
+
+    public OrgAdminResource(OrgAdminService orgAdminService, UserExtService userExtService, OrganizationService organizationService) {
         this.orgAdminService = orgAdminService;
+        this.userExtService = userExtService;
+        this.organizationService = organizationService;
     }
 
     /**
@@ -128,5 +137,34 @@ public class OrgAdminResource {
         log.debug("REST request to delete OrgAdmin : {}", id);
         orgAdminService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+
+    /**
+     * PUT  /org-admins/add/:orgId/:userExtId : add an the "userExtId" user as an admin for the "orgId" organization 
+     *
+     * @param orgId the orgId to update
+     * @param userExtId the userExtId to add
+     * @return the ResponseEntity with status 200 (OK) and with body the updated orgAdminDTO,
+     * or with status 400 (Bad Request) if the one of the orgId or userExtId is not valid,
+     * or with status 500 (Internal Server Error) if the orgAdmin couldn't be updated
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @PutMapping("/org-admins/add/{orgId}/{userExtId}")
+    @Timed
+    public ResponseEntity<OrgAdminDTO> addOrgAdmin(@PathVariable Long orgId, @PathVariable Long userExtId) throws URISyntaxException {
+        log.debug("REST request to add userExt {} to Org : {}", userExtId, orgId);
+        if (orgId == null) {
+            throw new BadRequestAlertException("Invalid orgId", ENTITY_NAME, "idnull");
+        }
+        if (userExtId == null) {
+            throw new BadRequestAlertException("Invalid userExtId", ENTITY_NAME, "idnull");
+        }
+        userExtService.findOne(userExtId).
+        orgAdminService.findOneByUserExtEmail(email)
+        
+        OrgAdminDTO result = orgAdminService.save(orgAdminDTO);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, orgAdminDTO.getId().toString()))
+            .body(result);
     }
 }

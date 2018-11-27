@@ -59,6 +59,8 @@ public class UserDTO {
     
     private Long organizationId;
 
+    private Long userExtId;
+
     public UserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -228,5 +230,14 @@ public class UserDTO {
 
 	public void setOrganizationId(Long organizationId) {
 		this.organizationId = organizationId;
+    }
+    
+    public Long getUserExtId() {
+		return userExtId;
 	}
+
+	public void setUserExtId(Long userExtId) {
+		this.userExtId = userExtId;
+	}
+
 }
