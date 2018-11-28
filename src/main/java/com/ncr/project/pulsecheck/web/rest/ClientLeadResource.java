@@ -152,4 +152,31 @@ public class ClientLeadResource {
         clientLeadService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
+    
+    /**
+     * PUT  /client-leads/add/:eventId/:userExtId : add an the "userExtId" user as an lead for the "eventId" event 
+     *
+     * @param eventId the eventId to update
+     * @param userExtId the userExtId to add
+     * @return the ResponseEntity with status 200 (OK) and with body the updated orgAdminDTO,
+     * or with status 400 (Bad Request) if the one of the orgId or userExtId is not valid,
+     * or with status 500 (Internal Server Error) if the orgAdmin couldn't be updated
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @PutMapping("/client-leads/add/{eventId}/{userExtId}")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.NCR_ADMIN})
+    public ResponseEntity<ClientLeadDTO> addOrgAdmin(@PathVariable Long eventId, @PathVariable Long userExtId) throws URISyntaxException {
+        log.debug("REST request to add userExt {} to Event : {}", userExtId, eventId);
+        if (eventId == null) {
+            throw new BadRequestAlertException("Invalid eventId", ENTITY_NAME, "idnull");
+        }
+        if (userExtId == null) {
+            throw new BadRequestAlertException("Invalid userExtId", ENTITY_NAME, "idnull");
+        }
+
+        ClientLeadDTO clientLeadDTO = clientLeadService.addClientLead(eventId, userExtId);
+        
+        return ResponseUtil.wrapOrNotFound(Optional.of(clientLeadDTO));
+    }
 }

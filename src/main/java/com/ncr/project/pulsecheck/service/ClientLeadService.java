@@ -1,5 +1,7 @@
 package com.ncr.project.pulsecheck.service;
 
+import com.ncr.project.pulsecheck.domain.ClientLead;
+import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.service.dto.ClientLeadDTO;
 import com.ncr.project.pulsecheck.service.dto.ClientLead_Simple_DTO;
 
@@ -66,4 +68,8 @@ public interface ClientLeadService {
      * @return the entity
      */
 	Optional<ClientLeadDTO> findOneByExtId(Long id);
+
+     ClientLeadDTO addClientLead(Long eventId, Long userExtId);
+     
+     ClientLead createIfNotExists(UserExt userExt);
 }

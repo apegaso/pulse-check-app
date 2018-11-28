@@ -10,14 +10,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ncr.project.pulsecheck.domain.ClientLead;
+import com.ncr.project.pulsecheck.domain.Event;
 import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.ClientLeadRepository;
+import com.ncr.project.pulsecheck.repository.EventRepository;
 import com.ncr.project.pulsecheck.repository.UserExtRepository;
 import com.ncr.project.pulsecheck.service.ClientLeadService;
 import com.ncr.project.pulsecheck.service.dto.ClientLeadDTO;
 import com.ncr.project.pulsecheck.service.dto.ClientLead_Simple_DTO;
 import com.ncr.project.pulsecheck.service.mapper.ClientLeadMapper;
 import com.ncr.project.pulsecheck.service.mapper.ClientLead_Simple_VMMapper;
+import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 /**
  * Service Implementation for managing ClientLead.
  */
@@ -29,15 +32,17 @@ public class ClientLeadServiceImpl implements ClientLeadService {
 
     private final ClientLeadRepository clientLeadRepository;
     private final UserExtRepository userExtRepository;
+    private final EventRepository eventRepository;
 
     private final ClientLeadMapper clientLeadMapper;
     private final ClientLead_Simple_VMMapper clientLead_Simple_VMMapper;
 
-    public ClientLeadServiceImpl(ClientLeadRepository clientLeadRepository, ClientLeadMapper clientLeadMapper, ClientLead_Simple_VMMapper clientLead_Simple_VMMapper, UserExtRepository userExtRepository) {
+    public ClientLeadServiceImpl(ClientLeadRepository clientLeadRepository, ClientLeadMapper clientLeadMapper, ClientLead_Simple_VMMapper clientLead_Simple_VMMapper, UserExtRepository userExtRepository, EventRepository eventRepository) {
         this.clientLeadRepository = clientLeadRepository;
         this.clientLeadMapper = clientLeadMapper;
 		this.clientLead_Simple_VMMapper = clientLead_Simple_VMMapper;
-		this.userExtRepository = userExtRepository;
+        this.userExtRepository = userExtRepository;
+        this.eventRepository = eventRepository;
     }
 
     /**
@@ -121,4 +126,33 @@ public class ClientLeadServiceImpl implements ClientLeadService {
 		}
 		return null;
 	}
+
+    @Override
+    public ClientLeadDTO addClientLead(Long eventId, Long userExtId) {
+        Optional<UserExt> userExt = userExtRepository.findById(userExtId);
+        if(!userExt.isPresent()){
+            throw new BadRequestAlertException("UserExt not exists", "ClientLead", "id not exist");
+        }
+        ClientLead ret = createIfNotExists(userExt.get());
+
+        Optional<Event> event = eventRepository.findById(eventId);
+        if(!event.isPresent()){
+            throw new BadRequestAlertException("Event not exists", "ClientLead", "id not exist");
+        }
+        ret.addEvents(event.get());
+
+        ret = clientLeadRepository.save(ret);
+        return clientLeadMapper.toDto(ret);
+    }
+
+    @Override
+    public ClientLead createIfNotExists(UserExt userExt) {
+        ClientLead ret = userExt.getClientLead();
+        if(ret != null) return ret;
+        ret = new ClientLead();
+        ret.setUserExt(userExt);
+        ret = clientLeadRepository.save(ret);
+        ret = clientLeadRepository.findOneWithEagerRelationships(ret.getId()).get();
+        return ret;
+    }
 }

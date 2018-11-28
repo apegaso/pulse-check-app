@@ -1,12 +1,18 @@
 package com.ncr.project.pulsecheck.service.impl;
 
 import com.ncr.project.pulsecheck.service.OrgAdminService;
+import com.ncr.project.pulsecheck.service.OrganizationService;
+import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.domain.OrgAdmin;
 import com.ncr.project.pulsecheck.domain.Organization;
 import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.OrgAdminRepository;
+import com.ncr.project.pulsecheck.repository.OrganizationRepository;
+import com.ncr.project.pulsecheck.repository.UserExtRepository;
 import com.ncr.project.pulsecheck.service.dto.OrgAdminDTO;
 import com.ncr.project.pulsecheck.service.mapper.OrgAdminMapper;
+import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +35,17 @@ public class OrgAdminServiceImpl implements OrgAdminService {
 
     private final OrgAdminMapper orgAdminMapper;
 
-    public OrgAdminServiceImpl(OrgAdminRepository orgAdminRepository, OrgAdminMapper orgAdminMapper) {
+    
+    private final OrganizationRepository organizationRepository;
+    private final UserExtRepository userExtRepository;
+    
+
+
+    public OrgAdminServiceImpl(OrgAdminRepository orgAdminRepository, OrgAdminMapper orgAdminMapper, OrganizationRepository organizationRepository, UserExtRepository userExtRepository) {
         this.orgAdminRepository = orgAdminRepository;
         this.orgAdminMapper = orgAdminMapper;
+        this.organizationRepository=organizationRepository;
+        this.userExtRepository=userExtRepository;
     }
 
     /**
@@ -121,5 +135,22 @@ public class OrgAdminServiceImpl implements OrgAdminService {
         orgAdmin = orgAdminRepository.save(orgAdmin);
         orgAdmin = orgAdminRepository.findOneWithEagerRelationships(orgAdmin.getId()).get();
         return orgAdmin;
-	}
+    }
+    @Override
+    public OrgAdminDTO addOrgAdmin(Long orgId, Long userExtId) {
+		Optional<UserExt> userExt = userExtRepository.findById(userExtId);
+        if(!userExt.isPresent()){
+            throw new BadRequestAlertException("UserExt not exists", "OrgAdmin", "id not exist");
+        }
+        OrgAdmin ret = createIfNotExists(userExt.get());
+
+        Optional<Organization> organization = organizationRepository.findById(orgId);
+        if(!organization.isPresent()){
+            throw new BadRequestAlertException("Organization not exists", "OrgAdmin", "id not exist");
+        }
+        ret.addOrganizations(organization.get());
+
+        ret = orgAdminRepository.save(ret);
+        return orgAdminMapper.toDto(ret);
+    }
 }

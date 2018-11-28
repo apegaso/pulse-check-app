@@ -68,4 +68,6 @@ public interface OrgAdminService {
 	void removeOrganization(Organization org);
 
 	OrgAdmin createIfNotExists(UserExt existingUserExt);
+
+	OrgAdminDTO addOrgAdmin(Long orgId, Long userExtId);
 }

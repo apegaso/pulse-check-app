@@ -1,6 +1,13 @@
 package com.ncr.project.pulsecheck.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.ncr.project.pulsecheck.domain.OrgAdmin;
+import com.ncr.project.pulsecheck.domain.Organization;
+import com.ncr.project.pulsecheck.domain.UserExt;
+import com.ncr.project.pulsecheck.repository.OrgAdminRepository;
+import com.ncr.project.pulsecheck.repository.OrganizationRepository;
+import com.ncr.project.pulsecheck.repository.UserExtRepository;
+import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
 import com.ncr.project.pulsecheck.service.OrgAdminService;
 import com.ncr.project.pulsecheck.service.OrganizationService;
 import com.ncr.project.pulsecheck.service.UserExtService;
@@ -16,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -36,16 +44,11 @@ public class OrgAdminResource {
     private static final String ENTITY_NAME = "orgAdmin";
 
     private final OrgAdminService orgAdminService;
-
-    private final UserExtService userExtService;
     
-    private final OrganizationService organizationService;
 
 
-    public OrgAdminResource(OrgAdminService orgAdminService, UserExtService userExtService, OrganizationService organizationService) {
+    public OrgAdminResource(OrgAdminService orgAdminService) {
         this.orgAdminService = orgAdminService;
-        this.userExtService = userExtService;
-        this.organizationService = organizationService;
     }
 
     /**
@@ -57,6 +60,7 @@ public class OrgAdminResource {
      */
     @PostMapping("/org-admins")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<OrgAdminDTO> createOrgAdmin(@RequestBody OrgAdminDTO orgAdminDTO) throws URISyntaxException {
         log.debug("REST request to save OrgAdmin : {}", orgAdminDTO);
         if (orgAdminDTO.getId() != null) {
@@ -79,6 +83,7 @@ public class OrgAdminResource {
      */
     @PutMapping("/org-admins")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<OrgAdminDTO> updateOrgAdmin(@RequestBody OrgAdminDTO orgAdminDTO) throws URISyntaxException {
         log.debug("REST request to update OrgAdmin : {}", orgAdminDTO);
         if (orgAdminDTO.getId() == null) {
@@ -133,6 +138,7 @@ public class OrgAdminResource {
      */
     @DeleteMapping("/org-admins/{id}")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<Void> deleteOrgAdmin(@PathVariable Long id) {
         log.debug("REST request to delete OrgAdmin : {}", id);
         orgAdminService.delete(id);
@@ -151,6 +157,7 @@ public class OrgAdminResource {
      */
     @PutMapping("/org-admins/add/{orgId}/{userExtId}")
     @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
     public ResponseEntity<OrgAdminDTO> addOrgAdmin(@PathVariable Long orgId, @PathVariable Long userExtId) throws URISyntaxException {
         log.debug("REST request to add userExt {} to Org : {}", userExtId, orgId);
         if (orgId == null) {
@@ -159,12 +166,9 @@ public class OrgAdminResource {
         if (userExtId == null) {
             throw new BadRequestAlertException("Invalid userExtId", ENTITY_NAME, "idnull");
         }
-        userExtService.findOne(userExtId).
-        orgAdminService.findOneByUserExtEmail(email)
+
+        OrgAdminDTO orgAdminDTO = orgAdminService.addOrgAdmin(orgId, userExtId);
         
-        OrgAdminDTO result = orgAdminService.save(orgAdminDTO);
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, orgAdminDTO.getId().toString()))
-            .body(result);
+        return ResponseUtil.wrapOrNotFound(Optional.of(orgAdminDTO));
     }
 }
