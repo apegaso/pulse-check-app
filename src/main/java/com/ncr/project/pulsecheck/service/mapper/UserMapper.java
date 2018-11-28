@@ -3,6 +3,7 @@ package com.ncr.project.pulsecheck.service.mapper;
 import com.ncr.project.pulsecheck.domain.Authority;
 import com.ncr.project.pulsecheck.domain.User;
 import com.ncr.project.pulsecheck.domain.UserExt;
+import com.ncr.project.pulsecheck.repository.UserExtRepository;
 import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.service.dto.UserDTO;
 import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
@@ -23,11 +24,11 @@ import java.util.stream.Collectors;
 public class UserMapper {
     
     @Autowired
-    UserExtService userExtService;
+    UserExtRepository userExtRepository;
 
     public UserDTO userToUserDTO(User user) {
         final UserDTO ret = new UserDTO(user);
-        userExtService.findOneByEmail(user.getEmail()).ifPresent(u -> {ret.setUserExtId(u.getId());});
+        userExtRepository.findByEmail(user.getEmail()).ifPresent(u -> {ret.setUserExtId(u.getId());});
         return ret;
     }
 
