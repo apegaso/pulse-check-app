@@ -6,6 +6,7 @@ import com.ncr.project.pulsecheck.domain.User;
 import com.ncr.project.pulsecheck.repository.UserRepository;
 import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
 import com.ncr.project.pulsecheck.service.MailService;
+import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.service.dto.UserDTO;
 import com.ncr.project.pulsecheck.service.mapper.UserMapper;
@@ -91,6 +92,9 @@ public class UserResourceIntTest {
     private ExceptionTranslator exceptionTranslator;
 
     @Autowired
+    private UserExtService userExtService;
+
+    @Autowired
     private EntityManager em;
 
     @Autowired
@@ -105,7 +109,7 @@ public class UserResourceIntTest {
         MockitoAnnotations.initMocks(this);
         cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE).clear();
         cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE).clear();
-        UserResource userResource = new UserResource(userService, userRepository, mailService, userMapper);
+        UserResource userResource = new UserResource(userService, userRepository, mailService, userMapper, userExtService);
         this.restUserMockMvc = MockMvcBuilders.standaloneSetup(userResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

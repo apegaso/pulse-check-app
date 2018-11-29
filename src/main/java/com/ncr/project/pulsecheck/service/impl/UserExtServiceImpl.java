@@ -10,11 +10,14 @@ import com.ncr.project.pulsecheck.domain.Participant;
 import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.UserExtRepository;
 import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
+import com.ncr.project.pulsecheck.service.dto.UserExtWRelationsDTO;
 import com.ncr.project.pulsecheck.service.mapper.OrganizationAndEventsVMMapper;
 import com.ncr.project.pulsecheck.service.mapper.UserEventsVMMapper;
 import com.ncr.project.pulsecheck.service.mapper.UserExtMapper;
+import com.ncr.project.pulsecheck.service.mapper.UserExtWRelationsMapper;
 import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
 import com.ncr.project.pulsecheck.web.rest.vm.UserEventsVM;
+import com.ncr.project.pulsecheck.web.rest.errors.DeleteUserException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +45,8 @@ public class UserExtServiceImpl implements UserExtService {
     private final UserExtRepository userExtRepository;
 
     private final UserExtMapper userExtMapper;
+
+    private final UserExtWRelationsMapper userExtWRelationsMapper;
     
     private final UserEventsVMMapper userEventsVMMapper;
     
@@ -51,7 +56,7 @@ public class UserExtServiceImpl implements UserExtService {
     
     private final OrgAdminService orgAdminService;
     
-    private final ParticipantService participantService;
+    
 
     public UserExtServiceImpl(UserExtRepository userExtRepository
     , UserExtMapper userExtMapper
@@ -59,7 +64,7 @@ public class UserExtServiceImpl implements UserExtService {
     , OrganizationAndEventsVMMapper organizationAndEventsVMMapper
     ,ClientLeadService clientLeadService
     ,OrgAdminService orgAdminService
-    ,ParticipantService participantService
+    ,UserExtWRelationsMapper userExtWRelationsMapper
     ) {
         this.userExtRepository = userExtRepository;
         this.userExtMapper = userExtMapper;
@@ -67,7 +72,7 @@ public class UserExtServiceImpl implements UserExtService {
         this.organizationAndEventsVMMapper = organizationAndEventsVMMapper;
         this.clientLeadService = clientLeadService;
         this.orgAdminService=orgAdminService;
-        this.participantService = participantService;
+        this.userExtWRelationsMapper=userExtWRelationsMapper;
     }
 
     /**
@@ -190,7 +195,8 @@ public class UserExtServiceImpl implements UserExtService {
             }
             Participant participant = userExt.getParticipant();
             if (participant != null){
-                participantService.delete(participant.getId());
+                throw new DeleteUserException("Unable to delete. Participant not empty.");
+                //participantService.delete(participant.getId());
             }
         });
         
@@ -242,4 +248,18 @@ public class UserExtServiceImpl implements UserExtService {
         System.out.println("aaaa ********************* after save "+save);     
         return save;
     }
+
+    @Override
+    public Optional<UserExtWRelationsDTO> findOneWithRelationship(Long id) {
+        log.debug("Request to get UserExtWRelationship : {}", id);
+        return userExtRepository.findById(id)
+            .map(userExtWRelationsMapper::toDto);
+    }
+    
+    @Override
+    public Optional<UserExtWRelationsDTO> findOneByEmailWithRelationship(String email) {
+        log.debug("Request to get UserExtWRelationship by email: {}", email);
+        return userExtRepository.findByEmail(email)
+            .map(userExtWRelationsMapper::toDto);
+	}
 }

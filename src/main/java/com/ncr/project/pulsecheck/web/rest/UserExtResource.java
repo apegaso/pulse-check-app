@@ -6,6 +6,8 @@ import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
 import com.ncr.project.pulsecheck.web.rest.util.PaginationUtil;
 import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
+import com.ncr.project.pulsecheck.service.dto.UserExtWRelationsDTO;
+
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,9 +123,9 @@ public class UserExtResource {
      */
     @GetMapping("/user-exts/{id}")
     @Timed
-    public ResponseEntity<UserExtDTO> getUserExt(@PathVariable Long id) {
+    public ResponseEntity<UserExtWRelationsDTO> getUserExt(@PathVariable Long id) {
         log.debug("REST request to get UserExt : {}", id);
-        Optional<UserExtDTO> userExtDTO = userExtService.findOne(id);
+        Optional<UserExtWRelationsDTO> userExtDTO = userExtService.findOneWithRelationship(id);
         return ResponseUtil.wrapOrNotFound(userExtDTO);
     }
 

@@ -284,10 +284,8 @@ public class UserService {
     }
 
     public void deleteUser(String login) {
-        //TODO: delete ext user
         userRepository.findOneByLogin(login).ifPresent(user -> {
             userExtService.findOneByEmail(user.getEmail()).ifPresent(uext -> {
-                
                 userExtService.delete(uext.getId());
             });
             userRepository.delete(user);
