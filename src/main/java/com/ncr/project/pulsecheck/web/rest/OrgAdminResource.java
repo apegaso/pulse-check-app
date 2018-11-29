@@ -171,4 +171,22 @@ public class OrgAdminResource {
         
         return ResponseUtil.wrapOrNotFound(Optional.of(orgAdminDTO));
     }
+
+
+    @DeleteMapping("/org-admins/del/{orgId}/{userExtId}")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN})
+    public ResponseEntity<OrgAdminDTO> delOrgAdmin(@PathVariable Long orgId, @PathVariable Long userExtId) throws URISyntaxException {
+        log.debug("REST request to del userExt {} to Org : {}", userExtId, orgId);
+        if (orgId == null) {
+            throw new BadRequestAlertException("Invalid orgId", ENTITY_NAME, "idnull");
+        }
+        if (userExtId == null) {
+            throw new BadRequestAlertException("Invalid userExtId", ENTITY_NAME, "idnull");
+        }
+
+        OrgAdminDTO orgAdminDTO = orgAdminService.delOrgAdmin(orgId, userExtId);
+        
+        return ResponseUtil.wrapOrNotFound(Optional.of(orgAdminDTO));
+    }
 }

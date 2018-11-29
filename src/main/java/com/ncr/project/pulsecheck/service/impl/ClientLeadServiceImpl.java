@@ -155,4 +155,24 @@ public class ClientLeadServiceImpl implements ClientLeadService {
         ret = clientLeadRepository.findOneWithEagerRelationships(ret.getId()).get();
         return ret;
     }
+
+    @Override
+    public ClientLeadDTO delClientLead(Long eventId, Long userExtId) {
+        Optional<UserExt> userExt = userExtRepository.findById(userExtId);
+        if(!userExt.isPresent()){
+            throw new BadRequestAlertException("UserExt not exists", "ClientLead", "id not exist");
+        }
+        ClientLead ret = userExt.get().getClientLead();
+
+        if(ret == null) throw new BadRequestAlertException("UserExt doesn't have any ClientLead assoiciated", "ClientLead", "ClientLead not exist");
+
+        Optional<Event> event = eventRepository.findById(eventId);
+        if(!event.isPresent()){
+            throw new BadRequestAlertException("Event not exists", "ClientLead", "id not exist");
+        }
+
+        ret = ret.removeEvents(event.get());
+        ret = clientLeadRepository.save(ret);
+        return clientLeadMapper.toDto(ret);
+    }
 }

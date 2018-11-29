@@ -153,4 +153,23 @@ public class OrgAdminServiceImpl implements OrgAdminService {
         ret = orgAdminRepository.save(ret);
         return orgAdminMapper.toDto(ret);
     }
+
+    @Override
+    public OrgAdminDTO delOrgAdmin(Long orgId, Long userExtId) {
+        Optional<UserExt> userExt = userExtRepository.findById(userExtId);
+        if(!userExt.isPresent()){
+            throw new BadRequestAlertException("UserExt not exists", "OrgAdmin", "id not exist");
+        }
+        OrgAdmin ret = userExt.get().getOrgAdmin();
+        if(ret == null) throw new BadRequestAlertException("UserExt doesn't have any OrgAdmin assoiciated", "OrgAdmin", "OrgAdmin not exist");
+
+        Optional<Organization> organization = organizationRepository.findById(orgId);
+        if(!organization.isPresent()){
+            throw new BadRequestAlertException("Organization not exists", "OrgAdmin", "id not exist");
+        }
+        ret = ret.removeOrganizations(organization.get());
+        ret = orgAdminRepository.save(ret);
+
+        return orgAdminMapper.toDto(ret);
+    }
 }

@@ -72,4 +72,6 @@ public interface ClientLeadService {
      ClientLeadDTO addClientLead(Long eventId, Long userExtId);
      
      ClientLead createIfNotExists(UserExt userExt);
+
+	ClientLeadDTO delClientLead(Long eventId, Long userExtId);
 }

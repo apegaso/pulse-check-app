@@ -166,7 +166,7 @@ public class ClientLeadResource {
     @PutMapping("/client-leads/add/{eventId}/{userExtId}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.NCR_ADMIN})
-    public ResponseEntity<ClientLeadDTO> addOrgAdmin(@PathVariable Long eventId, @PathVariable Long userExtId) throws URISyntaxException {
+    public ResponseEntity<ClientLeadDTO> addClientLead(@PathVariable Long eventId, @PathVariable Long userExtId) throws URISyntaxException {
         log.debug("REST request to add userExt {} to Event : {}", userExtId, eventId);
         if (eventId == null) {
             throw new BadRequestAlertException("Invalid eventId", ENTITY_NAME, "idnull");
@@ -176,6 +176,23 @@ public class ClientLeadResource {
         }
 
         ClientLeadDTO clientLeadDTO = clientLeadService.addClientLead(eventId, userExtId);
+        
+        return ResponseUtil.wrapOrNotFound(Optional.of(clientLeadDTO));
+    }
+    @DeleteMapping("/client-leads/del/{eventId}/{userExtId}")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.NCR_ADMIN})
+    public ResponseEntity<ClientLeadDTO> delClientLead(@PathVariable Long eventId, @PathVariable Long userExtId) throws URISyntaxException {
+        log.debug("REST request to add userExt {} to Event : {}", userExtId, eventId);
+        if (eventId == null) {
+            throw new BadRequestAlertException("Invalid eventId", ENTITY_NAME, "idnull");
+        }
+        if (userExtId == null) {
+            throw new BadRequestAlertException("Invalid userExtId", ENTITY_NAME, "idnull");
+        }
+
+        ClientLeadDTO clientLeadDTO = clientLeadService.delClientLead(eventId, userExtId);
+        
         
         return ResponseUtil.wrapOrNotFound(Optional.of(clientLeadDTO));
     }

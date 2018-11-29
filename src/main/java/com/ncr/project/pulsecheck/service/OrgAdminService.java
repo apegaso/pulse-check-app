@@ -70,4 +70,6 @@ public interface OrgAdminService {
 	OrgAdmin createIfNotExists(UserExt existingUserExt);
 
 	OrgAdminDTO addOrgAdmin(Long orgId, Long userExtId);
+
+	OrgAdminDTO delOrgAdmin(Long orgId, Long userExtId);
 }
