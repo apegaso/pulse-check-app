@@ -10,6 +10,7 @@ import com.ncr.project.pulsecheck.security.SecurityUtils;
 import com.ncr.project.pulsecheck.service.util.RandomUtil;
 import com.ncr.project.pulsecheck.service.dto.UserDTO;
 import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
+import com.ncr.project.pulsecheck.service.mapper.UserMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.errors.InvalidPasswordException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +40,7 @@ public class UserService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     private final UserExtService userExtService;
 
     private final PasswordEncoder passwordEncoder;
@@ -45,12 +49,13 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, UserExtService userExtService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, UserExtService userExtService, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
-		this.userExtService = userExtService;
+        this.userExtService = userExtService;
+        this.userMapper = userMapper;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -378,5 +383,41 @@ public class UserService {
 
 	public Optional<User> getUserWithAuthoritiesByEmail(String email) {
 		return userRepository.findOneWithAuthoritiesByEmail(email);
-	}
+    }
+    
+
+    public Optional<User> createUserFromEmail(Long orgId, String email, Set<String> authorities) {
+        if(email == null || email.isEmpty()) throw new BadRequestAlertException("A new user must have the email", "UserService", "email null");
+        if(orgId == null || orgId < 1) throw new BadRequestAlertException("A new user must have the organization", "UserService", "missing orgId");
+         
+		//search for user
+		Optional<User> ret = getUserWithAuthoritiesByEmail(email);
+		//createUser if not exists
+		if(!ret.isPresent()){
+		    UserDTO userDTO = new UserDTO();
+		    userDTO.setLogin(email);
+		    userDTO.setEmail(email);
+		    userDTO.setOrganizationId(orgId);
+		    userDTO.setAuthorities(authorities);
+
+		    User createdUser = createUser(userDTO);
+            log.debug("User created: {}", createdUser);
+            ret = Optional.of(createdUser);
+        }else{
+            ret = updateAuthorities(ret.get().getId(), authorities, true);
+        }
+        return ret;
+    }
+
+    public Optional<User> updateAuthorities(Long id, Set<String> authorities, boolean merge){
+        Optional<User> ret = getUserWithAuthorities(id);
+        ret.ifPresent(u->{
+            Set<Authority> authoritiesFromStrings = userMapper.authoritiesFromStrings(authorities);
+            if(merge) authoritiesFromStrings.addAll(u.getAuthorities());
+            u.setAuthorities(authoritiesFromStrings);
+            userRepository.save(u);
+        });
+
+        return ret;
+    }
 }

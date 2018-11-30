@@ -20,6 +20,7 @@ import com.ncr.project.pulsecheck.service.dto.ParticipantDTO;
 import com.ncr.project.pulsecheck.service.dto.UserDTO;
 import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
 import com.ncr.project.pulsecheck.service.dto.UserExtWRelationsDTO;
+import com.ncr.project.pulsecheck.service.mapper.UserExtMapper;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -52,16 +53,18 @@ public class EventResource {
 
     private final EventService eventService;
     private final UserExtService userExtService;
+    private final UserExtMapper userExtMapper;
     private final UserService userService;
     private final ClientLeadService clientLeadService;
     private final ParticipantService participantService;
 
-    public EventResource(EventService eventService, UserExtService userExtService, ClientLeadService clientLeadService, ParticipantService participantService, UserService userService) {
+    public EventResource(EventService eventService, UserExtService userExtService, ClientLeadService clientLeadService, ParticipantService participantService, UserService userService, UserExtMapper userExtMapper) {
         this.eventService = eventService;
         this.userExtService = userExtService;
         this.clientLeadService = clientLeadService;
         this.participantService = participantService;
         this.userService = userService;
+        this.userExtMapper = userExtMapper;
     }
 
     /**
@@ -95,25 +98,10 @@ public class EventResource {
         EventDTO eventDtoNew = eventService.save(eventDTO);
 
         EventExtendedDTO result = new EventExtendedDTO(eventDtoNew);
-        
+        result.setClientLeads(Sets.newHashSet());
+        result.setParticipants(Sets.newHashSet());
         for(UserExtDTO u : eventDTO.getParticipants()) {
-            if(u.getEmail() == null || u.getEmail().isEmpty()) throw new BadRequestAlertException("A new user must have the email", ENTITY_NAME, "email null");
-            
-            //search for user
-            Optional<User> userWithAuthoritiesByEmail = userService.getUserWithAuthoritiesByEmail(u.getEmail());
-            //createUser if not exists
-            if(!userWithAuthoritiesByEmail.isPresent()){
-                UserDTO userDTO = new UserDTO();
-                userDTO.setLogin(u.getEmail());
-                userDTO.setEmail(u.getEmail());
-                userDTO.setOrganizationId(eventDtoNew.getOrganizationId());
-                userDTO.setAuthorities(Sets.newHashSet(AuthoritiesConstants.USER, AuthoritiesConstants.PARTICIPANT));
-
-                User createdUser = userService.createUser(userDTO);
-                log.debug("User created: {}",createdUser);
-                u.setUserId(createdUser.getId());
-            }
-            
+            userService.createUserFromEmail(eventDtoNew.getOrganizationId(),u.getEmail(), Sets.newHashSet(AuthoritiesConstants.PARTICIPANT,AuthoritiesConstants.USER));
             //create userExt if not exists
             UserExt createIfNotExists = userExtService.createIfNotExists(null, u.getEmail());
             if(createIfNotExists == null) throw new BadRequestAlertException("Error creating new UserExt", ENTITY_NAME, "userext null");
@@ -121,24 +109,10 @@ public class EventResource {
 
             //assign as participants
             participantService.addParticipant(result.getId(), u.getId());
+            result.getParticipants().add(userExtMapper.toDto(createIfNotExists));
         }
         for(UserExtDTO u : eventDTO.getClientLeads()){
-            if(u.getEmail() == null || u.getEmail().isEmpty()) throw new BadRequestAlertException("A new user must have the email", ENTITY_NAME, "email null");
-            
-            //search for user
-            Optional<User> userWithAuthoritiesByEmail = userService.getUserWithAuthoritiesByEmail(u.getEmail());
-            //createUser if not exists
-            if(!userWithAuthoritiesByEmail.isPresent()){
-                UserDTO userDTO = new UserDTO();
-                userDTO.setLogin(u.getEmail());
-                userDTO.setEmail(u.getEmail());
-                userDTO.setAuthorities(Sets.newHashSet(AuthoritiesConstants.USER, AuthoritiesConstants.CLIENT_LEAD));
-                userDTO.setOrganizationId(eventDtoNew.getOrganizationId());
-                User createdUser = userService.createUser(userDTO);
-                log.debug("User created: {}",createdUser);
-                u.setUserId(createdUser.getId());
-            }
-            
+            userService.createUserFromEmail(eventDtoNew.getOrganizationId(),u.getEmail(), Sets.newHashSet(AuthoritiesConstants.CLIENT_LEAD,AuthoritiesConstants.USER));
             //create userExt if not exists
             UserExt createIfNotExists = userExtService.createIfNotExists(null, u.getEmail());
             if(createIfNotExists == null) throw new BadRequestAlertException("Error creating new UserExt", ENTITY_NAME, "userext null");
@@ -146,6 +120,7 @@ public class EventResource {
 
             //assign as client lead
             clientLeadService.addClientLead(result.getId(), u.getId());
+            result.getClientLeads().add(userExtMapper.toDto(createIfNotExists));
         }
         
 

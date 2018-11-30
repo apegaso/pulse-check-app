@@ -4,6 +4,7 @@ import com.ncr.project.pulsecheck.service.OrgAdminService;
 import com.ncr.project.pulsecheck.service.OrganizationService;
 import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.service.UserService;
+import com.google.common.collect.Sets;
 import com.ncr.project.pulsecheck.domain.OrgAdmin;
 import com.ncr.project.pulsecheck.domain.Organization;
 import com.ncr.project.pulsecheck.domain.User;
@@ -11,9 +12,11 @@ import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.OrganizationRepository;
 import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
 import com.ncr.project.pulsecheck.service.dto.OrganizationDTO;
+import com.ncr.project.pulsecheck.service.dto.UserDTO;
 import com.ncr.project.pulsecheck.service.mapper.OrganizationAndAdminsVMMapper;
 import com.ncr.project.pulsecheck.service.mapper.OrganizationAndEventsVMMapper;
 import com.ncr.project.pulsecheck.service.mapper.OrganizationMapper;
+import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndAdminVM;
 import com.ncr.project.pulsecheck.web.rest.vm.OrganizationAndEventsVM;
 import com.ncr.project.pulsecheck.web.rest.vm.UserEmailVM;
@@ -144,16 +147,20 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
 	public OrganizationAndAdminVM setAdmins(OrganizationDTO organizationDTO, List<UserEmailVM> admins){
-        if(admins != null && !admins.isEmpty()){
-            Organization organization = organizationRepository.findById(organizationDTO.getId()).get();
+        Optional<Organization> findById = organizationRepository.findById(organizationDTO.getId());
+        if(!findById.isPresent()) throw new BadRequestAlertException("Organizaition not found", "OrgAdmin", "organization not found");
+        if (admins != null && !admins.isEmpty()) {
+            Organization organization = findById.get();
             admins.forEach(e -> {
+                userService.createUserFromEmail(organizationDTO.getId(), e.getEmail(), Sets.newHashSet(AuthoritiesConstants.NCR_ADMIN,AuthoritiesConstants.USER));
+            
                 UserExt existingUserExt = userExtService.createIfNotExists(e.getUserExtId(), e.getEmail());
                 OrgAdmin orgAdmin = orgAdminService.createIfNotExists(existingUserExt);
                 orgAdmin.addOrganizations(organization);   
             });
         }
         List<UserEmailVM> adminsRet = new ArrayList<>();
-        Organization organization = organizationRepository.findById(organizationDTO.getId()).get();
+        Organization organization = findById.get();
         organization.getAdmins().forEach(a -> {
             UserEmailVM tmp = new UserEmailVM(a.getUserExt().getId(),a.getUserExt().getEmail());
             adminsRet.add(tmp);
@@ -163,10 +170,12 @@ public class OrganizationServiceImpl implements OrganizationService {
 		ret.setAdmins(adminsRet);
 		return ret;
     }
-    
+
+	
+
     @Override
     @Transactional(readOnly = true)
-	public Optional<OrganizationAndAdminVM> findOneWithAdmins(Long id){
+    public Optional<OrganizationAndAdminVM> findOneWithAdmins(Long id) {
         return organizationRepository.findById(id).map(organizationAndAdminsVMMapper::toDto);
     }
 
