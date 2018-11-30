@@ -2,13 +2,15 @@ package com.ncr.project.pulsecheck.service.impl;
 
 import com.ncr.project.pulsecheck.service.ClientLeadService;
 import com.ncr.project.pulsecheck.service.OrgAdminService;
-import com.ncr.project.pulsecheck.service.ParticipantService;
 import com.ncr.project.pulsecheck.service.UserExtService;
+import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.domain.ClientLead;
 import com.ncr.project.pulsecheck.domain.OrgAdmin;
 import com.ncr.project.pulsecheck.domain.Participant;
+import com.ncr.project.pulsecheck.domain.User;
 import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.UserExtRepository;
+import com.ncr.project.pulsecheck.repository.UserRepository;
 import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
 import com.ncr.project.pulsecheck.service.dto.UserExtWRelationsDTO;
 import com.ncr.project.pulsecheck.service.mapper.OrganizationAndEventsVMMapper;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 /**
@@ -55,6 +58,8 @@ public class UserExtServiceImpl implements UserExtService {
     private final ClientLeadService clientLeadService;
     
     private final OrgAdminService orgAdminService;
+
+    private final UserRepository userRepository;
     
     
 
@@ -65,6 +70,7 @@ public class UserExtServiceImpl implements UserExtService {
     ,ClientLeadService clientLeadService
     ,OrgAdminService orgAdminService
     ,UserExtWRelationsMapper userExtWRelationsMapper
+    ,UserRepository userRepository
     ) {
         this.userExtRepository = userExtRepository;
         this.userExtMapper = userExtMapper;
@@ -73,6 +79,7 @@ public class UserExtServiceImpl implements UserExtService {
         this.clientLeadService = clientLeadService;
         this.orgAdminService=orgAdminService;
         this.userExtWRelationsMapper=userExtWRelationsMapper;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -236,16 +243,23 @@ public class UserExtServiceImpl implements UserExtService {
             Optional<UserExt> findById = userExtRepository.findById(userExtId);
             if(findById.isPresent()) return findById.get();
         }
-        if(email == null) return null;
+        if(email == null) {
+            log.error("Error creating UserExt: empty email");
+            return null;
+        }
         Optional<UserExt> findByEmail = userExtRepository.findByEmail(email);
         if(findByEmail.isPresent()) return findByEmail.get();
 
+        Optional<User> optionalUser = userRepository.findOneByEmailIgnoreCase(email);
+        if(!optionalUser.isPresent()) {
+            log.error("Error creating UserExt: User with '{}' not found.",email);
+            return null;
+        }
         UserExtDTO userExtDTO = new UserExtDTO();
+        userExtDTO.setUserId(optionalUser.get().getId());
         userExtDTO.setEmail(email);
         UserExt entity = userExtMapper.toEntity(userExtDTO);
-        System.out.println("aaaa ********************* before save "+entity);     
         UserExt save = userExtRepository.save(entity);
-        System.out.println("aaaa ********************* after save "+save);     
         return save;
     }
 
@@ -260,6 +274,6 @@ public class UserExtServiceImpl implements UserExtService {
     public Optional<UserExtWRelationsDTO> findOneByEmailWithRelationship(String email) {
         log.debug("Request to get UserExtWRelationship by email: {}", email);
         return userExtRepository.findByEmail(email)
-            .map(userExtWRelationsMapper::toDto);
-	}
+                .map(userExtWRelationsMapper::toDto);
+    }
 }

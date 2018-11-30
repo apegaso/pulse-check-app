@@ -27,4 +27,7 @@ public interface ClientLeadRepository extends JpaRepository<ClientLead, Long> {
     @Query("select client_lead from ClientLead client_lead left join fetch client_lead.events where client_lead.id =:id")
     Optional<ClientLead> findOneWithEagerRelationships(@Param("id") Long id);
 
+    @Query(value = "select distinct client_lead from ClientLead client_lead left join fetch client_lead.events events where events.id =:id")
+	List<ClientLead> findAllByEventId(@Param("id") Long id);
+
 }

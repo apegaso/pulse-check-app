@@ -1,11 +1,26 @@
 package com.ncr.project.pulsecheck.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.collect.Sets;
+import com.ncr.project.pulsecheck.domain.User;
+import com.ncr.project.pulsecheck.domain.UserExt;
+import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
+import com.ncr.project.pulsecheck.service.ClientLeadService;
 import com.ncr.project.pulsecheck.service.EventService;
+import com.ncr.project.pulsecheck.service.ParticipantService;
+import com.ncr.project.pulsecheck.service.UserExtService;
+import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
 import com.ncr.project.pulsecheck.web.rest.util.PaginationUtil;
+import com.ncr.project.pulsecheck.service.dto.ClientLeadDTO;
 import com.ncr.project.pulsecheck.service.dto.EventDTO;
+import com.ncr.project.pulsecheck.service.dto.EventExtendedDTO;
+import com.ncr.project.pulsecheck.service.dto.ParticipantDTO;
+import com.ncr.project.pulsecheck.service.dto.UserDTO;
+import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
+import com.ncr.project.pulsecheck.service.dto.UserExtWRelationsDTO;
+
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +37,7 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * REST controller for managing Event.
@@ -35,9 +51,17 @@ public class EventResource {
     private static final String ENTITY_NAME = "event";
 
     private final EventService eventService;
+    private final UserExtService userExtService;
+    private final UserService userService;
+    private final ClientLeadService clientLeadService;
+    private final ParticipantService participantService;
 
-    public EventResource(EventService eventService) {
+    public EventResource(EventService eventService, UserExtService userExtService, ClientLeadService clientLeadService, ParticipantService participantService, UserService userService) {
         this.eventService = eventService;
+        this.userExtService = userExtService;
+        this.clientLeadService = clientLeadService;
+        this.participantService = participantService;
+        this.userService = userService;
     }
 
     /**
@@ -59,6 +83,108 @@ public class EventResource {
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
+
+    @PostMapping("/events/extended")
+    @Timed
+    public ResponseEntity<EventExtendedDTO> createEventExtended(@Valid @RequestBody EventExtendedDTO eventDTO) throws URISyntaxException {
+        log.debug("REST request to save EventExtended : {}", eventDTO);
+        if (eventDTO.getId() != null) {
+            throw new BadRequestAlertException("A new event cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        
+        EventDTO eventDtoNew = eventService.save(eventDTO);
+
+        EventExtendedDTO result = new EventExtendedDTO(eventDtoNew);
+        
+        for(UserExtDTO u : eventDTO.getParticipants()) {
+            if(u.getEmail() == null || u.getEmail().isEmpty()) throw new BadRequestAlertException("A new user must have the email", ENTITY_NAME, "email null");
+            
+            //search for user
+            Optional<User> userWithAuthoritiesByEmail = userService.getUserWithAuthoritiesByEmail(u.getEmail());
+            //createUser if not exists
+            if(!userWithAuthoritiesByEmail.isPresent()){
+                UserDTO userDTO = new UserDTO();
+                userDTO.setLogin(u.getEmail());
+                userDTO.setEmail(u.getEmail());
+                userDTO.setOrganizationId(eventDtoNew.getOrganizationId());
+                userDTO.setAuthorities(Sets.newHashSet(AuthoritiesConstants.USER, AuthoritiesConstants.PARTICIPANT));
+
+                User createdUser = userService.createUser(userDTO);
+                log.debug("User created: {}",createdUser);
+                u.setUserId(createdUser.getId());
+            }
+            
+            //create userExt if not exists
+            UserExt createIfNotExists = userExtService.createIfNotExists(null, u.getEmail());
+            if(createIfNotExists == null) throw new BadRequestAlertException("Error creating new UserExt", ENTITY_NAME, "userext null");
+            u.setId(createIfNotExists.getId());
+
+            //assign as participants
+            participantService.addParticipant(result.getId(), u.getId());
+        }
+        for(UserExtDTO u : eventDTO.getClientLeads()){
+            if(u.getEmail() == null || u.getEmail().isEmpty()) throw new BadRequestAlertException("A new user must have the email", ENTITY_NAME, "email null");
+            
+            //search for user
+            Optional<User> userWithAuthoritiesByEmail = userService.getUserWithAuthoritiesByEmail(u.getEmail());
+            //createUser if not exists
+            if(!userWithAuthoritiesByEmail.isPresent()){
+                UserDTO userDTO = new UserDTO();
+                userDTO.setLogin(u.getEmail());
+                userDTO.setEmail(u.getEmail());
+                userDTO.setAuthorities(Sets.newHashSet(AuthoritiesConstants.USER, AuthoritiesConstants.CLIENT_LEAD));
+                userDTO.setOrganizationId(eventDtoNew.getOrganizationId());
+                User createdUser = userService.createUser(userDTO);
+                log.debug("User created: {}",createdUser);
+                u.setUserId(createdUser.getId());
+            }
+            
+            //create userExt if not exists
+            UserExt createIfNotExists = userExtService.createIfNotExists(null, u.getEmail());
+            if(createIfNotExists == null) throw new BadRequestAlertException("Error creating new UserExt", ENTITY_NAME, "userext null");
+            u.setId(createIfNotExists.getId());
+
+            //assign as client lead
+            clientLeadService.addClientLead(result.getId(), u.getId());
+        }
+        
+
+        return ResponseEntity.created(new URI("/api/events/extended/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    @GetMapping("/events/extended/{id}")
+    @Timed
+    public ResponseEntity<EventExtendedDTO> getEventExtended(@PathVariable Long id) throws URISyntaxException {
+        Optional<EventDTO> eventOptional = eventService.findOne(id);
+        if(!eventOptional.isPresent()){
+            return ResponseUtil.wrapOrNotFound(Optional.empty());
+        }
+
+        EventExtendedDTO result = new EventExtendedDTO(eventOptional.get());
+        
+        Set<ParticipantDTO> participants = participantService.findAllByEventId(id);
+
+        Set<UserExtDTO> participantsUserExt = Sets.newHashSet();
+        participants.forEach(p -> {
+            userExtService.findOne(p.getUserExtId()).ifPresent(participantsUserExt::add);
+        });
+        result.setParticipants(participantsUserExt);
+
+        Set<UserExtDTO> clientLeadsUserExt = Sets.newHashSet();
+        Set<ClientLeadDTO> clientLeads = clientLeadService.fineAllByEventId(id);
+        clientLeads.forEach(p -> {
+            userExtService.findOne(p.getUserExtId()).ifPresent(clientLeadsUserExt::add);
+        });
+        result.setClientLeads(clientLeadsUserExt);
+
+        return ResponseUtil.wrapOrNotFound(Optional.of(result));
+    }
+
+
+    
+
 
     /**
      * PUT  /events : Updates an existing event.

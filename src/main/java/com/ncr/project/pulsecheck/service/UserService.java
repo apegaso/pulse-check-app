@@ -375,4 +375,8 @@ public class UserService {
         
 		return ret;
 	}
+
+	public Optional<User> getUserWithAuthoritiesByEmail(String email) {
+		return userRepository.findOneWithAuthoritiesByEmail(email);
+	}
 }

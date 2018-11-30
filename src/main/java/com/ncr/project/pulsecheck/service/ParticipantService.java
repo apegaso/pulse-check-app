@@ -1,11 +1,15 @@
 package com.ncr.project.pulsecheck.service;
 
+import com.ncr.project.pulsecheck.domain.Participant;
+import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.service.dto.ParticipantDTO;
+import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service Interface for managing Participant.
@@ -49,4 +53,10 @@ public interface ParticipantService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+    Participant createIfNotExists(UserExt userExt);
+
+	ParticipantDTO addParticipant(Long eventId, Long userExtId);
+
+	Set<ParticipantDTO> findAllByEventId(Long id);
 }

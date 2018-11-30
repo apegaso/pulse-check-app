@@ -1,6 +1,8 @@
 package com.ncr.project.pulsecheck.service.impl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Sets;
 import com.ncr.project.pulsecheck.domain.ClientLead;
 import com.ncr.project.pulsecheck.domain.Event;
 import com.ncr.project.pulsecheck.domain.UserExt;
@@ -175,4 +178,12 @@ public class ClientLeadServiceImpl implements ClientLeadService {
         ret = clientLeadRepository.save(ret);
         return clientLeadMapper.toDto(ret);
     }
+
+    @Override
+    public Set<ClientLeadDTO> fineAllByEventId(Long id) {
+        List<ClientLead> findAllByEventId = clientLeadRepository.findAllByEventId(id);
+        List<ClientLeadDTO> dto = clientLeadMapper.toDto(findAllByEventId);
+        Set<ClientLeadDTO> ret = Sets.newHashSet(dto.iterator());
+        return ret;
+	}
 }
