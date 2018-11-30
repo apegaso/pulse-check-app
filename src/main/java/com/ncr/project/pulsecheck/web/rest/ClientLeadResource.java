@@ -1,13 +1,19 @@
 package com.ncr.project.pulsecheck.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.collect.Sets;
+import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
 import com.ncr.project.pulsecheck.service.ClientLeadService;
+import com.ncr.project.pulsecheck.service.EventService;
+import com.ncr.project.pulsecheck.service.UserExtService;
+import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
 import com.ncr.project.pulsecheck.web.rest.util.PaginationUtil;
 import com.ncr.project.pulsecheck.service.dto.ClientLeadDTO;
 import com.ncr.project.pulsecheck.service.dto.ClientLead_Simple_DTO;
+import com.ncr.project.pulsecheck.service.dto.EventDTO;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -38,9 +44,15 @@ public class ClientLeadResource {
     private static final String ENTITY_NAME = "clientLead";
 
     private final ClientLeadService clientLeadService;
+    private final UserService userService;
+    private final UserExtService userExtService;
+    private final EventService eventService;
 
-    public ClientLeadResource(ClientLeadService clientLeadService) {
+    public ClientLeadResource(ClientLeadService clientLeadService, UserService userService, UserExtService userExtService, EventService eventService) {
         this.clientLeadService = clientLeadService;
+        this.userService =  userService;
+        this.userExtService = userExtService;
+        this.eventService = eventService;
     }
 
     /**
@@ -163,16 +175,29 @@ public class ClientLeadResource {
      * or with status 500 (Internal Server Error) if the orgAdmin couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PutMapping("/client-leads/add/{eventId}/{userExtId}")
+    @PutMapping("/client-leads/add/{eventId}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.NCR_ADMIN})
-    public ResponseEntity<ClientLeadDTO> addClientLead(@PathVariable Long eventId, @PathVariable Long userExtId) throws URISyntaxException {
+    public ResponseEntity<ClientLeadDTO> addClientLead(@PathVariable Long eventId, @RequestParam(required = false, value="userExtId") Long userExtId, @RequestParam(required = false, value="email") String email) throws URISyntaxException {
         log.debug("REST request to add userExt {} to Event : {}", userExtId, eventId);
         if (eventId == null) {
             throw new BadRequestAlertException("Invalid eventId", ENTITY_NAME, "idnull");
         }
-        if (userExtId == null) {
-            throw new BadRequestAlertException("Invalid userExtId", ENTITY_NAME, "idnull");
+        if (userExtId == null && (email == null || email.isEmpty())) {
+            throw new BadRequestAlertException("Missing user. one of email or userExtId parameter must filled", ENTITY_NAME, "idnull");
+        }
+
+        
+        if(email != null && !email.isEmpty()) {
+            Optional<EventDTO> event = eventService.findOne(eventId);
+            if(!event.isPresent()) throw new BadRequestAlertException("Event not found", ENTITY_NAME, "idnull");
+            Long organizationId = event.get().getOrganizationId();
+            userService.createUserFromEmail(organizationId, email,
+                    Sets.newHashSet(AuthoritiesConstants.CLIENT_LEAD, AuthoritiesConstants.USER));
+            //create userExt if not exists
+            UserExt createIfNotExists = userExtService.createIfNotExists(null, email);
+            if(createIfNotExists == null) throw new BadRequestAlertException("Error creating new UserExt", ENTITY_NAME, "userext null");
+            userExtId = createIfNotExists.getId();
         }
 
         ClientLeadDTO clientLeadDTO = clientLeadService.addClientLead(eventId, userExtId);
