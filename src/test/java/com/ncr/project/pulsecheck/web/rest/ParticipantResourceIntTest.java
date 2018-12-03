@@ -4,7 +4,10 @@ import com.ncr.project.pulsecheck.PulseCheckApp;
 
 import com.ncr.project.pulsecheck.domain.Participant;
 import com.ncr.project.pulsecheck.repository.ParticipantRepository;
+import com.ncr.project.pulsecheck.service.EventService;
 import com.ncr.project.pulsecheck.service.ParticipantService;
+import com.ncr.project.pulsecheck.service.UserExtService;
+import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.service.dto.ParticipantDTO;
 import com.ncr.project.pulsecheck.service.mapper.ParticipantMapper;
 import com.ncr.project.pulsecheck.web.rest.errors.ExceptionTranslator;
@@ -76,11 +79,26 @@ public class ParticipantResourceIntTest {
     private MockMvc restParticipantMockMvc;
 
     private Participant participant;
+    
+    @Autowired
+    UserService userService; 
+    @Autowired
+    UserExtService userExtService; 
+    @Autowired
+    EventService eventService;
+
+
+    @Mock
+    UserService userServiceMock; 
+    @Mock
+    UserExtService userExtServiceMock; 
+    @Mock
+    EventService eventServiceMock;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ParticipantResource participantResource = new ParticipantResource(participantService);
+        final ParticipantResource participantResource = new ParticipantResource(participantService, userService,userExtService, eventService);
         this.restParticipantMockMvc = MockMvcBuilders.standaloneSetup(participantResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -156,7 +174,7 @@ public class ParticipantResourceIntTest {
     }
     
     public void getAllParticipantsWithEagerRelationshipsIsEnabled() throws Exception {
-        ParticipantResource participantResource = new ParticipantResource(participantServiceMock);
+        ParticipantResource participantResource = new ParticipantResource(participantServiceMock, userServiceMock,userExtServiceMock, eventServiceMock);
         when(participantServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restParticipantMockMvc = MockMvcBuilders.standaloneSetup(participantResource)
@@ -172,7 +190,7 @@ public class ParticipantResourceIntTest {
     }
 
     public void getAllParticipantsWithEagerRelationshipsIsNotEnabled() throws Exception {
-        ParticipantResource participantResource = new ParticipantResource(participantServiceMock);
+        ParticipantResource participantResource = new ParticipantResource(participantServiceMock, userServiceMock,userExtServiceMock, eventServiceMock);
             when(participantServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restParticipantMockMvc = MockMvcBuilders.standaloneSetup(participantResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)

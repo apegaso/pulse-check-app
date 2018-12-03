@@ -5,6 +5,9 @@ import com.ncr.project.pulsecheck.PulseCheckApp;
 import com.ncr.project.pulsecheck.domain.ClientLead;
 import com.ncr.project.pulsecheck.repository.ClientLeadRepository;
 import com.ncr.project.pulsecheck.service.ClientLeadService;
+import com.ncr.project.pulsecheck.service.EventService;
+import com.ncr.project.pulsecheck.service.UserExtService;
+import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.service.dto.ClientLeadDTO;
 import com.ncr.project.pulsecheck.service.mapper.ClientLeadMapper;
 import com.ncr.project.pulsecheck.web.rest.errors.ExceptionTranslator;
@@ -77,10 +80,26 @@ public class ClientLeadResourceIntTest {
 
     private ClientLead clientLead;
 
+    @Autowired
+    UserService userService; 
+    @Autowired
+    UserExtService userExtService; 
+    @Autowired
+    EventService eventService;
+
+
+    @Mock
+    UserService userServiceMock; 
+    @Mock
+    UserExtService userExtServiceMock; 
+    @Mock
+    EventService eventServiceMock;
+
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ClientLeadResource clientLeadResource = new ClientLeadResource(clientLeadService);
+        final ClientLeadResource clientLeadResource = new ClientLeadResource(clientLeadService, userService,userExtService, eventService);
         this.restClientLeadMockMvc = MockMvcBuilders.standaloneSetup(clientLeadResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -156,7 +175,7 @@ public class ClientLeadResourceIntTest {
     }
     
     public void getAllClientLeadsWithEagerRelationshipsIsEnabled() throws Exception {
-        ClientLeadResource clientLeadResource = new ClientLeadResource(clientLeadServiceMock);
+        ClientLeadResource clientLeadResource = new ClientLeadResource(clientLeadServiceMock, userServiceMock,userExtServiceMock, eventServiceMock);
         when(clientLeadServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restClientLeadMockMvc = MockMvcBuilders.standaloneSetup(clientLeadResource)
@@ -172,7 +191,7 @@ public class ClientLeadResourceIntTest {
     }
 
     public void getAllClientLeadsWithEagerRelationshipsIsNotEnabled() throws Exception {
-        ClientLeadResource clientLeadResource = new ClientLeadResource(clientLeadServiceMock);
+        ClientLeadResource clientLeadResource = new ClientLeadResource(clientLeadServiceMock, userServiceMock,userExtServiceMock, eventServiceMock);
             when(clientLeadServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restClientLeadMockMvc = MockMvcBuilders.standaloneSetup(clientLeadResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
