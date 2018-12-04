@@ -138,9 +138,9 @@ public class CategoryResource {
      */
     @GetMapping("/categories/{id}/question-groups")
     @Timed
-    public ResponseEntity<Set<QuestionGroupDTO>> getCategoryQuestionGroups(@PathVariable Long id) {
+    public ResponseEntity<List<QuestionGroupDTO>> getCategoryQuestionGroups(@PathVariable Long id) {
         log.debug("REST request to get Category : {}", id);
-        Optional<Set<QuestionGroupDTO>> questionDTO = categoryService.findQuestionGroupsById(id);
+        Optional<List<QuestionGroupDTO>> questionDTO = categoryService.findQuestionGroupsById(id);
         return ResponseUtil.wrapOrNotFound(questionDTO);
     }
 

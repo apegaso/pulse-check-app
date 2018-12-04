@@ -7,6 +7,7 @@ import com.ncr.project.pulsecheck.service.dto.QuestionGroupDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -49,5 +50,5 @@ public interface CategoryService {
      */
     void delete(Long id);
 
-	Optional<Set<QuestionGroupDTO>> findQuestionGroupsById(Long id);
+	Optional<List<QuestionGroupDTO>> findQuestionGroupsById(Long id);
 }

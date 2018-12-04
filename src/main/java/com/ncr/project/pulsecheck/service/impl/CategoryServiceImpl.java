@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -137,7 +138,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Optional<Set<QuestionGroupDTO>> findQuestionGroupsById(Long id) {
+    public Optional<List<QuestionGroupDTO>> findQuestionGroupsById(Long id) {
         log.debug("Request to get Category Question Groups : {}", id);
         Optional<Category> categoryOpt = categoryRepository.findById(id);
         Set<QuestionGroup> ret = Sets.newHashSet();
@@ -149,8 +150,14 @@ public class CategoryServiceImpl implements CategoryService {
             }
         }
         
-        Set<QuestionGroupDTO> collect = ret.stream().map(groupQuestionMapper::toDto).collect(Collectors.toSet());
-        
+        List<QuestionGroupDTO> collect = ret.stream().map(groupQuestionMapper::toDto).collect(Collectors.toList());
+        collect.sort(new Comparator<QuestionGroupDTO>(){
+
+            @Override
+            public int compare(QuestionGroupDTO o1, QuestionGroupDTO o2) {
+                return o1.getQuestionNumber().compareTo(o2.getQuestionNumber());
+            }
+        });
         return Optional.ofNullable(collect);
 	}
 }
