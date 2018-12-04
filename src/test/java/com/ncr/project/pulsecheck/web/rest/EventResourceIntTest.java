@@ -4,9 +4,14 @@ import com.ncr.project.pulsecheck.PulseCheckApp;
 
 import com.ncr.project.pulsecheck.domain.Event;
 import com.ncr.project.pulsecheck.repository.EventRepository;
+import com.ncr.project.pulsecheck.service.ClientLeadService;
 import com.ncr.project.pulsecheck.service.EventService;
+import com.ncr.project.pulsecheck.service.ParticipantService;
+import com.ncr.project.pulsecheck.service.UserExtService;
+import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.service.dto.EventDTO;
 import com.ncr.project.pulsecheck.service.mapper.EventMapper;
+import com.ncr.project.pulsecheck.service.mapper.UserExtMapper;
 import com.ncr.project.pulsecheck.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -82,11 +87,21 @@ public class EventResourceIntTest {
     private MockMvc restEventMockMvc;
 
     private Event event;
+    @Autowired
+    UserExtService userExtService;
+    @Autowired
+    ClientLeadService clientLeadService;
+    @Autowired
+    ParticipantService participantService;
+    @Autowired
+    UserService userService;
+    @Autowired
+    UserExtMapper userExtMapper;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final EventResource eventResource = new EventResource(eventService);
+        final EventResource eventResource = new EventResource(eventService, userExtService, clientLeadService, participantService, userService, userExtMapper);
         this.restEventMockMvc = MockMvcBuilders.standaloneSetup(eventResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
