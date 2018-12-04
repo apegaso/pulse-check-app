@@ -2,6 +2,7 @@ package com.ncr.project.pulsecheck.service;
 
 import com.ncr.project.pulsecheck.service.dto.CategoryDTO;
 import com.ncr.project.pulsecheck.service.dto.QuestionDTO;
+import com.ncr.project.pulsecheck.service.dto.QuestionGroupDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,4 +48,6 @@ public interface CategoryService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+	Optional<Set<QuestionGroupDTO>> findQuestionGroupsById(Long id);
 }

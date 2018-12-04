@@ -1,12 +1,16 @@
 package com.ncr.project.pulsecheck.service.impl;
 
 import com.ncr.project.pulsecheck.service.CategoryService;
+import com.google.common.collect.Sets;
 import com.ncr.project.pulsecheck.domain.Category;
 import com.ncr.project.pulsecheck.domain.Question;
+import com.ncr.project.pulsecheck.domain.QuestionGroup;
 import com.ncr.project.pulsecheck.repository.CategoryRepository;
 import com.ncr.project.pulsecheck.service.dto.CategoryDTO;
 import com.ncr.project.pulsecheck.service.dto.QuestionDTO;
+import com.ncr.project.pulsecheck.service.dto.QuestionGroupDTO;
 import com.ncr.project.pulsecheck.service.mapper.CategoryMapper;
+import com.ncr.project.pulsecheck.service.mapper.QuestionGroupMapper;
 import com.ncr.project.pulsecheck.service.mapper.QuestionMapper;
 
 import org.slf4j.Logger;
@@ -21,9 +25,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * Service Implementation for managing Category.
+ * 
  */
 @Service
 @Transactional
@@ -37,10 +45,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final QuestionMapper questionMapper;
     
-    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper, QuestionMapper questionMapper) {
+    private final QuestionGroupMapper groupQuestionMapper;
+    
+    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper, QuestionMapper questionMapper, QuestionGroupMapper groupQuestionMapper) {
         this.categoryRepository = categoryRepository;
         this.categoryMapper = categoryMapper;
         this.questionMapper = questionMapper;
+        this.groupQuestionMapper = groupQuestionMapper;
     }
 
     /**
@@ -124,4 +135,22 @@ public class CategoryServiceImpl implements CategoryService {
         sons.forEach(c -> {ret.addAll(getSonsQuestions(c));});
         return ret;
     }
+
+    @Override
+    public Optional<Set<QuestionGroupDTO>> findQuestionGroupsById(Long id) {
+        log.debug("Request to get Category Question Groups : {}", id);
+        Optional<Category> categoryOpt = categoryRepository.findById(id);
+        Set<QuestionGroup> ret = Sets.newHashSet();
+        if(categoryOpt.isPresent()){
+            Category category = categoryOpt.get();
+            Set<Question> questions = category.getQuestions();
+            for(Question q : questions){
+                ret.add(q.getGroup());
+            }
+        }
+        
+        Set<QuestionGroupDTO> collect = ret.stream().map(groupQuestionMapper::toDto).collect(Collectors.toSet());
+        
+        return Optional.ofNullable(collect);
+	}
 }

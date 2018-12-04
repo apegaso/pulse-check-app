@@ -7,6 +7,7 @@ import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
 import com.ncr.project.pulsecheck.web.rest.util.PaginationUtil;
 import com.ncr.project.pulsecheck.service.dto.CategoryDTO;
 import com.ncr.project.pulsecheck.service.dto.QuestionDTO;
+import com.ncr.project.pulsecheck.service.dto.QuestionGroupDTO;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -126,6 +127,20 @@ public class CategoryResource {
     public ResponseEntity<Set<QuestionDTO>> getCategoryQuestions(@PathVariable Long id) {
         log.debug("REST request to get Category : {}", id);
         Optional<Set<QuestionDTO>> questionDTO = categoryService.findQuestionsById(id);
+        return ResponseUtil.wrapOrNotFound(questionDTO);
+    }
+
+    /**
+     * GET  /categories/:id/questions : get the questions belonging to "id" category. Nested categories are resolved. 
+     *
+     * @param id the id of the categoryDTO to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the Set<QuestionDTO>, or with status 404 (Not Found)
+     */
+    @GetMapping("/categories/{id}/question-groups")
+    @Timed
+    public ResponseEntity<Set<QuestionGroupDTO>> getCategoryQuestionGroups(@PathVariable Long id) {
+        log.debug("REST request to get Category : {}", id);
+        Optional<Set<QuestionGroupDTO>> questionDTO = categoryService.findQuestionGroupsById(id);
         return ResponseUtil.wrapOrNotFound(questionDTO);
     }
 
