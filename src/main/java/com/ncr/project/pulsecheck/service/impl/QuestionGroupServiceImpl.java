@@ -3,6 +3,7 @@ package com.ncr.project.pulsecheck.service.impl;
 import com.ncr.project.pulsecheck.service.QuestionGroupService;
 import com.ncr.project.pulsecheck.domain.QuestionGroup;
 import com.ncr.project.pulsecheck.repository.QuestionGroupRepository;
+import com.ncr.project.pulsecheck.service.dto.QuestionGroupCountVM;
 import com.ncr.project.pulsecheck.service.dto.QuestionGroupDTO;
 import com.ncr.project.pulsecheck.service.mapper.QuestionGroupMapper;
 import org.slf4j.Logger;
@@ -86,4 +87,16 @@ public class QuestionGroupServiceImpl implements QuestionGroupService {
         log.debug("Request to delete QuestionGroup : {}", id);
         questionGroupRepository.deleteById(id);
     }
+
+    @Override
+    public Optional<QuestionGroupCountVM> count() {
+
+        QuestionGroupCountVM questionGroupCountVM = new QuestionGroupCountVM();
+
+        questionGroupCountVM.setCount(questionGroupRepository.count());
+        
+        Optional<QuestionGroupCountVM> ret = Optional.of(questionGroupCountVM);
+
+        return ret;
+	}
 }

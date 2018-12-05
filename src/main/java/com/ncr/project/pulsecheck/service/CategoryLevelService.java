@@ -1,6 +1,7 @@
 package com.ncr.project.pulsecheck.service;
 
 import com.ncr.project.pulsecheck.service.dto.CategoryLevelDTO;
+import com.ncr.project.pulsecheck.service.dto.CategoryLevelDetailsVM;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,4 +41,6 @@ public interface CategoryLevelService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+	Optional<CategoryLevelDetailsVM> findOneWithDetails(Long id);
 }

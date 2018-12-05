@@ -1,5 +1,6 @@
 package com.ncr.project.pulsecheck.service;
 
+import com.ncr.project.pulsecheck.service.dto.QuestionGroupCountVM;
 import com.ncr.project.pulsecheck.service.dto.QuestionGroupDTO;
 
 import java.util.List;
@@ -40,4 +41,6 @@ public interface QuestionGroupService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+	Optional<QuestionGroupCountVM> count();
 }

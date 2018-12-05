@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.ncr.project.pulsecheck.service.QuestionGroupService;
 import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
+import com.ncr.project.pulsecheck.service.dto.QuestionGroupCountVM;
 import com.ncr.project.pulsecheck.service.dto.QuestionGroupDTO;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -100,6 +101,15 @@ public class QuestionGroupResource {
     public ResponseEntity<QuestionGroupDTO> getQuestionGroup(@PathVariable Long id) {
         log.debug("REST request to get QuestionGroup : {}", id);
         Optional<QuestionGroupDTO> questionGroupDTO = questionGroupService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(questionGroupDTO);
+    }
+
+    
+    @GetMapping("/question-groups/count")
+    @Timed
+    public ResponseEntity<QuestionGroupCountVM> getQuestionGroupCount() {
+        log.debug("REST request to get QuestionGroupCount ");
+        Optional<QuestionGroupCountVM> questionGroupDTO = questionGroupService.count();
         return ResponseUtil.wrapOrNotFound(questionGroupDTO);
     }
 

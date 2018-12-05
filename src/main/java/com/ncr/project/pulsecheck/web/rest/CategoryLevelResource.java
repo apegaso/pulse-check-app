@@ -5,6 +5,8 @@ import com.ncr.project.pulsecheck.service.CategoryLevelService;
 import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
 import com.ncr.project.pulsecheck.service.dto.CategoryLevelDTO;
+import com.ncr.project.pulsecheck.service.dto.CategoryLevelDetailsVM;
+
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,7 @@ public class CategoryLevelResource {
     private static final String ENTITY_NAME = "categoryLevel";
 
     private final CategoryLevelService categoryLevelService;
+
 
     public CategoryLevelResource(CategoryLevelService categoryLevelService) {
         this.categoryLevelService = categoryLevelService;
@@ -97,9 +100,9 @@ public class CategoryLevelResource {
      */
     @GetMapping("/category-levels/{id}")
     @Timed
-    public ResponseEntity<CategoryLevelDTO> getCategoryLevel(@PathVariable Long id) {
+    public ResponseEntity<CategoryLevelDetailsVM> getCategoryLevel(@PathVariable Long id) {
         log.debug("REST request to get CategoryLevel : {}", id);
-        Optional<CategoryLevelDTO> categoryLevelDTO = categoryLevelService.findOne(id);
+        Optional<CategoryLevelDetailsVM> categoryLevelDTO = categoryLevelService.findOneWithDetails(id);
         return ResponseUtil.wrapOrNotFound(categoryLevelDTO);
     }
 
