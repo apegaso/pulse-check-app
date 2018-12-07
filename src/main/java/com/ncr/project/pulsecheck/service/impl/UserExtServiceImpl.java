@@ -202,6 +202,7 @@ public class UserExtServiceImpl implements UserExtService {
             }
             Participant participant = userExt.getParticipant();
             if (participant != null){
+                //participant.getEvents();
                 throw new DeleteUserException("Unable to delete. Participant not empty.");
                 //participantService.delete(participant.getId());
             }

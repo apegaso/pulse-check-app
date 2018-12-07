@@ -2,12 +2,16 @@ package com.ncr.project.pulsecheck.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.ncr.project.pulsecheck.domain.User;
+import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.UserRepository;
 import com.ncr.project.pulsecheck.security.SecurityUtils;
 import com.ncr.project.pulsecheck.service.MailService;
 import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.service.dto.UserDTO;
+import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
+import com.ncr.project.pulsecheck.service.dto.UserExtWRelationsDTO;
+import com.ncr.project.pulsecheck.service.mapper.UserExtWRelationsMapper;
 import com.ncr.project.pulsecheck.web.rest.errors.*;
 import com.ncr.project.pulsecheck.web.rest.vm.KeyAndPasswordVM;
 import com.ncr.project.pulsecheck.web.rest.vm.ManagedUserVM;
@@ -40,13 +44,16 @@ public class AccountResource {
 
     private final UserExtService userExtService;
 
+    private final UserExtWRelationsMapper userExtWRelationsMapper;
+
     private final MailService mailService;
 
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService, UserExtService userExtService) {
+    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService, UserExtService userExtService, UserExtWRelationsMapper userExtWRelationsMapper) {
         this.userExtService = userExtService;
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
+        this.userExtWRelationsMapper = userExtWRelationsMapper;
     }
 
     /**
@@ -109,6 +116,24 @@ public class AccountResource {
     public UserDTO getAccount() {
         return userService.getUserWithAuthorities()
             .map(userService::newUserDTO)
+            .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
+    }
+    /**
+     * GET  /account : get the current user.
+     *
+     * @return the current user
+     * @throws RuntimeException 500 (Internal Server Error) if the user couldn't be returned
+     */
+    @GetMapping("/account/ext")
+    @Timed
+    public UserExtWRelationsDTO getAccountExt() {
+        Optional<User> userWithAuthorities = userService.getUserWithAuthorities();
+        if(!userWithAuthorities.isPresent()) throw new InternalServerErrorException("User could not be found");
+        User user = userWithAuthorities.get();
+        Optional<UserExtWRelationsDTO> userExt = userExtService
+                .findOneByEmailWithRelationship(user.getEmail());
+
+        return userExt
             .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
     }
     
