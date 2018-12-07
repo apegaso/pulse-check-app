@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import afu.org.checkerframework.checker.oigj.qual.O;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -120,5 +118,13 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
         return Optional.ofNullable(questionnaireMapper.toDto(findAllByParticipantId));
         
+    }
+
+    @Override
+    public Optional<List<QuestionnaireDTO>> findAllByEventId(Long eventId) {
+        log.debug("Request to get all Questionnaires by Event Id");
+        return Optional.ofNullable(questionnaireRepository.findAllByEventId(eventId).stream()
+            .map(questionnaireMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new)));
     }
 }

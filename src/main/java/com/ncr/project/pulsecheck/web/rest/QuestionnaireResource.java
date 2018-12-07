@@ -1,14 +1,19 @@
 package com.ncr.project.pulsecheck.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
+import com.ncr.project.pulsecheck.service.QuestionnaireAnswerService;
 import com.ncr.project.pulsecheck.service.QuestionnaireService;
 import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
+import com.ncr.project.pulsecheck.web.rest.errors.InternalServerErrorException;
 import com.ncr.project.pulsecheck.web.rest.util.HeaderUtil;
+import com.ncr.project.pulsecheck.service.dto.QuestionnaireAnswerDTO;
 import com.ncr.project.pulsecheck.service.dto.QuestionnaireDTO;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -22,6 +27,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
+@Secured(AuthoritiesConstants.ADMIN)
 public class QuestionnaireResource {
 
     private final Logger log = LoggerFactory.getLogger(QuestionnaireResource.class);
@@ -29,9 +35,11 @@ public class QuestionnaireResource {
     private static final String ENTITY_NAME = "questionnaire";
 
     private final QuestionnaireService questionnaireService;
+    private final QuestionnaireAnswerService questionnaireAnswerService;
 
-    public QuestionnaireResource(QuestionnaireService questionnaireService) {
+    public QuestionnaireResource(QuestionnaireService questionnaireService, QuestionnaireAnswerService questionnaireAnswerService) {
         this.questionnaireService = questionnaireService;
+        this.questionnaireAnswerService = questionnaireAnswerService;
     }
 
     /**
@@ -115,4 +123,26 @@ public class QuestionnaireResource {
         questionnaireService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
+
+    @GetMapping("/questionnaires/{questionnaireId}/answers")
+    @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
+    public List<QuestionnaireAnswerDTO> getQuestionnaireAnswers(@PathVariable Long questionnaireId) {
+        Optional<List<QuestionnaireAnswerDTO>> ret = questionnaireAnswerService.findAllByQuestionnaire(questionnaireId);
+        return ret
+            .orElseThrow(() -> new InternalServerErrorException("No questionnaire found"));
+    }
+
+    /**
+     * GET  /questionnaires : get all the questionnaires.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of questionnaires in body
+     */
+    @GetMapping("/questionnaires/event/{eventid}")
+    @Timed
+    public List<QuestionnaireDTO> getAllQuestionnairesByEvent(@PathVariable Long eventId) {
+        log.debug("REST request to get all Questionnaires by Event Id");
+        return questionnaireService.findAllByEventId(eventId).orElseThrow(() -> new InternalServerErrorException("No questionnaire found"));
+    }
+
 }

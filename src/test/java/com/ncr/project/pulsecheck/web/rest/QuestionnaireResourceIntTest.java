@@ -4,6 +4,7 @@ import com.ncr.project.pulsecheck.PulseCheckApp;
 
 import com.ncr.project.pulsecheck.domain.Questionnaire;
 import com.ncr.project.pulsecheck.repository.QuestionnaireRepository;
+import com.ncr.project.pulsecheck.service.QuestionnaireAnswerService;
 import com.ncr.project.pulsecheck.service.QuestionnaireService;
 import com.ncr.project.pulsecheck.service.dto.QuestionnaireDTO;
 import com.ncr.project.pulsecheck.service.mapper.QuestionnaireMapper;
@@ -60,6 +61,9 @@ public class QuestionnaireResourceIntTest {
 
     @Autowired
     private QuestionnaireService questionnaireService;
+    
+    @Autowired
+    QuestionnaireAnswerService questionnaireAnswerService;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -80,7 +84,7 @@ public class QuestionnaireResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final QuestionnaireResource questionnaireResource = new QuestionnaireResource(questionnaireService);
+        final QuestionnaireResource questionnaireResource = new QuestionnaireResource(questionnaireService, questionnaireAnswerService);
         this.restQuestionnaireMockMvc = MockMvcBuilders.standaloneSetup(questionnaireResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

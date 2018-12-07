@@ -8,8 +8,11 @@ import com.ncr.project.pulsecheck.repository.AuthorityRepository;
 import com.ncr.project.pulsecheck.repository.UserRepository;
 import com.ncr.project.pulsecheck.security.AuthoritiesConstants;
 import com.ncr.project.pulsecheck.service.MailService;
+import com.ncr.project.pulsecheck.service.QuestionnaireAnswerService;
+import com.ncr.project.pulsecheck.service.QuestionnaireService;
 import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.service.dto.UserDTO;
+import com.ncr.project.pulsecheck.service.mapper.UserExtWRelationsMapper;
 import com.ncr.project.pulsecheck.service.dto.PasswordChangeDTO;
 import com.ncr.project.pulsecheck.web.rest.errors.ExceptionTranslator;
 import com.ncr.project.pulsecheck.web.rest.vm.KeyAndPasswordVM;
@@ -65,6 +68,12 @@ public class AccountResourceIntTest {
     private UserExtService userExtService;
 
     @Autowired
+    UserExtWRelationsMapper userExtWRelationsMapper;
+    @Autowired
+    QuestionnaireService questionnaireService;
+    @Autowired
+    QuestionnaireAnswerService questionnaireAnswerService;
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -79,6 +88,16 @@ public class AccountResourceIntTest {
     @Mock
     private MailService mockMailService;
 
+
+    @Mock
+    private UserExtService mockUserExtService;
+    @Mock
+    UserExtWRelationsMapper mockUserExtWRelationsMapper;
+    @Mock
+    QuestionnaireService mockQuestionnaireService;
+    @Mock
+    QuestionnaireAnswerService mockQuestionnaireAnswerService;
+
     private MockMvc restMvc;
 
     private MockMvc restUserMockMvc;
@@ -88,10 +107,10 @@ public class AccountResourceIntTest {
         MockitoAnnotations.initMocks(this);
         doNothing().when(mockMailService).sendActivationEmail(any());
         AccountResource accountResource =
-            new AccountResource(userRepository, userService, mockMailService, userExtService);
+            new AccountResource(userRepository, userService, mockMailService, userExtService, userExtWRelationsMapper, questionnaireService, questionnaireAnswerService);
 
         AccountResource accountUserMockResource =
-            new AccountResource(userRepository, mockUserService, mockMailService, userExtService);
+            new AccountResource(userRepository, mockUserService, mockMailService, mockUserExtService, mockUserExtWRelationsMapper, mockQuestionnaireService, mockQuestionnaireAnswerService);
         this.restMvc = MockMvcBuilders.standaloneSetup(accountResource)
             .setMessageConverters(httpMessageConverters)
             .setControllerAdvice(exceptionTranslator)

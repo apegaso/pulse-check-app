@@ -52,4 +52,6 @@ public interface QuestionnaireService {
     void delete(Long id);
 
 	Optional<List<QuestionnaireDTO>> findAllByUserExt(Long id);
+
+	Optional<List<QuestionnaireDTO>> findAllByEventId(Long eventId);
 }

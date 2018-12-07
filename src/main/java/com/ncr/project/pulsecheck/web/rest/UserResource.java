@@ -211,6 +211,7 @@ public class UserResource {
      */
     @GetMapping("/users/{login:" + Constants.LOGIN_REGEX + "}/events")
     @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
     public UserEventsVM getAccountEvents(@PathVariable String login) {
         Optional<User> loggedUser = userService.getUserWithAuthoritiesByLogin(login);
         Optional<UserEventsVM> ret = loggedUser.map(u -> u.getEmail()).flatMap(userExtService::findUserEventsVMByEmail);
@@ -227,6 +228,7 @@ public class UserResource {
      */
     @GetMapping("/users/{login:" + Constants.LOGIN_REGEX + "}/organizations")
     @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
     public List<OrganizationAndEventsVM> getAccountOrganizations(@PathVariable String login) {
         Optional<User> loggedUser = userService.getUserWithAuthorities();
         Optional<List<OrganizationAndEventsVM>> ret = loggedUser.map(u -> u.getEmail()).flatMap(userExtService::findUserOrganizationsVMByEmail);
