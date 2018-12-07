@@ -1,9 +1,12 @@
 package com.ncr.project.pulsecheck.service.mapper;
 
+import java.util.List;
+
 import com.ncr.project.pulsecheck.domain.*;
 import com.ncr.project.pulsecheck.service.dto.QuestionnaireDTO;
 
 import org.mapstruct.*;
+
 
 /**
  * Mapper for the entity Questionnaire and its DTO QuestionnaireDTO.
@@ -18,6 +21,8 @@ public interface QuestionnaireMapper extends EntityMapper<QuestionnaireDTO, Ques
     @Mapping(source = "eventId", target = "event")
     @Mapping(source = "participantId", target = "participant")
     Questionnaire toEntity(QuestionnaireDTO questionnaireDTO);
+
+    List<QuestionnaireDTO> toDto(List<Questionnaire> questionnaires);
 
     default Questionnaire fromId(Long id) {
         if (id == null) {

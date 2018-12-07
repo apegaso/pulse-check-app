@@ -33,6 +33,8 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     @Query(value = "select distinct participant from Participant participant left join fetch participant.events events where events.id =:id")
 	List<Participant> findAllByEventId(@Param("id") Long id);
 
+	Optional<Participant> findByUserExtId(Long userid);
+
 
 
 }

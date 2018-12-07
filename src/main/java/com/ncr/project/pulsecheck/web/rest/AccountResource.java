@@ -6,6 +6,8 @@ import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.UserRepository;
 import com.ncr.project.pulsecheck.security.SecurityUtils;
 import com.ncr.project.pulsecheck.service.MailService;
+import com.ncr.project.pulsecheck.service.QuestionnaireAnswerService;
+import com.ncr.project.pulsecheck.service.QuestionnaireService;
 import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.service.dto.UserDTO;
@@ -26,7 +28,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import com.ncr.project.pulsecheck.service.dto.ParticipantDTO;
 import com.ncr.project.pulsecheck.service.dto.PasswordChangeDTO;
+import com.ncr.project.pulsecheck.service.dto.QuestionnaireAnswerDTO;
+import com.ncr.project.pulsecheck.service.dto.QuestionnaireDTO;
+
 import java.util.*;
 
 /**
@@ -44,25 +51,31 @@ public class AccountResource {
 
     private final UserExtService userExtService;
 
-    private final UserExtWRelationsMapper userExtWRelationsMapper;
+    private final QuestionnaireService questionnaireService;
+
+    private final QuestionnaireAnswerService questionnaireAnswerService;
 
     private final MailService mailService;
 
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService, UserExtService userExtService, UserExtWRelationsMapper userExtWRelationsMapper) {
+    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService, UserExtService userExtService, UserExtWRelationsMapper userExtWRelationsMapper, QuestionnaireService questionnaireService, QuestionnaireAnswerService questionnaireAnswerService) {
         this.userExtService = userExtService;
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
-        this.userExtWRelationsMapper = userExtWRelationsMapper;
+        this.questionnaireService = questionnaireService;
+        this.questionnaireAnswerService = questionnaireAnswerService;
     }
 
     /**
-     * POST  /register : register the user.
+     * POST /register : register the user.
      *
      * @param managedUserVM the managed user View Model
-     * @throws InvalidPasswordException 400 (Bad Request) if the password is incorrect/PUT
-     * @throws EmailAlreadyUsedException 400 (Bad Request) if the email is already used
-     * @throws LoginAlreadyUsedException 400 (Bad Request) if the login is already used
+     * @throws InvalidPasswordException  400 (Bad Request) if the password is
+     *                                   incorrect/PUT
+     * @throws EmailAlreadyUsedException 400 (Bad Request) if the email is already
+     *                                   used
+     * @throws LoginAlreadyUsedException 400 (Bad Request) if the login is already
+     *                                   used
      */
     @PostMapping("/register")
     @Timed
@@ -135,6 +148,39 @@ public class AccountResource {
 
         return userExt
             .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
+    }
+
+    @GetMapping("/account/questionnaires")
+    @Timed
+    public List<QuestionnaireDTO> getAccountQuestionnaires() {
+        Optional<User> userWithAuthorities = userService.getUserWithAuthorities();
+        if(!userWithAuthorities.isPresent()) throw new InternalServerErrorException("User could not be found");
+        User user = userWithAuthorities.get();
+        Optional<UserExtWRelationsDTO> userExt = userExtService
+                .findOneByEmailWithRelationship(user.getEmail());
+        if (!userExt.isPresent())
+            throw new InternalServerErrorException("User could not be found");
+        
+        Optional<List<QuestionnaireDTO>> ret = questionnaireService.findAllByUserExt(userExt.get().getId());
+        return ret
+            .orElseThrow(() -> new InternalServerErrorException("No questionnaire found"));
+    }
+
+    @GetMapping("/account/questionnaire/{questionnaireId}/answers")
+    @Timed
+    public List<QuestionnaireAnswerDTO> getAccountQuestionnaireAnswers(@PathVariable Long questionnaireId) {
+        Optional<User> userWithAuthorities = userService.getUserWithAuthorities();
+        if(!userWithAuthorities.isPresent()) throw new InternalServerErrorException("User could not be found");
+        User user = userWithAuthorities.get();
+        Optional<UserExtWRelationsDTO> userExt = userExtService
+                .findOneByEmailWithRelationship(user.getEmail());
+        if (!userExt.isPresent())
+                throw new InternalServerErrorException("User could not be found");
+        Optional<List<QuestionnaireAnswerDTO>> ret = questionnaireAnswerService.findAllByQuestionnaire(questionnaireId);
+        return ret
+            .orElseThrow(() -> new InternalServerErrorException("No questionnaire found"));
+        // return userExt
+        //     .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
     }
     
     /**

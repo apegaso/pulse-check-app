@@ -1,7 +1,9 @@
 package com.ncr.project.pulsecheck.service.impl;
 
 import com.ncr.project.pulsecheck.service.QuestionnaireService;
+import com.ncr.project.pulsecheck.domain.Participant;
 import com.ncr.project.pulsecheck.domain.Questionnaire;
+import com.ncr.project.pulsecheck.repository.ParticipantRepository;
 import com.ncr.project.pulsecheck.repository.QuestionnaireRepository;
 import com.ncr.project.pulsecheck.service.dto.QuestionnaireDTO;
 import com.ncr.project.pulsecheck.service.mapper.QuestionnaireMapper;
@@ -10,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import afu.org.checkerframework.checker.oigj.qual.O;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -25,12 +29,14 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     private final Logger log = LoggerFactory.getLogger(QuestionnaireServiceImpl.class);
 
     private final QuestionnaireRepository questionnaireRepository;
+    private final ParticipantRepository participantRepository;
 
     private final QuestionnaireMapper questionnaireMapper;
 
-    public QuestionnaireServiceImpl(QuestionnaireRepository questionnaireRepository, QuestionnaireMapper questionnaireMapper) {
+    public QuestionnaireServiceImpl(QuestionnaireRepository questionnaireRepository, QuestionnaireMapper questionnaireMapper, ParticipantRepository participantRepository) {
         this.questionnaireRepository = questionnaireRepository;
         this.questionnaireMapper = questionnaireMapper;
+        this.participantRepository = participantRepository;
     }
 
     /**
@@ -90,6 +96,22 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     @Override
     @Transactional(readOnly = true)
     public Optional<QuestionnaireDTO> findOneByUserExtAndEvent(Long userid, Long eventid) {
-        return questionnaireRepository.findByUserExtIdAndEventId(userid,eventid).map(questionnaireMapper::toDto);
+        Optional<Participant> participant = participantRepository.findByUserExtId(userid);
+        if(!participant.isPresent()) return Optional.empty();
+        return questionnaireRepository.findByParticipantIdAndEventId(participant.get().getId(),eventid).map(questionnaireMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<List<QuestionnaireDTO>> findAllByUserExt(Long id) {
+        Optional<Participant> participant = participantRepository.findByUserExtId(id);
+        if(!participant.isPresent()) return Optional.empty();
+
+        List<Questionnaire> findAllByParticipantId = questionnaireRepository
+                .findAllByParticipantId(participant.get().getId());
+        
+
+        return Optional.ofNullable(questionnaireMapper.toDto(findAllByParticipantId));
+        
     }
 }

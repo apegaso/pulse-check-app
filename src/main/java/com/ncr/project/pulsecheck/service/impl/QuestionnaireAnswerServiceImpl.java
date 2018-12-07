@@ -1,6 +1,7 @@
 package com.ncr.project.pulsecheck.service.impl;
 
 import com.ncr.project.pulsecheck.service.QuestionnaireAnswerService;
+import com.ncr.project.pulsecheck.domain.Participant;
 import com.ncr.project.pulsecheck.domain.QuestionnaireAnswer;
 import com.ncr.project.pulsecheck.repository.QuestionnaireAnswerRepository;
 import com.ncr.project.pulsecheck.service.dto.QuestionnaireAnswerDTO;
@@ -13,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import java.util.List;
 import java.util.Optional;
 /**
  * Service Implementation for managing QuestionnaireAnswer.
@@ -85,5 +86,14 @@ public class QuestionnaireAnswerServiceImpl implements QuestionnaireAnswerServic
     public void delete(Long id) {
         log.debug("Request to delete QuestionnaireAnswer : {}", id);
         questionnaireAnswerRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<List<QuestionnaireAnswerDTO>> findAllByQuestionnaire(Long questionnaireId) {
+        List<QuestionnaireAnswer> findAllByParticipantId = questionnaireAnswerRepository
+                .findAllByQuestionnaireId(questionnaireId);
+
+        return Optional.ofNullable(questionnaireAnswerMapper.toDto(findAllByParticipantId));
     }
 }
