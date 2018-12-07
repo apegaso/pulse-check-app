@@ -7,6 +7,8 @@ import com.ncr.project.pulsecheck.repository.ParticipantRepository;
 import com.ncr.project.pulsecheck.repository.QuestionnaireRepository;
 import com.ncr.project.pulsecheck.service.dto.QuestionnaireDTO;
 import com.ncr.project.pulsecheck.service.mapper.QuestionnaireMapper;
+import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +48,14 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
      * @return the persisted entity
      */
     @Override
-    public QuestionnaireDTO save(QuestionnaireDTO questionnaireDTO) {
+    public QuestionnaireDTO save(QuestionnaireDTO questionnaireDTO, Boolean checkNew) {
         log.debug("Request to save Questionnaire : {}", questionnaireDTO);
         Questionnaire questionnaire = questionnaireMapper.toEntity(questionnaireDTO);
+        if(checkNew){
+            Optional<Questionnaire> findByParticipantIdAndEventId = questionnaireRepository
+                    .findByParticipantIdAndEventId(questionnaireDTO.getParticipantId(), questionnaireDTO.getEventId());
+            if(findByParticipantIdAndEventId.isPresent()) throw new BadRequestAlertException("A new questionnaire cannot already have same participant and event id", "questionnaire", "idexists");
+        }
         questionnaire = questionnaireRepository.save(questionnaire);
         return questionnaireMapper.toDto(questionnaire);
     }

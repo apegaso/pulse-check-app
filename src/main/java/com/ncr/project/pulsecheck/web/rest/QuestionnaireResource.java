@@ -48,7 +48,7 @@ public class QuestionnaireResource {
         if (questionnaireDTO.getId() != null) {
             throw new BadRequestAlertException("A new questionnaire cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        QuestionnaireDTO result = questionnaireService.save(questionnaireDTO);
+        QuestionnaireDTO result = questionnaireService.save(questionnaireDTO, true);
         return ResponseEntity.created(new URI("/api/questionnaires/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -70,7 +70,7 @@ public class QuestionnaireResource {
         if (questionnaireDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        QuestionnaireDTO result = questionnaireService.save(questionnaireDTO);
+        QuestionnaireDTO result = questionnaireService.save(questionnaireDTO, false);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, questionnaireDTO.getId().toString()))
             .body(result);

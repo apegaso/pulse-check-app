@@ -16,7 +16,7 @@ public interface QuestionnaireService {
      * @param questionnaireDTO the entity to save
      * @return the persisted entity
      */
-    QuestionnaireDTO save(QuestionnaireDTO questionnaireDTO);
+    QuestionnaireDTO save(QuestionnaireDTO questionnaireDTO, Boolean checkNew);
 
     /**
      * Get all the questionnaires.
