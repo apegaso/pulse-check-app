@@ -40,4 +40,6 @@ public interface EmailService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+	Optional<Email> findNextToSend();
 }

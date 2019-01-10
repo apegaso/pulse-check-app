@@ -48,14 +48,16 @@ public class UserService {
     private final AuthorityRepository authorityRepository;
 
     private final CacheManager cacheManager;
+    private final MailService mailService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, UserExtService userExtService, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, UserExtService userExtService, UserMapper userMapper, MailService mailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
         this.userExtService = userExtService;
         this.userMapper = userMapper;
+        this.mailService = mailService;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -96,63 +98,65 @@ public class UserService {
             });
     }
 
-    public User registerUser(UserDTO userDTO, String password) {
+    // public User registerUser(UserDTO userDTO, String password) {
 
-        User newUser = new User();
-        String encryptedPassword = passwordEncoder.encode(password);
-        newUser.setLogin(userDTO.getLogin());
-        // new user gets initially a generated password
-        newUser.setPassword(encryptedPassword);
-        newUser.setFirstName(userDTO.getFirstName());
-        newUser.setLastName(userDTO.getLastName());
-        newUser.setEmail(userDTO.getEmail());
-        newUser.setImageUrl(userDTO.getImageUrl());
-        newUser.setLangKey(userDTO.getLangKey());
-        // new user is not active
-        newUser.setActivated(false);
-        // new user gets registration key
-        newUser.setActivationKey(RandomUtil.generateActivationKey());
-        Set<Authority> authorities = new HashSet<>();
-        authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
-        newUser.setAuthorities(authorities);
+    //     User newUser = new User();
+    //     String encryptedPassword = passwordEncoder.encode(password);
+    //     newUser.setLogin(userDTO.getLogin());
+    //     // new user gets initially a generated password
+    //     newUser.setPassword(encryptedPassword);
+    //     newUser.setFirstName(userDTO.getFirstName());
+    //     newUser.setLastName(userDTO.getLastName());
+    //     newUser.setEmail(userDTO.getEmail());
+    //     newUser.setImageUrl(userDTO.getImageUrl());
+    //     newUser.setLangKey(userDTO.getLangKey());
+    //     // new user is not active
+    //     newUser.setActivated(true);
+    //     // new user gets registration key
+    //     // newUser.setActivationKey(RandomUtil.generateActivationKey());
+    //     newUser.setResetKey(RandomUtil.generateResetKey());
+    //     newUser.setResetDate(Instant.now());
+    //     Set<Authority> authorities = new HashSet<>();
+    //     authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
+    //     newUser.setAuthorities(authorities);
         
-        newUser = userRepository.save(newUser);
-        updateExtDTO(userDTO, newUser);
+    //     newUser = userRepository.save(newUser);
+    //     updateExtDTO(userDTO, newUser);
         
             
         
-        // Optional<UserExt> userext = userExtRepository.findByEmail(userDTO.getEmail());
-        // if(userext.isPresent()) {
-        // 	UserExt userExt2 = userext.get();
-		// 	userExt2.setUser(newUser);
-		// 	userExt2.setJobRole(userDTO.getJobRole());
+    //     // Optional<UserExt> userext = userExtRepository.findByEmail(userDTO.getEmail());
+    //     // if(userext.isPresent()) {
+    //     // 	UserExt userExt2 = userext.get();
+	// 	// 	userExt2.setUser(newUser);
+	// 	// 	userExt2.setJobRole(userDTO.getJobRole());
 			
-		// 	if(userExt2.getClientLead() != null)
-		// 		authorityRepository.findById(AuthoritiesConstants.CLIENT_LEAD).ifPresent(authorities::add);
-		// 	if(userExt2.getOrgAdmin() != null)
-		// 		authorityRepository.findById(AuthoritiesConstants.NCR_ADMIN).ifPresent(authorities::add);
-		// 	if(userExt2.getParticipant() != null)
-		// 		authorityRepository.findById(AuthoritiesConstants.PARTICIPANT).ifPresent(authorities::add);
+	// 	// 	if(userExt2.getClientLead() != null)
+	// 	// 		authorityRepository.findById(AuthoritiesConstants.CLIENT_LEAD).ifPresent(authorities::add);
+	// 	// 	if(userExt2.getOrgAdmin() != null)
+	// 	// 		authorityRepository.findById(AuthoritiesConstants.NCR_ADMIN).ifPresent(authorities::add);
+	// 	// 	if(userExt2.getParticipant() != null)
+	// 	// 		authorityRepository.findById(AuthoritiesConstants.PARTICIPANT).ifPresent(authorities::add);
 			
 			
-        // }else {
-        // 	UserExt newUserExt = new UserExt();
-        //     newUserExt.setUser(newUser);
-        //     newUserExt.setJobRole(userDTO.getJobRole());
+    //     // }else {
+    //     // 	UserExt newUserExt = new UserExt();
+    //     //     newUserExt.setUser(newUser);
+    //     //     newUserExt.setJobRole(userDTO.getJobRole());
             
-        //     if(userDTO.getOrganizationId() != null && userDTO.getOrganizationId() > 0) {
-        //     	organizationRepository.findById(userDTO.getOrganizationId()).ifPresent(newUserExt::setOrganization);
-        //     } else {
-        //     	organizationRepository.findByOrganizationName(userDTO.getOrganizationName()).ifPresent(newUserExt::setOrganization);
-        //     }
-        //     userExtRepository.save(newUserExt);
-        // }
+    //     //     if(userDTO.getOrganizationId() != null && userDTO.getOrganizationId() > 0) {
+    //     //     	organizationRepository.findById(userDTO.getOrganizationId()).ifPresent(newUserExt::setOrganization);
+    //     //     } else {
+    //     //     	organizationRepository.findByOrganizationName(userDTO.getOrganizationName()).ifPresent(newUserExt::setOrganization);
+    //     //     }
+    //     //     userExtRepository.save(newUserExt);
+    //     // }
         
         
-        this.clearUserCaches(newUser);
-        log.debug("Created Information for User: {}", newUser);
-        return newUser;
-    }
+    //     this.clearUserCaches(newUser);
+    //     log.debug("Created Information for User: {}", newUser);
+    //     return newUser;
+    // }
 
 	private void updateExtDTO(UserDTO userDTO, User newUser) {
 		Optional<UserExtDTO> userExtDTOopt = userExtService.findOneByEmail(userDTO.getEmail());
@@ -186,7 +190,11 @@ public class UserService {
         }
     }
 
-    public User createUser(UserDTO userDTO) {
+    // public User createUser(UserDTO userDTO){
+    //     return createUser(userDTO, RandomUtil.generatePassword());
+    // }
+
+    public User createUser(UserDTO userDTO, String password) {
         User user = new User();
         user.setLogin(userDTO.getLogin());
         user.setFirstName(userDTO.getFirstName());
@@ -206,7 +214,7 @@ public class UserService {
                 .collect(Collectors.toSet());
             user.setAuthorities(authorities);
         }
-        String encryptedPassword = passwordEncoder.encode(RandomUtil.generatePassword());
+        String encryptedPassword = passwordEncoder.encode(password);
         user.setPassword(encryptedPassword);
         user.setResetKey(RandomUtil.generateResetKey());
         user.setResetDate(Instant.now());
@@ -399,8 +407,10 @@ public class UserService {
 		    userDTO.setEmail(email);
 		    userDTO.setOrganizationId(orgId);
 		    userDTO.setAuthorities(authorities);
-
-		    User createdUser = createUser(userDTO);
+            String password = RandomUtil.generatePassword();
+            // registerUser(userDTO, password);
+            User createdUser = createUser(userDTO, password);
+            mailService.sendCreationEmailWithPassword(createdUser, password);
             log.debug("User created: {}", createdUser);
             ret = Optional.of(createdUser);
         }else{

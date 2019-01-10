@@ -7,7 +7,10 @@ import io.github.jhipster.config.JHipsterProperties;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+
 import javax.mail.internet.MimeMessage;
 
 import org.slf4j.Logger;
@@ -31,6 +34,8 @@ public class MailService {
     private final Logger log = LoggerFactory.getLogger(MailService.class);
 
     private static final String USER = "user";
+    private static final String PASSWORD = "password";
+    
 
     private static final String BASE_URL = "baseUrl";
 
@@ -101,20 +106,43 @@ public class MailService {
     }
 
     @Async
-    public void sendActivationEmail(User user) {
-        log.debug("Sending activation email to '{}'", user.getEmail());
-        sendEmailFromTemplate(user, "mail/activationEmail", "email.activation.title");
+    public void sendEmailFromTemplateWithContext(User user, String templateName, String titleKey, Map<String,Object> contextMap) {
+        Locale locale = Locale.forLanguageTag(user.getLangKey());
+        Context context = new Context(locale);
+        context.setVariables(contextMap);
+        context.setVariable(USER, user);
+        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+        
+        String content = templateEngine.process(templateName, context);
+        String subject = messageSource.getMessage(titleKey, null, locale);
+        sendEmail(user.getEmail(), subject, content, false, true);
+
     }
 
-    @Async
-    public void sendCreationEmail(User user) {
-        log.debug("Sending creation email to '{}'", user.getEmail());
-        sendEmailFromTemplate(user, "mail/creationEmail", "email.activation.title");
-    }
+
+    // @Async
+    // public void sendActivationEmail(User user) {
+    //     log.debug("Sending activation email to '{}'", user.getEmail());
+    //     sendEmailFromTemplate(user, "mail/activationEmail", "email.activation.title");
+    // }
+
+    // @Async
+    // public void sendCreationEmail(User user) {
+    //     log.debug("Sending creation email to '{}'", user.getEmail());
+    //     sendEmailFromTemplate(user, "mail/creationEmail", "email.activation.title");
+    // }
 
     @Async
     public void sendPasswordResetMail(User user) {
         log.debug("Sending password reset email to '{}'", user.getEmail());
         sendEmailFromTemplate(user, "mail/passwordResetEmail", "email.reset.title");
+    }
+
+    @Async
+    public void sendCreationEmailWithPassword(User user, String password) {
+        log.debug("Sending creation email to '{}'", user.getEmail());
+        Map<String, Object> context = new HashMap<>();
+        context.put(PASSWORD, password);
+		sendEmailFromTemplateWithContext(user, "mail/creationEmailWithPassword", "email.activation.title", context);
     }
 }

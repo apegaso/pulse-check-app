@@ -2,15 +2,19 @@ package com.ncr.project.pulsecheck.service.impl;
 
 import com.ncr.project.pulsecheck.service.ClientLeadService;
 import com.ncr.project.pulsecheck.service.OrgAdminService;
+import com.ncr.project.pulsecheck.service.ParticipantService;
+import com.ncr.project.pulsecheck.service.QuestionnaireService;
 import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.domain.ClientLead;
+import com.ncr.project.pulsecheck.domain.Event;
 import com.ncr.project.pulsecheck.domain.OrgAdmin;
 import com.ncr.project.pulsecheck.domain.Participant;
 import com.ncr.project.pulsecheck.domain.User;
 import com.ncr.project.pulsecheck.domain.UserExt;
 import com.ncr.project.pulsecheck.repository.UserExtRepository;
 import com.ncr.project.pulsecheck.repository.UserRepository;
+import com.ncr.project.pulsecheck.service.dto.QuestionnaireDTO;
 import com.ncr.project.pulsecheck.service.dto.UserExtDTO;
 import com.ncr.project.pulsecheck.service.dto.UserExtWRelationsDTO;
 import com.ncr.project.pulsecheck.service.mapper.OrganizationAndEventsVMMapper;
@@ -57,7 +61,11 @@ public class UserExtServiceImpl implements UserExtService {
 
     private final ClientLeadService clientLeadService;
     
+    private final ParticipantService participantService;
+    
     private final OrgAdminService orgAdminService;
+
+    private final QuestionnaireService questionnaireService;
 
     private final UserRepository userRepository;
     
@@ -71,6 +79,8 @@ public class UserExtServiceImpl implements UserExtService {
     ,OrgAdminService orgAdminService
     ,UserExtWRelationsMapper userExtWRelationsMapper
     ,UserRepository userRepository
+    ,ParticipantService participantService
+    ,QuestionnaireService questionnaireService
     ) {
         this.userExtRepository = userExtRepository;
         this.userExtMapper = userExtMapper;
@@ -80,6 +90,8 @@ public class UserExtServiceImpl implements UserExtService {
         this.orgAdminService=orgAdminService;
         this.userExtWRelationsMapper=userExtWRelationsMapper;
         this.userRepository = userRepository;
+        this.participantService = participantService;
+        this.questionnaireService = questionnaireService;
     }
 
     /**
@@ -192,6 +204,8 @@ public class UserExtServiceImpl implements UserExtService {
     public void delete(Long id) {
         log.debug("Request to delete UserExt : {}", id);
         userExtRepository.findById(id).ifPresent(userExt -> {
+            Optional<List<QuestionnaireDTO>> findAllByUserExt = questionnaireService.findAllByUserExt(id);
+            if(findAllByUserExt.isPresent() && findAllByUserExt.get().size() > 0) throw new DeleteUserException("Unable to delete. Participant has questionnaire associated. Please delete questionnaire before.");
             OrgAdmin orgAdmin = userExt.getOrgAdmin();
             if(orgAdmin != null){
                 orgAdminService.delete(orgAdmin.getId());
@@ -201,10 +215,14 @@ public class UserExtServiceImpl implements UserExtService {
                 clientLeadService.delete(clientLead.getId());
             }
             Participant participant = userExt.getParticipant();
-            if (participant != null){
-                //participant.getEvents();
-                throw new DeleteUserException("Unable to delete. Participant not empty.");
-                //participantService.delete(participant.getId());
+            if (participant != null) {
+                Set<Event> events = participant.getEvents();
+                for(Event e : events){
+                    e.removeParticipants(participant);
+                }
+
+                //throw new DeleteUserException("Unable to delete. Participant not empty.");
+                participantService.delete(participant.getId());
             }
         });
         

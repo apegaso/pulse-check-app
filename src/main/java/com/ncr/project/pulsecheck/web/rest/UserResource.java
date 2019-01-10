@@ -34,6 +34,7 @@ import com.ncr.project.pulsecheck.service.UserExtService;
 import com.ncr.project.pulsecheck.service.UserService;
 import com.ncr.project.pulsecheck.service.dto.UserDTO;
 import com.ncr.project.pulsecheck.service.mapper.UserMapper;
+import com.ncr.project.pulsecheck.service.util.RandomUtil;
 import com.ncr.project.pulsecheck.web.rest.errors.BadRequestAlertException;
 import com.ncr.project.pulsecheck.web.rest.errors.EmailAlreadyUsedException;
 import com.ncr.project.pulsecheck.web.rest.errors.LoginAlreadyUsedException;
@@ -117,8 +118,9 @@ public class UserResource {
         } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
             throw new EmailAlreadyUsedException();
         } else {
-            User newUser = userService.createUser(userDTO);
-            mailService.sendCreationEmail(newUser);
+            String password = RandomUtil.generatePassword();
+            User newUser = userService.createUser(userDTO, password);
+            mailService.sendCreationEmailWithPassword(newUser, password);
             return ResponseEntity.created(new URI("/api/users/" + newUser.getLogin()))
                 .headers(HeaderUtil.createAlert( "A user is created with identifier " + newUser.getLogin(), newUser.getLogin()))
                 .body(newUser);

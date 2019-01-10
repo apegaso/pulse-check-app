@@ -27,7 +27,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
-@Secured(AuthoritiesConstants.ADMIN)
+@Secured(AuthoritiesConstants.USER)
 public class QuestionnaireResource {
 
     private final Logger log = LoggerFactory.getLogger(QuestionnaireResource.class);

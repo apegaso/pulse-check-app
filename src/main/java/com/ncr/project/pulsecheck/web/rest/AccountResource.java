@@ -86,9 +86,22 @@ public class AccountResource {
         }
         userRepository.findOneByLogin(managedUserVM.getLogin().toLowerCase()).ifPresent(u -> {throw new LoginAlreadyUsedException();});
         userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).ifPresent(u -> {throw new EmailAlreadyUsedException();});
-        User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
-        mailService.sendActivationEmail(user);
+        User user = userService.createUser(managedUserVM, managedUserVM.getPassword());
+        mailService.sendCreationEmailWithPassword(user, managedUserVM.getPassword());
     }
+
+    // @PostMapping("/postregister")
+    // @Timed
+    // @ResponseStatus(HttpStatus.CREATED)
+    // public void registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
+    //     if (!checkPasswordLength(managedUserVM.getPassword())) {
+    //         throw new InvalidPasswordException();
+    //     }
+    //     userRepository.findOneByLogin(managedUserVM.getLogin().toLowerCase()).ifPresent(u -> {throw new LoginAlreadyUsedException();});
+    //     userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).ifPresent(u -> {throw new EmailAlreadyUsedException();});
+    //     User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
+    //     mailService.sendActivationEmail(user);
+    // }
 
     /**
      * GET  /activate : activate the registered user.

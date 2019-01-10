@@ -65,6 +65,19 @@ public class EmailServiceImpl implements EmailService {
     }
 
     /**
+     * Get one email by id.
+     *
+     * @param id the id of the entity
+     * @return the entity
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Email> findNextToSend() {
+        log.debug("Request to get next email");
+        return emailRepository.findFistByIsSent(false);
+    }
+
+    /**
      * Delete the email by id.
      *
      * @param id the id of the entity

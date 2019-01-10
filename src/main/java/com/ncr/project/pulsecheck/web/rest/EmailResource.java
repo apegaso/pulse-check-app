@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,6 +88,26 @@ public class EmailResource {
         return emailService.findAll();
     }
 
+    @GetMapping("/emails/next")
+    @Timed
+    public  ResponseEntity<Email>  getNextEmails() {
+        log.debug("REST request to get all Next Emails to sed");
+        Optional<Email> email = emailService.findNextToSend();
+        return ResponseUtil.wrapOrNotFound(email);
+    }
+    @PutMapping("/emails/{id}/done")
+    @Timed
+    public ResponseEntity<Void> postEmailDone(@PathVariable Long id) {
+        log.debug("REST request to set Email done : {}", id);
+        Optional<Email> emailOpt = emailService.findOne(id);
+        if(emailOpt.isPresent()){
+            Email email = emailOpt.get();
+            email.setIsSent(true);
+            email.setDateSent(Instant.now());
+            emailService.save(email);
+        }
+        return ResponseEntity.ok().build();
+    }
     /**
      * GET  /emails/:id : get the "id" email.
      *
