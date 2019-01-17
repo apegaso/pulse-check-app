@@ -79,28 +79,16 @@
                           <center>
                             <p style="text-align: center; line-height: 20px; font-size: 14px;">
                               <font color="#444444">
-                                <span th:text="#{email.creation_wp.greeting(${user.login})}">Dear <em>{0}</em>, </span><br/>
-                                <span th:text="#{email.creation_wp.text1}">Your Digital Maturity Tool account has been created.</span>
-                              </font>
-                            </p>
-                            <p style="text-align: center; line-height: 28px; font-size: 14px;">
-                              <font color="#444444">
-                                <span th:text="#{email.creation_wp.text2_0}">Your login is:</span><br/>
-                                <b th:text="#{email.creation_wp.text2_1(${user.email})}">{0}</b>
-                              </font>
-                            </p>
-                            <p style="text-align: center; line-height: 28px; font-size: 14px;">
-                              <font color="#444444">
-                                <span th:text="#{email.creation_wp.text3_0}">Your temporary password is:</span><br/>
-                                <b th:text="#{email.creation_wp.text3_1(${password})}">{0}</b>
+                                <span th:text="#{email.event_join.greeting(${user.login})}">Dear <em>{0}</em>, </span><br/>
+                                <span th:text="#{email.event_join.text1(${event.name})}">You was selected to participate to {0} event.</span>
                               </font>
                             </p>
                           </center>
                           <font color="#444444"></font>
                           <center>
                             <p style="text-align: center; line-height: 20px; font-size: 12px;">
-                              <font color="#444444" th:text="#{email.creation_wp.text4}">
-                                Please click on the URL below to access it:
+                              <font color="#444444" th:text="#{email.creation_wp.text2}">
+                                Please click on the URL below to access to the Digital Maturity Tool and take the assessment:
                               </font>
                             </p>
                           </center>

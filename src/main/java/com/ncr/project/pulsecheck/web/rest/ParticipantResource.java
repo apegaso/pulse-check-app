@@ -188,7 +188,7 @@ public class ParticipantResource {
     @DeleteMapping("/participants/del/{eventId}/{userExtId}")
     @Timed
     @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.NCR_ADMIN})
-    public ResponseEntity<ParticipantDTO> delParticipant(@PathVariable Long eventId, @PathVariable Long userExtId) throws URISyntaxException {
+    public ResponseEntity<Void> delParticipant(@PathVariable Long eventId, @PathVariable Long userExtId) throws URISyntaxException {
         log.debug("REST request to del participant userExt {} to Event : {}", userExtId, eventId);
         if (eventId == null) {
             throw new BadRequestAlertException("Invalid eventId", ENTITY_NAME, "idnull");
@@ -197,9 +197,8 @@ public class ParticipantResource {
             throw new BadRequestAlertException("Invalid userExtId", ENTITY_NAME, "idnull");
         }
 
-        ParticipantDTO participantDTO = participantService.addParticipant(eventId, userExtId);
+        participantService.delParticipant(eventId, userExtId);
         
-        
-        return ResponseUtil.wrapOrNotFound(Optional.of(participantDTO));
+        return ResponseEntity.ok().build();
     }
 }

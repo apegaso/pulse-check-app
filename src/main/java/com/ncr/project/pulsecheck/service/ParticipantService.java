@@ -57,6 +57,6 @@ public interface ParticipantService {
     Participant createIfNotExists(UserExt userExt);
 
 	ParticipantDTO addParticipant(Long eventId, Long userExtId);
-
+    void delParticipant(Long eventId, Long userExtId);
 	Set<ParticipantDTO> findAllByEventId(Long id);
 }

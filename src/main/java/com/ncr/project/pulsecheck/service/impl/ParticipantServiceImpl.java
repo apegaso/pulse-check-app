@@ -1,5 +1,6 @@
 package com.ncr.project.pulsecheck.service.impl;
 
+import com.ncr.project.pulsecheck.service.MailService;
 import com.ncr.project.pulsecheck.service.ParticipantService;
 import com.google.common.collect.Sets;
 import com.ncr.project.pulsecheck.domain.Event;
@@ -35,14 +36,16 @@ public class ParticipantServiceImpl implements ParticipantService {
     private final ParticipantRepository participantRepository;
     private final UserExtRepository userExtRepository;
     private final EventRepository eventRepository;
+    private final MailService mailService;
 
     private final ParticipantMapper participantMapper;
 
-    public ParticipantServiceImpl(ParticipantRepository participantRepository, ParticipantMapper participantMapper, UserExtRepository userExtRepository, EventRepository eventRepository) {
+    public ParticipantServiceImpl(ParticipantRepository participantRepository, ParticipantMapper participantMapper, UserExtRepository userExtRepository, EventRepository eventRepository, MailService mailService) {
         this.participantRepository = participantRepository;
         this.participantMapper = participantMapper;
         this.userExtRepository=userExtRepository;
         this.eventRepository = eventRepository;
+        this.mailService = mailService;
     }
 
     /**
@@ -130,10 +133,31 @@ public class ParticipantServiceImpl implements ParticipantService {
             throw new BadRequestAlertException("Event not exists", "Participant", "id not exist");
         }
         ret.addEvents(event.get());
+        mailService.sendEventJoinEmail(ret.getUserExt().getUser(), event.get());
 
         ret = participantRepository.save(ret);
         return participantMapper.toDto(ret);
     }
+
+    @Override
+    public void delParticipant(Long eventId, Long userExtId) {
+        Optional<UserExt> userExt = userExtRepository.findById(userExtId);
+        if(!userExt.isPresent()){
+            throw new BadRequestAlertException("UserExt not exists", "Participant", "id not exist");
+        }
+        Participant ret = createIfNotExists(userExt.get());
+
+        Optional<Event> event = eventRepository.findById(eventId);
+        if(!event.isPresent()){
+            throw new BadRequestAlertException("Event not exists", "Participant", "id not exist");
+        }
+        ret.removeEvents(event.get());
+        
+
+        ret = participantRepository.save(ret);
+        
+    }
+
 
     @Override
     public Set<ParticipantDTO> findAllByEventId(Long id) {

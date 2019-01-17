@@ -1,6 +1,7 @@
 package com.ncr.project.pulsecheck.service;
 
 import com.ncr.project.pulsecheck.domain.Email;
+import com.ncr.project.pulsecheck.domain.Event;
 import com.ncr.project.pulsecheck.domain.User;
 
 import io.github.jhipster.config.JHipsterProperties;
@@ -144,5 +145,12 @@ public class MailService {
         Map<String, Object> context = new HashMap<>();
         context.put(PASSWORD, password);
 		sendEmailFromTemplateWithContext(user, "mail/creationEmailWithPassword", "email.activation.title", context);
+    }
+    @Async
+    public void sendEventJoinEmail(User user, Event event) {
+        log.debug("Sending event join email to '{}'", user.getEmail());
+        Map<String, Object> context = new HashMap<>();
+        context.put("event",event);
+		sendEmailFromTemplateWithContext(user, "mail/eventJoin", "email.activation.title", context);
     }
 }
